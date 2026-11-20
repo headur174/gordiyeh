@@ -1,0 +1,22 @@
+{
+  "id": "piece_customer_memory",
+  "name": "مرکز کنترل حریم خصوصی و حافظه هوش مصنوعی (Phase 7)",
+  "version": "1.0.0",
+  "category": "privacy",
+  "grid": {
+    "defaultSpan": "half",
+    "minSpan": "half",
+    "maxSpan": "full"
+  },
+  "security": {
+    "allowedEmits": [
+      "v1.memory.cleared",
+      "v1.memory.updated"
+    ],
+    "allowedSubscribes": [
+      "v1.security.vault_active"
+    ]
+  },
+  "isOptional": true,
+  "fallbackBehavior": "error_notice"
+}

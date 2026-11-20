@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Vazirmatn:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; } body { font-family: 'Vazirmatn', sans-serif; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { 'colors': { 'primary-fixed': '#e7e3d0', 'on-primary': '#323124', 'on-tertiary-fixed': '#001d36', 'tertiary-container': '#d1e4ff', 'secondary': '#abcae8', 'background': '#02142a', 'on-surface': '#d5e3ff', 'surface-tint': '#cbc7b5', 'surface-container-high': '#1a2a41', 'secondary-fixed-dim': '#abcae8', 'on-error': '#690005', 'secondary-fixed': '#cce5ff', 'tertiary-fixed': '#d1e4ff', 'on-tertiary-container': '#4e6683', 'on-background': '#d5e3ff', 'secondary-container': '#2b4963', 'error': '#ffb4ab', 'primary-container': '#e7e3d0', 'inverse-primary': '#615f50', 'surface-container': '#0f2036', 'on-surface-variant': '#cac6bb', 'surface-container-low': '#0b1c32', 'primary': '#ffffff', 'on-primary-fixed': '#1d1c10', 'primary-fixed-dim': '#cbc7b5', 'on-primary-fixed-variant': '#494739', 'on-secondary': '#12334b', 'tertiary': '#ffffff', 'on-error-container': '#ffdad6', 'on-tertiary-fixed-variant': '#304864', 'on-primary-container': '#676556', 'surface-container-highest': '#26354d', 'on-tertiary': '#18324c', 'on-secondary-fixed': '#001d31', 'surface-bright': '#2a3a51', 'outline-variant': '#49473f', 'tertiary-fixed-dim': '#b0c8ea', 'on-secondary-fixed-variant': '#2b4963', 'surface-variant': '#26354d', 'surface': '#02142a', 'outline': '#949187', 'inverse-surface': '#d5e3ff', 'surface-dim': '#02142a', 'on-secondary-container': '#9ab8d6', 'error-container': '#93000a', 'surface-container-lowest': '#000e23', 'inverse-on-surface': '#213148' }, 'borderRadius': { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, 'spacing': { 'space-xs': '0.25rem', 'gutter': '1.5rem', 'gutter-mobile': '0.75rem', 'margin-mobile': '1rem', 'space-md': '1rem', 'space-xl': '2.5rem', 'space-lg': '1.5rem', 'space-sm': '0.5rem', 'margin': '3rem' }, 'fontFamily': { 'body-sm': ['Geist'], 'body-lg': ['Geist'], 'headline-sm': ['Space Grotesk'], 'headline-xl-mobile': ['Space Grotesk'], 'headline-lg-mobile': ['Space Grotesk'], 'label-sm': ['JetBrains Mono'], 'label-lg': ['JetBrains Mono'], 'headline-lg': ['Space Grotesk'], 'body-md': ['Geist'], 'headline-xl': ['Space Grotesk'], 'label-md': ['JetBrains Mono'], 'headline-md': ['Space Grotesk'] }, 'fontSize': { 'body-sm': ['0.8125rem', { 'lineHeight': '1.25rem', 'letterSpacing': '0.01em', 'fontWeight': '400' }], 'body-lg': ['1.125rem', { 'lineHeight': '1.75rem', 'letterSpacing': '-0.01em', 'fontWeight': '400' }], 'headline-sm': ['1.25rem', { 'lineHeight': '1.75rem', 'letterSpacing': '-0.01em', 'fontWeight': '500' }], 'headline-xl-mobile': ['2.25rem', { 'lineHeight': '2.75rem', 'letterSpacing': '-0.02em', 'fontWeight': '700' }], 'headline-lg-mobile': ['1.75rem', { 'lineHeight': '2.25rem', 'letterSpacing': '-0.02em', 'fontWeight': '600' }], 'label-sm': ['0.6875rem', { 'lineHeight': '0.875rem', 'letterSpacing': '0.08em', 'fontWeight': '400' }], 'label-lg': ['0.875rem', { 'lineHeight': '1.25rem', 'letterSpacing': '0.04em', 'fontWeight': '500' }], 'headline-lg': ['2.5rem', { 'lineHeight': '3rem', 'letterSpacing': '-0.025em', 'fontWeight': '600' }], 'body-md': ['0.9375rem', { 'lineHeight': '1.5rem', 'letterSpacing': '0em', 'fontWeight': '400' }], 'headline-xl': ['3.5rem', { 'lineHeight': '4rem', 'letterSpacing': '-0.03em', 'fontWeight': '700' }], 'label-md': ['0.75rem', { 'lineHeight': '1rem', 'letterSpacing': '0.06em', 'fontWeight': '500' }], 'headline-md': ['1.75rem', { 'lineHeight': '2.25rem', 'letterSpacing': '-0.015em', 'fontWeight': '600' }] } } } };</script></head><body class="bg-surface text-on-surface font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-outline-variant"><div class="w-full bg-surface-container-lowest border-b border-outline-variant/60 py-1.5 px-6 lg:px-12 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm"><div class="flex items-center gap-space-sm"><span class="w-1.5 h-1.5 bg-primary rounded-none inline-block animate-pulse"></span><span class="font-label-sm tracking-wide text-primary-fixed">گُردیه مهندسی دقیق: تضمین تلورانس ۵ میکرون CNC و ارسال بارنامه هوایی مستقیم</span></div><div class="hidden md:flex items-center gap-space-lg text-on-surface-variant/80 font-label-sm"><span>تلفن متالورژی: ۰۲۱-۸۸۹۹۰۰۰۲</span><span class="text-outline-variant">|</span><span>تحویل اکسپرس فرودگاهی تهران</span></div></div><div class="h-20 w-full px-6 lg:px-12 flex items-center justify-between gap-space-lg border-b border-outline-variant/40"><div class="flex items-center gap-space-md shrink-0"><img alt="GORDIYEH" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1U4GgT5BVVUMA3-A8NDiPyCO6XFQmVZxT3OJ3JUa5hM3Ti2fWUCOW6d6nVCl8KsaDq2bEVZnqU-JuQhiKwWKX97fCpfeYK7ljSVVeyEvYxn1C2T2M7qpusguPT7_DLTk3g1p_PBTruaPD3GYRpKX5z6i3iQESVJQihRXIEVPo2W7jJ2mmQgqfKC46v76QoxpWDGMW6O9XxiG3fYf0R0kwqEkiZW7q49azGcRgs1Txag"/><div class="flex flex-col text-right"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">گُردیـه</span><span class="font-label-sm text-label-sm text-on-surface-variant tracking-widest uppercase">GORDIYEH INSTRUMENTS</span></div></div><div class="flex-1 max-w-2xl mx-space-md relative hidden md:block"><div class="flex items-center bg-surface-container border border-outline-variant hover:border-primary focus-within:border-primary transition-all px-space-md h-11"><span class="material-symbols-outlined text-on-surface-variant ml-space-sm text-[20px]">search</span><input class="bg-transparent w-full text-on-surface placeholder:text-outline focus:outline-none font-body-sm text-body-sm text-right pr-space-xs" placeholder="جستجو در میان ادوات ستاپ، شاسی‌های CNC، کابل‌های آویاتور و لوازم مهندسی..." type="text"/><span class="font-label-sm text-label-sm text-outline border border-outline-variant px-1.5 py-0.5">⌘K</span></div></div><div class="flex items-center gap-space-md shrink-0"><a class="hidden sm:flex items-center gap-space-xs px-space-md h-10 border border-outline-variant bg-surface-container text-on-surface hover:border-primary hover:text-primary transition-colors font-label-md text-label-md" data-path="login" href="#"><span class="material-symbols-outlined text-[18px]">login</span><span>ورود | عضویت</span></a><a class="relative flex items-center justify-center w-10 h-10 border border-outline-variant bg-surface-container text-on-surface hover:border-primary transition-colors" data-path="cart" href="#"><span class="material-symbols-outlined text-[20px]">shopping_bag</span><span class="absolute -top-1.5 -right-1.5 bg-primary text-on-primary font-label-sm text-label-sm w-4 h-4 flex items-center justify-center">۰</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div><div class="h-11 w-full px-6 lg:px-12 flex items-center justify-between text-on-surface-variant"><div class="flex items-center gap-space-lg h-full"><button class="flex items-center gap-space-xs text-on-surface font-label-md text-label-md h-full pl-space-md border-l border-outline-variant/60 hover:text-primary"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>دسته‌بندی کالاها</span></button><nav class="flex items-center gap-space-lg h-full" data-active-classes="text-primary font-semibold border-b-2 border-primary"><a aria-current="page" class="h-full flex items-center transition-colors text-primary font-semibold border-b-2 border-primary" data-path="home" href="#">پیشنهادهای برگزیده کارگاه</a><a class="h-full flex items-center text-on-surface-variant hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="best-sellers" href="#">پرفروش‌ترین ادوات ستاپ</a><a class="h-full flex items-center text-on-surface-variant hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="raw-materials-and-cnc" href="#">شمش و متالورژی</a><a class="h-full flex items-center text-on-surface-variant hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="engineering-journal" href="#">مجله تخصصی مهندسی</a><a class="h-full flex items-center text-on-surface-variant hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="about-gordiyeh" href="#">درباره گُردیه</a></nav></div><div class="hidden xl:flex items-center gap-space-sm text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px]">verified</span><span>استاندارد مقاومت سطحی آنادایز تیپ ۳</span></div></div></header><main class="w-full pt-[8.5rem] bg-surface min-h-[calc(100vh-20rem)]"><div class="flex flex-col w-full selection:bg-primary-container selection:text-on-primary-container">
+<!-- 1. TOP STORIES / WORKSHOP HIGHLIGHTS ROW -->
+<section class="w-full px-4 lg:px-12 py-6 bg-surface-container-lowest">
+<div class="flex items-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth py-2">
+<!-- Story 1 -->
+<a class="flex flex-col items-center gap-2 group shrink-0" href="#">
+<div class="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-secondary via-outline to-primary transition-transform duration-300 group-hover:scale-105">
+<div class="w-full h-full rounded-full bg-surface-container overflow-hidden p-0.5">
+<img class="w-full h-full object-cover rounded-full filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-300" data-alt="Close up precision macro shot of raw milled aerospace 7075 aluminum chassis keyboard internal cross section engineering blueprint studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBonfwrhY7UxfhqW0GH5OeHv_D9xuaudXh1xNBdVeCN_VMcrgJVMOqG4x2WRCzur6SY5Jf0OrlwzzBwk39AeTi9VK-8zgJaWSBJ_ajObxgSyHX4OyWxMl_1u_UffgLZaeB59YpmUcpx0OL5s0IhbAsIxB02SVV1OFotyhHrSW3Px2Eel9X6pgPGjRT5ucnKmyOu2pYF00_zhC_IVLHDs9uIp7J2j3lJxiPQYxslD-8"/>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary transition-colors text-center max-w-[5rem] truncate font-medium">کالبدشکافی ۷۰۷۵</span>
+</a>
+<!-- Story 2 -->
+<a class="flex flex-col items-center gap-2 group shrink-0" href="#">
+<div class="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-secondary-container via-outline to-primary-container transition-transform duration-300 group-hover:scale-105">
+<div class="w-full h-full rounded-full bg-surface-container overflow-hidden p-0.5">
+<img class="w-full h-full object-cover rounded-full filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-300" data-alt="Industrial flight case drop test ballistic polymer shockproof hardcase with metal buckles under high intensity technical strobe lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKOLVvHG1-sdah0mEt83xP70rkgTcVHiPv5Ja5edjggr9_A2wU-NGoLYBuNqiKUsnHI07ZJc4RMQrqflVIyr7QmpaejYoLNlLmEVkNeyEhrQi84a__HfTl2P16CncDCh27goLQ9wjoFDOtUZUpySgY5uY2Wg-VnHSfLwXoeFxMQWb2_RxX1VmwFKD6WqCsU1rcFhGoNOMPCIHfpNojfhIUfOKhwyIpAS815MyOXHk"/>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary transition-colors text-center max-w-[5rem] truncate font-medium">تست سقوط هاردکیس</span>
+</a>
+<!-- Story 3 -->
+<a class="flex flex-col items-center gap-2 group shrink-0" href="#">
+<div class="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-secondary via-outline to-primary transition-transform duration-300 group-hover:scale-105">
+<div class="w-full h-full rounded-full bg-surface-container overflow-hidden p-0.5">
+<img class="w-full h-full object-cover rounded-full filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-300" data-alt="Matte deep petroleum military hardcoat type III anodized metal plate surface macro texture tactile dark slate finish" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe5Rpz7lWTTERQNcZlUe2oNPKK8dJsp2O8ctx9cFdOlbswZvLQhCmvkFyT1-R7oOQzmsqQXQJWrrCNmfd65YehFUXCQAEn6nfavYrWw_fCMWiDA5a6zdp4QVkwhu2hUcecBy_56dSHdJJtxCtH5dfW9D5x2p-EMS51NZXe2IjFQtxChiZpFqpKq3dAv5V1kv2L4s_B00MdFneXXSI1lobJdobb2oxsBE6FZi5zHwg"/>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary transition-colors text-center max-w-[5rem] truncate font-medium">آنودایز مات نظامی</span>
+</a>
+<!-- Story 4 -->
+<a class="flex flex-col items-center gap-2 group shrink-0" href="#">
+<div class="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-secondary-container via-outline to-primary transition-transform duration-300 group-hover:scale-105">
+<div class="w-full h-full rounded-full bg-surface-container overflow-hidden p-0.5">
+<img class="w-full h-full object-cover rounded-full filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-300" data-alt="Mechanical keyboard switch stem angle calibration laser micrometric measurement high precision gauge tool" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmCcgYELNiXck4zjNHiY-sRE_YuFKUyV0np_5EUQA2_WJsJYPKIp6kG9dGDnav1ProyOg4GBIXMd-hha6uJY8ylmb80pVdP9PLSdBl0TN2ZPgFCISMYfcGgde9eBODIUDBYhhQLpumM5qMKr1Ik6S6zv2l2K-9_Xon2W9rkvSsfWmbKjIeiBkfTK5WG8nby2Ww57kMbM1jzTPEylCsF6Mdfg1FSYWeowyU7-TtM80"/>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary transition-colors text-center max-w-[5rem] truncate font-medium">کالیبراسیون سوئیچ</span>
+</a>
+<!-- Story 5 -->
+<a class="flex flex-col items-center gap-2 group shrink-0" href="#">
+<div class="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-secondary via-outline to-primary transition-transform duration-300 group-hover:scale-105">
+<div class="w-full h-full rounded-full bg-surface-container overflow-hidden p-0.5">
+<img class="w-full h-full object-cover rounded-full filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-300" data-alt="Braided coaxial custom aviator cables with chrome titanium GX16 connectors coiled cable metallic weave close view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYaLuu5D1RjA5zdJ-QfZGS_O6P-XmfAFr4di6rpo8crFDWA7mbrgcCIZoz9yqeEySJ7CL_yLSf9aFtiRaKGaU4BtA_x5iG0PwwS40JdIGHTkX1k6IrU9yekIlsMPHneDZMdehzulWrpdAJL4sh2XL7x2wUot1b42Dn5NhKpaLEdhe5B8pusIUSodTTuM_jYRkbo2QJgm3JM-rEBvGaBXq2D_dnktaAGEMwkbqLoqA"/>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary transition-colors text-center max-w-[5rem] truncate font-medium">شیدرهای کواکسیال</span>
+</a>
+<!-- Story 6 -->
+<a class="flex flex-col items-center gap-2 group shrink-0" href="#">
+<div class="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-secondary-container via-outline to-primary-container transition-transform duration-300 group-hover:scale-105">
+<div class="w-full h-full rounded-full bg-surface-container overflow-hidden p-0.5">
+<img class="w-full h-full object-cover rounded-full filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-300" data-alt="Natural volcanic basalt slate hand carved ergonomic desk wrist rest stone grain architectural mineral texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCka3vIt029ASE8T-E4IFaZyDMfzshED5R6_jB8IrtI1TB85hHqyHaJZEOU3PMkFfkjZAgXBN4bi3jHHzd1p1QZBwM1cP23tZLWx7qWI0Gb6EtpyMquR-5O7Shwek9YFj9XfRfcci5PMXt6SP49IP8HMERFvlqVTabwApiz9zx1qTWEiAgeOTRX1-IoLYK9PbCZ2VBBeqwboP2nJ28mZ_0FwiHF4z5Tzc-CXaCIHQ8"/>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary transition-colors text-center max-w-[5rem] truncate font-medium">سنگ بازالت طبیعی</span>
+</a>
+<!-- Story 7 -->
+<a class="flex flex-col items-center gap-2 group shrink-0" href="#">
+<div class="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-secondary via-outline to-primary transition-transform duration-300 group-hover:scale-105">
+<div class="w-full h-full rounded-full bg-surface-container overflow-hidden p-0.5">
+<img class="w-full h-full object-cover rounded-full filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-300" data-alt="5-axis CNC high speed milling spindle cutting solid aluminum billet with coolant mist sparking clean metallic factory" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2lud1Aqk2J-is29BqtgUyydN4xb11EpnK8tLtnFb9h5MmNcpubQ7Et4cHKmElFBsXGk6rGGoju3BxFXZC8ELRyyL42ObJWkGllamwc3iLtU5XL3FyLmBT6gNoLML-BsSExSUUzHn2D80QT4NjE1X5LUtz7nVhbkAlm4fEuQozIaVR92vyJAwPNSJTq92UcR9AbUrz2ooD2QUgxMAKOW3IjyEgRLruSy2KOgjGjaw"/>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary transition-colors text-center max-w-[5rem] truncate font-medium">فرزکاری ۵ محوره</span>
+</a>
+<!-- Story 8 -->
+<a class="flex flex-col items-center gap-2 group shrink-0" href="#">
+<div class="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-secondary-container via-outline to-primary transition-transform duration-300 group-hover:scale-105">
+<div class="w-full h-full rounded-full bg-surface-container overflow-hidden p-0.5">
+<img class="w-full h-full object-cover rounded-full filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-300" data-alt="Engraved metallic serial warranty token seal with 36-month certified guarantee embossed geometric arch insignia" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ_J1las9tn-5Rb8_L2kt0Sjt5iq71PnI6DaOpn_mzzLH_xE8mm-kinEtUernfaY37wWiw2ZSI-NBCaw6D7ZGAwk4jN-xPoWA4SNJT_lKQQViSCG2HKxPa5PC8hCg3UKvgR6o-Jnfk04ozxr50UF7sEJthn8jCr87wzEPT0NU1i4jwxBey1ArD08a2Kq7NCuI_yl9xRIvYbft4yWtejska-D9nQF8NC9FMq70YctQ"/>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary transition-colors text-center max-w-[5rem] truncate font-medium">گارانتی ۳۶ ماهه</span>
+</a>
+</div>
+</section>
+<!-- 2. HERO CAROUSEL & TWIN PROMOTIONAL TILES -->
+<section class="w-full px-4 lg:px-12 py-4">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+<!-- Main Hero Showcase (8 cols / ~70%) -->
+<div class="lg:col-span-8 relative bg-surface-container-high rounded-xl overflow-hidden p-6 sm:p-10 flex flex-col justify-between min-h-[460px] shadow-xl">
+<!-- Background subtle tech graphic -->
+<div class="absolute inset-0 bg-gradient-to-l from-surface-container-lowest/80 via-surface-container-high/60 to-surface-container-lowest/90 pointer-events-none z-10"></div>
+<div class="absolute left-0 bottom-0 top-0 w-3/5 overflow-hidden hidden sm:block pointer-events-none">
+<img class="w-full h-full object-contain object-left scale-110" data-alt="Flagship GORDIYEH Monolith KB75 mechanical keyboard milled from raw aerospace 7075 aluminum billet with titanium rotary knob studio rim lighting dark cinematic background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCn0eyW1FbDSuAx7_bCFcuny_DTT8Ba1AFJ224wVCOAeCzS72p2IA_hTgEt7Mt-k2nIGECiNtFMA1rfOM_lRm0_9phiWtpsKWlMKsMr_rRCMaDC-DyXMt-wLWXXDk_uJlCi2PUH3f1mq2su7w4GwspmiH_hh6gFLqxXPVlSAJ2ptq3cDObEPXVSarHjW26ZLXj6Y-8MLnrKaqGvHFitARXG0tmDxp1A_ksegW1f8os"/>
+</div>
+<!-- Top HUD Specs bar -->
+<div class="relative z-20 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-2 bg-surface-container-lowest/90 px-3 py-1 rounded">
+<span class="w-2 h-2 rounded-full bg-primary-fixed animate-ping"></span>
+<span class="text-primary-fixed uppercase tracking-wider font-semibold">پرچم‌دار نسل ۵ مهندسی</span>
+</div>
+<div class="hidden sm:flex items-center gap-4 text-secondary">
+<span>کالیبراسیون تلورانس: ±۰.۰۰۵ mm</span>
+<span>•</span>
+<span>آلیاژ شمش: T6-7075</span>
+</div>
+</div>
+<!-- Main Hero Content -->
+<div class="relative z-20 max-w-xl my-8">
+<div class="inline-flex items-center gap-2 mb-3 px-2 py-0.5 bg-surface-container text-secondary text-label-xs font-label-sm uppercase rounded">
+<span>SERIES: MONOLITH KB75 V3</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary mb-3 leading-tight tracking-tight">
+            کیبورد مکانیکی شاسی یکپارچه <span class="text-primary-fixed">KB75 Monolith</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed max-w-lg">
+            تراش‌خورده از یک بلوک صلب ۲.۸ کیلوگرمی آلومینیوم T6-7075 با لایه‌های دمپینگ صوتی ۵ گانه پُرون ژاپن، گسکت‌مانت معلق و انکودر چرخشی تیتانیومی نانوکروم.
+          </p>
+<div class="flex flex-wrap items-center gap-4">
+<a class="px-6 py-3 bg-primary-fixed text-on-primary-fixed font-headline-sm text-headline-sm font-semibold hover:bg-secondary transition-colors inline-flex items-center gap-2 rounded" href="#">
+<span>بررسی مشخصات فنی و سفارش</span>
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+</a>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md bg-surface-container-low/80 px-4 py-2.5 rounded">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span>موجودی کارگاه: تحویل اکسپرس ۴۸ ساعته</span>
+</div>
+</div>
+</div>
+<!-- Hero Navigation & Indicators -->
+<div class="relative z-20 flex items-center justify-between pt-4 border-t border-outline-variant/30 text-on-surface-variant">
+<div class="flex items-center gap-2">
+<button class="w-3 h-1.5 bg-primary rounded-full transition-all"></button>
+<button class="w-1.5 h-1.5 bg-outline rounded-full hover:bg-on-surface transition-all"></button>
+<button class="w-1.5 h-1.5 bg-outline rounded-full hover:bg-on-surface transition-all"></button>
+<button class="w-1.5 h-1.5 bg-outline rounded-full hover:bg-on-surface transition-all"></button>
+</div>
+<div class="flex items-center gap-2 font-label-sm text-label-sm">
+<button class="w-8 h-8 rounded bg-surface-container flex items-center justify-center hover:bg-surface-bright text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded bg-surface-container flex items-center justify-center hover:bg-surface-bright text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Twin Stacked Promotional Tiles (4 cols / ~30%) -->
+<div class="lg:col-span-4 flex flex-col gap-4">
+<!-- Top Promo Banner -->
+<a class="group relative flex-1 bg-surface-container rounded-xl overflow-hidden p-5 flex flex-col justify-between shadow-md hover:bg-surface-container-high transition-all" href="#">
+<div class="relative z-10 flex items-center justify-between text-label-sm font-label-sm text-secondary">
+<span class="bg-surface-container-lowest/90 px-2 py-0.5 rounded text-primary-fixed">مس خالص الکترولیتی C11000</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_back</span>
+</div>
+<div class="relative z-10 my-4">
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary mb-1">داک استیشن ۱۲ پورت تاندربولت ۴</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">سیستم خنک‌کاری پسیو تمام مس بدون نویز فن با پهنای باند ۴۰ گیگابیت بر ثانیه</p>
+</div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-primary-fixed">۱۹,۸۰۰,۰۰۰ تومان</span>
+<span class="font-label-sm text-label-sm text-outline-variant">سفارش سری محدود</span>
+</div>
+<!-- Corner Ambient Backdrop Graphic -->
+<div class="absolute -left-6 -bottom-6 w-32 h-32 bg-secondary-container/20 rounded-full blur-2xl"></div>
+</a>
+<!-- Bottom Promo Banner -->
+<a class="group relative flex-1 bg-surface-container rounded-xl overflow-hidden p-5 flex flex-col justify-between shadow-md hover:bg-surface-container-high transition-all" href="#">
+<div class="relative z-10 flex items-center justify-between text-label-sm font-label-sm text-secondary">
+<span class="bg-surface-container-lowest/90 px-2 py-0.5 rounded text-primary-fixed">سنگ بازالت و چرم طبیعی</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_back</span>
+</div>
+<div class="relative z-10 my-4">
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary mb-1">پد ارگونومیک ستاپ بازالت و چرم</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">تراش هیدرولیکی لبه‌ها و پشتیبانی زاویه‌ای ۶ درجه برای استراحت مچ دست در تایپ ممتد</p>
+</div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-primary-fixed">۴,۹۵۰,۰۰۰ تومان</span>
+<span class="font-label-sm text-label-sm text-outline-variant">ارسال فوری</span>
+</div>
+<!-- Corner Ambient Backdrop Graphic -->
+<div class="absolute -left-6 -bottom-6 w-32 h-32 bg-primary-container/10 rounded-full blur-2xl"></div>
+</a>
+</div>
+</div>
+</section>
+<!-- 3. SPECIAL WORKSHOP OFFERS RAIL (شگفت‌انگیزهای کارگاه با ساختار دیجی‌کالا در پالت پترولئوم) -->
+<section class="w-full px-4 lg:px-12 py-6">
+<div class="w-full bg-surface-container rounded-xl p-4 sm:p-6 shadow-2xl overflow-hidden relative">
+<!-- Glow ambient overlay -->
+<div class="absolute -top-24 -right-24 w-72 h-72 bg-secondary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex flex-col lg:flex-row items-stretch gap-4">
+<!-- Rail Anchor Card (طاق معمارگونه برند و تایمر مشابه جعبه شگفت‌انگیز) -->
+<div class="w-full lg:w-56 shrink-0 bg-surface-container-low rounded-xl p-6 flex flex-col items-center justify-between text-center shadow-inner">
+<div class="flex flex-col items-center gap-3">
+<div class="w-16 h-20 rounded-t-full bg-surface-container-high flex flex-col items-center justify-center p-2 relative shadow-md">
+<span class="font-headline-sm text-headline-sm font-bold text-primary-fixed">گُردیه</span>
+<span class="font-label-sm text-[9px] text-secondary tracking-widest uppercase">WORKSHOP</span>
+</div>
+<div class="flex flex-col gap-1 mt-2">
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary">پیشنهادهای برگزیده کارگاه</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">تحویل روزانه تهران</span>
+</div>
+</div>
+<!-- Technical Countdown Clock -->
+<div class="w-full my-4 flex items-center justify-center gap-2 font-label-md text-label-md text-primary">
+<div class="bg-surface-container px-2 py-1.5 rounded flex flex-col items-center">
+<span class="text-primary-fixed font-bold">۰۸</span>
+<span class="text-[9px] text-outline">ساعت</span>
+</div>
+<span class="text-secondary font-bold">:</span>
+<div class="bg-surface-container px-2 py-1.5 rounded flex flex-col items-center">
+<span class="text-primary-fixed font-bold">۴۲</span>
+<span class="text-[9px] text-outline">دقیقه</span>
+</div>
+<span class="text-secondary font-bold">:</span>
+<div class="bg-surface-container px-2 py-1.5 rounded flex flex-col items-center">
+<span class="text-primary-fixed font-bold animate-pulse">۱۹</span>
+<span class="text-[9px] text-outline">ثانیه</span>
+</div>
+</div>
+<a class="w-full py-2 bg-surface-container-highest hover:bg-surface-bright text-primary font-body-sm text-body-sm rounded flex items-center justify-center gap-1 transition-colors" href="#">
+<span>مشاهده همه ادوات</span>
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</a>
+</div>
+<!-- Horizontal Scrollable Product Track -->
+<div class="flex-1 overflow-x-auto no-scrollbar scroll-smooth flex items-stretch gap-3 py-1">
+<!-- Product Card 1 -->
+<div class="w-64 shrink-0 bg-surface-container-low rounded-xl p-4 flex flex-col justify-between group hover:bg-surface-container-high transition-colors shadow-sm">
+<div>
+<div class="w-full h-44 rounded-lg bg-surface-container-lowest overflow-hidden mb-3 relative flex items-center justify-center">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Aerospace matte black CNC machined mechanical keyboard monolith KB75 high tech studio photography on dark slate backdrop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkWu_rm1XKH4P03kz0dt-X1ANGbx4r1hXHGX-rHBYpZd_Gb-zZsVvJpT15BhC3ktl7RjLasCCrrNbJZUjuhUlNdQx3hEVeqrSgROvoY8UXDj6UJuzowBvv2jEQjcdpI-_9gKNbOwbAgZ718UluCivZH3AaWUbZ4g9qWb8BZmlYBCktQdIXAcW9lALhg2f0P9Gt-nec42qQScUqnOqBlRQ8WX1HM3BAZEzWUXtaVnw"/>
+<span class="absolute top-2 right-2 bg-surface-container-high/90 text-primary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded">آلیاژ ۷۰۷۵</span>
+</div>
+<h3 class="font-body-md text-body-md font-semibold text-primary group-hover:text-primary-fixed transition-colors line-clamp-2 mb-2 leading-snug">
+                کیبورد مکانیکی کاستوم KB75 Monolith با ناب تیتانیوم
+              </h3>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[14px]">tune</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">لایه‌های آکوستیک ۵ گانه ژاپنی</span>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary">فقط ۲ عدد در قفسه انبار</span>
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-primary">۲۴,۸۵۰,۰۰۰</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">تومان</span>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="w-64 shrink-0 bg-surface-container-low rounded-xl p-4 flex flex-col justify-between group hover:bg-surface-container-high transition-colors shadow-sm">
+<div>
+<div class="w-full h-44 rounded-lg bg-surface-container-lowest overflow-hidden mb-3 relative flex items-center justify-center">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Heavy duty structural aircraft grade monitor desk stand riser steel grey matte anodized finish studio dark backdrop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7MzsCm5K7yQweBgC4OqDF6H9EYoWl6G2QGTT4qMi8DLi3LqGaXr9aQ1vpkK_JRzbuzJkx5coI-LCroGWTc5V71xK6FnaSvE6HnJ38XSL-rotiERsBpp28jwCmGFHWinFKPudsJ5nkdjePY2Xkx9Ynhglv5OaqvkZC63ntgGA92DRkRcxdRKTcwTTt6qTx3mbmCHIUwtUj8wxhje2TpuHP-27YjPdRWVPYU9d7NDc"/>
+<span class="absolute top-2 right-2 bg-surface-container-high/90 text-primary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded">تحمل بار ۴۵ کیلو</span>
+</div>
+<h3 class="font-body-md text-body-md font-semibold text-primary group-hover:text-primary-fixed transition-colors line-clamp-2 mb-2 leading-snug">
+                استند مانیتور هوانوردی GRD-MON-01 شاسی دوتکه
+              </h3>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[14px]">architecture</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">شیارهای مخفی مدیریت کابل</span>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary">موجودی محدود کارگاه</span>
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-primary">۱۵,۲۰۰,۰۰۰</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">تومان</span>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="w-64 shrink-0 bg-surface-container-low rounded-xl p-4 flex flex-col justify-between group hover:bg-surface-container-high transition-colors shadow-sm">
+<div>
+<div class="w-full h-44 rounded-lg bg-surface-container-lowest overflow-hidden mb-3 relative flex items-center justify-center">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Solid copper passive cooling Thunderbolt 4 dock station industrial heat fin design studio clean dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQOxrQ_9x-OZCJ7aAeYZ3ONu-wrRNTOieHQkqjEcPLgw1gsEGWUvOiUbA2LTdJWIDShFnvJ0zZm-O5hJmvCZSsHR8pyCZ498J-N-OmXFPIqlrSl9VOb16WreaJbniTmZ_Y8ZVIwvD4EesVNpSu6SDg9c17Ihdh3SQytwSFGMa0kZNBvmeWKWCuw2gJlejTZwkXeFHJHNITfrhTWV6j8uBRqXLiE4J_8hDrwPLKf0g"/>
+<span class="absolute top-2 right-2 bg-surface-container-high/90 text-primary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded">مس C11000</span>
+</div>
+<h3 class="font-body-md text-body-md font-semibold text-primary group-hover:text-primary-fixed transition-colors line-clamp-2 mb-2 leading-snug">
+                داک استیشن تاندربولت ۴ پسیو با دفع حرارت تمام مس
+              </h3>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[14px]">bolt</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">توان خروجی ۹۶ وات PD 3.1</span>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary">آماده تحویل</span>
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-primary">۱۹,۸۰۰,۰۰۰</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">تومان</span>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="w-64 shrink-0 bg-surface-container-low rounded-xl p-4 flex flex-col justify-between group hover:bg-surface-container-high transition-colors shadow-sm">
+<div>
+<div class="w-full h-44 rounded-lg bg-surface-container-lowest overflow-hidden mb-3 relative flex items-center justify-center">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Mechanical macropad rotary encoder numpad precision milled from raw solid slate dark petroleum metal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuZ4YNfL0rbzZ3PhEIRegRF_RLkkWdeF1rBLxKybtLZyhVU_6T07FDELFImPdKIPH2X_wwads7ukTCb646OK4vEkyMTHJNgV9lLf24XzjZf69Pdx7hIov-Q4AuKsJQEAHPM1nwNv2m2_kb9NUhSKpjby9lNBCSuuEP4eO26uiQjpowVZfuGmdtlHc98EzL5uk1J86KMfOczdQP1RPfqrDOwf67JEEXxlEQajjjqxY"/>
+<span class="absolute top-2 right-2 bg-surface-container-high/90 text-primary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded">میکروپد CNC</span>
+</div>
+<h3 class="font-body-md text-body-md font-semibold text-primary group-hover:text-primary-fixed transition-colors line-clamp-2 mb-2 leading-snug">
+                ماژول عددی و انکودر کنترل تدوین پترولئوم گرادیان
+              </h3>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[14px]">dialpad</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">سوئیچ‌های روغن‌کاری Krytox</span>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary">فقط ۱ عدد در انبار</span>
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-primary">۷,۴۰۰,۰۰۰</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">تومان</span>
+</div>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="w-64 shrink-0 bg-surface-container-low rounded-xl p-4 flex flex-col justify-between group hover:bg-surface-container-high transition-colors shadow-sm">
+<div>
+<div class="w-full h-44 rounded-lg bg-surface-container-lowest overflow-hidden mb-3 relative flex items-center justify-center">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Custom coiled keyboard cable titanium weave sleeving with heavy industrial GX16 aviation detachable connector" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACKH6OhAcMl77Jf-unv6PNzg9f7CzAHbHMWoMj-z9eHI1V6IEJySaDHv3Dcv-IT9bd1eSfmNnFV1GU95x5HViXkBAo7MlPysCTKiTQIAbXHqsxnW1Iwv3RaOWaN91hNZUm0u8AqJW2CWsM3sSqMdNGnXYwQQEbxUYGLx08nf6hK4Pfohp1OMR4BzgdG8ygWQts-0nCpi1Uw9LOGQZ_kMcB1-vsOkJ-mnLMmzd0ghg"/>
+<span class="absolute top-2 right-2 bg-surface-container-high/90 text-primary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded">کانکتور GX16</span>
+</div>
+<h3 class="font-body-md text-body-md font-semibold text-primary group-hover:text-primary-fixed transition-colors line-clamp-2 mb-2 leading-snug">
+                کابل آویاتور کواکسیال دست‌ساز با بافت تیتانیومی
+              </h3>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[14px]">cable</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">هادی مس با خلوص ۹۹.۹٪</span>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary">موجودی کافی</span>
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-primary">۲,۶۵۰,۰۰۰</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">تومان</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. CIRCULAR CATEGORY GRID (دسته‌بندی‌های مدور ادوات ستاپ) -->
+<section class="w-full px-4 lg:px-12 py-10">
+<div class="flex flex-col items-center mb-8 text-center">
+<span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase mb-1">PRECISION DIVISIONS</span>
+<h2 class="font-headline-md text-headline-md font-bold text-primary">دسته‌بندی‌های تخصصی ادوات ستاپ و تجهیزات مهندسی</h2>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-6">
+<!-- Category 1 -->
+<a class="flex flex-col items-center text-center group" href="#">
+<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-surface-container flex items-center justify-center p-3 mb-3 shadow-md group-hover:bg-surface-container-high group-hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-primary-fixed text-[36px]">keyboard</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-primary group-hover:text-primary-fixed transition-colors">شاسی CNC و کاستوم</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">۲۴ مدل کالیبره</span>
+</a>
+<!-- Category 2 -->
+<a class="flex flex-col items-center text-center group" href="#">
+<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-surface-container flex items-center justify-center p-3 mb-3 shadow-md group-hover:bg-surface-container-high group-hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-primary-fixed text-[36px]">desktop_windows</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-primary group-hover:text-primary-fixed transition-colors">استندهای مانیتور</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">۱۲ سازه سنگین</span>
+</a>
+<!-- Category 3 -->
+<a class="flex flex-col items-center text-center group" href="#">
+<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-surface-container flex items-center justify-center p-3 mb-3 shadow-md group-hover:bg-surface-container-high group-hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-primary-fixed text-[36px]">hub</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-primary group-hover:text-primary-fixed transition-colors">داک تاندربولت ۴</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">۸ مدل خنک‌کاری پسیو</span>
+</a>
+<!-- Category 4 -->
+<a class="flex flex-col items-center text-center group" href="#">
+<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-surface-container flex items-center justify-center p-3 mb-3 shadow-md group-hover:bg-surface-container-high group-hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-primary-fixed text-[36px]">layers</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-primary group-hover:text-primary-fixed transition-colors">پدهای سنگ بازالت</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">۱۶ ابعاد استاندارد</span>
+</a>
+<!-- Category 5 -->
+<a class="flex flex-col items-center text-center group" href="#">
+<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-surface-container flex items-center justify-center p-3 mb-3 shadow-md group-hover:bg-surface-container-high group-hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-primary-fixed text-[36px]">cable</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-primary group-hover:text-primary-fixed transition-colors">کابل‌های آویاتور</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">۳۰ ترکیب بافت</span>
+</a>
+<!-- Category 6 -->
+<a class="flex flex-col items-center text-center group" href="#">
+<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-surface-container flex items-center justify-center p-3 mb-3 shadow-md group-hover:bg-surface-container-high group-hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-primary-fixed text-[36px]">hardware</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-primary group-hover:text-primary-fixed transition-colors">سوئیچ و پین طلااندود</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">۴۵ تیپ خطی و تاکتایل</span>
+</a>
+<!-- Category 7 -->
+<a class="flex flex-col items-center text-center group" href="#">
+<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-surface-container flex items-center justify-center p-3 mb-3 shadow-md group-hover:bg-surface-container-high group-hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-primary-fixed text-[36px]">straighten</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-primary group-hover:text-primary-fixed transition-colors">ابزار کالیبراسیون</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">گیج و لوپ میکرومتری</span>
+</a>
+<!-- Category 8 -->
+<a class="flex flex-col items-center text-center group" href="#">
+<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-surface-container flex items-center justify-center p-3 mb-3 shadow-md group-hover:bg-surface-container-high group-hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-primary-fixed text-[36px]">precision_manufacturing</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-primary group-hover:text-primary-fixed transition-colors">شمش و فرزکاری</span>
+<span class="font-label-sm text-label-sm text-outline mt-0.5">سفارش قطعه خام</span>
+</a>
+</div>
+</section>
+<!-- 5. QUAD PROMOTIONAL BANNERS (گرید ۴ تایی بنرهای تبلیغاتی ساختار معماری) -->
+<section class="w-full px-4 lg:px-12 py-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Quad 1 -->
+<a class="group relative bg-surface-container rounded-xl overflow-hidden p-6 flex flex-col justify-between min-h-[220px] shadow-md hover:bg-surface-container-high transition-all" href="#">
+<div class="flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<span>کارگاه تراش تهران</span>
+<span class="material-symbols-outlined text-[18px]">precision_manufacturing</span>
+</div>
+<div class="my-3">
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary group-hover:text-primary-fixed transition-colors">پایپ‌لاین فرزکاری CNC اختصاصی</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">تراش پنج محوره با تلورانس ۵ میکرون و شمش آلیاژی استاندارد هوانوردی</p>
+</div>
+<div class="flex items-center text-secondary font-label-sm text-label-sm group-hover:text-primary transition-colors">
+<span>مشاهده قابلیت‌های خط تولید</span>
+<span class="material-symbols-outlined text-[16px] mr-1">arrow_back</span>
+</div>
+</a>
+<!-- Quad 2 -->
+<a class="group relative bg-surface-container rounded-xl overflow-hidden p-6 flex flex-col justify-between min-h-[220px] shadow-md hover:bg-surface-container-high transition-all" href="#">
+<div class="flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<span>مهندسی آکوستیک</span>
+<span class="material-symbols-outlined text-[18px]">graphic_eq</span>
+</div>
+<div class="my-3">
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary group-hover:text-primary-fixed transition-colors">کیت‌های صوتی بدون اکو</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">دمپرهای سیلیکونی تزریقی و مموری فوم Poron LE-20 برای حذف رزونانس</p>
+</div>
+<div class="flex items-center text-secondary font-label-sm text-label-sm group-hover:text-primary transition-colors">
+<span>تست طیف فرکانسی تایپ</span>
+<span class="material-symbols-outlined text-[16px] mr-1">arrow_back</span>
+</div>
+</a>
+<!-- Quad 3 -->
+<a class="group relative bg-surface-container rounded-xl overflow-hidden p-6 flex flex-col justify-between min-h-[220px] shadow-md hover:bg-surface-container-high transition-all" href="#">
+<div class="flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<span>آزمایشگاه متالورژی</span>
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+<div class="my-3">
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary group-hover:text-primary-fixed transition-colors">گواهی سختی‌سنجی متالورژی</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">شناسنامه کالیبراسیون راکول C و هاردکوت آنودایز نظامی برای تک‌تک قطعات</p>
+</div>
+<div class="flex items-center text-secondary font-label-sm text-label-sm group-hover:text-primary transition-colors">
+<span>استعلام کد رهگیری آزمایشگاه</span>
+<span class="material-symbols-outlined text-[16px] mr-1">arrow_back</span>
+</div>
+</a>
+<!-- Quad 4 -->
+<a class="group relative bg-surface-container rounded-xl overflow-hidden p-6 flex flex-col justify-between min-h-[220px] shadow-md hover:bg-surface-container-high transition-all" href="#">
+<div class="flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<span>لجستیک صنعتی</span>
+<span class="material-symbols-outlined text-[18px]">flight_takeoff</span>
+</div>
+<div class="my-3">
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary group-hover:text-primary-fixed transition-colors">بسته‌بندی ضربه‌گیر هوانوردی</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">فوم‌های فشرده اتیلن وینیل استات برش‌خورده با واترژت در هاردباکس فلزی</p>
+</div>
+<div class="flex items-center text-secondary font-label-sm text-label-sm group-hover:text-primary transition-colors">
+<span>استاندارد ارسال بدون دفرمگی</span>
+<span class="material-symbols-outlined text-[16px] mr-1">arrow_back</span>
+</div>
+</a>
+</div>
+</section>
+<!-- 6. BEST SELLERS TABBED SECTION (پرفروش‌ترین‌های گُردیه بر اساس سفارشات) -->
+<section class="w-full px-4 lg:px-12 py-10">
+<div class="w-full bg-surface-container rounded-xl p-6 sm:p-8 shadow-xl">
+<!-- Header & Filter Tabs -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-outline-variant/40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed text-[28px]">stars</span>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-primary">پرفروش‌ترین ادوات ستاپ گُردیه</h2>
+<span class="font-label-sm text-label-sm text-outline">بر اساس داده‌های تحویل کارگاه در ۳۰ روز اخیر</span>
+</div>
+</div>
+<!-- Filter tabs -->
+<div class="flex items-center gap-2 overflow-x-auto no-scrollbar font-body-sm text-body-sm">
+<button class="px-4 py-1.5 bg-primary-fixed text-on-primary-fixed font-semibold rounded transition-colors shrink-0">تمام ادوات</button>
+<button class="px-4 py-1.5 bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant hover:text-primary rounded transition-colors shrink-0">شاسی و کیبورد</button>
+<button class="px-4 py-1.5 bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant hover:text-primary rounded transition-colors shrink-0">داک و اتصال</button>
+<button class="px-4 py-1.5 bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant hover:text-primary rounded transition-colors shrink-0">پد و ارگونومی</button>
+</div>
+</div>
+<!-- 2 Rows x 5 Columns Compact Product Matrix (Ranked 1 to 10) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<!-- Item 1 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۱</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Mechanical keyboard custom knob brass accent engineering photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHL2810HAndzJ7Q77CC0NR_INDrLylX5D5SvCKk2mNsnUz8qqIrjfqaA4B0rvLa5hnj_I7MyLbkaQS9MXOnRYanoYp1L5c2wm3bATYaiK1yoW1iL7Ddu7e2XCCUyMm9DnIUyMk8DLss-LRSw0y9ij56yiNKqzWDRW088rX8aOx6qTGnwWQajiizBEuVteiadbzk2BITXSAFaOqRYa8Kj3Gv24zMtJzKgJo7b8SANo"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">شاسی کاستوم Monolith KB75</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۲۴,۸۵۰,۰۰۰ ت</span>
+</div>
+</a>
+<!-- Item 2 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۲</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Aerospace monitor riser stand dark slate metal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvNSE4z_fydzlopipLhoR2LD_cmd2WZEe81QNf4cjS6YXCAhLvmLFzs5djRja_mAIe6viFa0lIjQIGRp19du6dl-G3sQMV6H69sEzbpAbbx0XysG25SoUGfmGgEoO28kzhheD_urzxyRr07_e7sjMm-pVxkfH4FvwcxgYcvDcYnscEcdc21xLPddEtABOvN46LPB-puiAKCguTeL3ki6zQwoaswULVvjJQs59lyu8"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">استند مانیتور GRD هوانوردی</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۱۵,۲۰۰,۰۰۰ ت</span>
+</div>
+</a>
+<!-- Item 3 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۳</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Volcanic basalt black stone keyboard wrist rest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQEhJS4oMJjBCq122gphNZeLI9b_IL_XYQ6Y-0dykG3IhklFfeINm57eubKK6715t0ReuVajYGJ6Nul8Sqy9y26SieaqF51zaidlaxbufhSp4k5aKE00NetUFEn5uhpJBDMzgUbzkmhM2m4sgm9AFTQ4TYItr55dVyCGYsYPpMiaCdatb9YRELiX_vSWIil_QGA-QdWKcftBLupdPhLPFGpcC5-Bn_Ntk9AAavRTg"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">پد مچ دست سنگ بازالت طبیعی</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۴,۹۵۰,۰۰۰ ت</span>
+</div>
+</a>
+<!-- Item 4 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۴</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Copper passive heatsink thunderbolt dock minimal desktop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm9y00vDOnALV7yEtxqUg5A2l96_WMgzFf1Q1CmOY9UXBzs_6LPcYe_4tynP7roJqWyaTE6GWHFNThlS4cjSTaKMECmhNLawJagaARLOKcs9eqMfFnAr6c9t4kYMcrabLh9rbBv2Utu1kMU93DiygmAxMQwzqfZFrhG5W9B2JrwqIH3qXmGekTu26vkstkuK9VijCEGlAxCwMtrA2JtB8d7dJ221LKhrLdR347VSo"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">داک استیشن تاندربولت پسیو</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۱۹,۸۰۰,۰۰۰ ت</span>
+</div>
+</a>
+<!-- Item 5 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۵</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Aviator cable GX16 coiled titanium braided metallic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoxBSX8GXTmIKQ-9lCwe4FJyJIapmrOaZ1NBlebesCFOET6cCNn02AukjLGZOo6URFsdbX25efABdMJE9uSunQcvmPWS1FMDKezbXzTfnesQ2CSSi44AiMW7cO8xml6ZFKZBRTHoheRzEaN4PJh3c5ka6fz8eMPzNziNcafzNdNBfivpsm7Q25vcrv1ppOn5eZ_MLnoD-jUEQP1cl1gA6DKX2OsCHAyYXNN_kk9Vk"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">کابل آویاتور کواکسیال دست‌ساز</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۲,۶۵۰,۰۰۰ ت</span>
+</div>
+</a>
+<!-- Item 6 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۶</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Krytox 205g0 lube switch station engineering tool" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDs-IxfuZ47wB1BE6GAVqX4lu9rcdkJJP863jrU8y1evSbd2wCvQ_36U5R4-EbEtiKBsbQOJaiIoUB8zHPiraTTXuV8nA2HrRerV5DRDZ470lEJoMloYhe_YTtWMYB_O3oShLWmKfm_XEDgRiN5zUSD--8FBb1U1SIX8AaEs6ldp6X1sNZrhmQu5tYzJaJt04UcxxSTu3TMpWe39km-2Ce5HiIjCinqYUyOK72bVGY"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">کیت روانکاری لوبریکنت Krytox</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۱,۴۸۰,۰۰۰ ت</span>
+</div>
+</a>
+<!-- Item 7 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۷</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Macro numpad metal rotary encoder clean dark aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqrio2SrytonI8e8hXAYGdLTjFcCwL4QCJh2FmfeekIFiQ7GYqn_OKV_GlsyVknSql66X0jUNvHOmOyg2voDdXyGfyL-G_2Qsi-B_l2kspk17D8iWcGEXpsDCcY4yA2CSXvoks6t7MEbB-syZGP7I2UM1VrVPCxy4guClxgotlBpQHnnk2UFNCI1ZA7ma-eAMxm6e_B-KCp1skR6qk1IHru2c1FJrq04GroaQkjZo"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">ماژول انکودر و نام‌پد عددی CNC</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۷,۴۰۰,۰۰۰ ت</span>
+</div>
+</a>
+<!-- Item 8 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۸</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Leather premium desk mat with wool felt backing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd7pZaCsL1VEqnpKYZd6wzkL7Mqy6q6oZgJWyBpudtLRC93wjvh_Htb3foaaOusNek8-JQi7FbZjNFfjdPcDdlgxRhdVF40WxT0p3DnlAkx_sc6OQJds1M-M_cIXlFR2jNSUhuB2A19LpxvaWlxTgmgDADGBWVgWwSmVkgmGwUlCk7PPdlokx3mCM5YNzmxqRw-txqMGRwxnl4sj4qeGgPWGtK8kS8OqB-Wwoy2QE"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">دسک‌پد چرم طبیعی دباغی گیاهی</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۳,۸۰۰,۰۰۰ ت</span>
+</div>
+</a>
+<!-- Item 9 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۹</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Mechanical switches gold plated pins tactile pack" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjkloEoCNCH23LiQSwIdafevntJaqSWpffb9KVFw6U8WWA_F1OR7-FTCcyyrDNgcQWix9bXE3J08Ypk4_xp2wlxPAgVZck7yMOF9bZTTJxlrk9f0DrFaxQ-T_yD0-nnOHy8SJQ-fI8-WxlaDAN5jDbREZL3GoSGcE8dR7fepLaQ1wRXQV_bDg6sNqruqHAz7USTG6t34fOYcgVsVwsIKX6qacVvTZdJbRWdSrzCV4"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">پک ۱۱۰ عددی سوئیچ تاکتایل تیل</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۵,۶۰۰,۰۰۰ ت</span>
+</div>
+</a>
+<!-- Item 10 -->
+<a class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors group" href="#">
+<span class="font-headline-md text-headline-md font-bold text-secondary/40 group-hover:text-primary-fixed transition-colors w-6 text-center">۱۰</span>
+<div class="w-16 h-16 rounded bg-surface-container-lowest overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Precision aluminium keycap puller engineering tool" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu5R15SKdprSIdAlxlrGq8r87yCbQ29lgCzQmp9EUj72T-3PdAMk5PrGGSETJ-VhIMG0BD5p0w-IArbfHeHwmYfqq56SDsCB3BoCQAtY7iFm71azgkgq7lrAOrjNbThxB7xKrJQRTT_0MZI0bRt5cC3cyC2AOJXj2yg8QwZxRQdIsW1BCjhg5dKbcigXrj5AFPPIq6RSfekE-VQ7XRWhoCC8rTjGkzKbZbmqTg14Q"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-body-sm text-body-sm font-semibold text-primary truncate group-hover:text-primary-fixed">پولر سوئیچ و کی‌کپ فلزی ارگونومیک</h4>
+<span class="font-label-sm text-label-sm text-secondary mt-1">۹۸۰,۰۰۰ ت</span>
+</div>
+</a>
+</div>
+</div>
+</section>
+<!-- 7. TWIN HORIZONTAL WIDE BANNERS (بنرهای دوقلوی عریض) -->
+<section class="w-full px-4 lg:px-12 py-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Wide Banner 1 -->
+<div class="relative bg-surface-container-high rounded-xl p-8 overflow-hidden flex flex-col justify-between min-h-[220px] shadow-lg group">
+<div class="relative z-10">
+<div class="flex items-center gap-2 text-primary-fixed font-label-sm text-label-sm mb-2">
+<span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+<span>احراز اصالت و تلورانس کارگاهی</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-bold text-primary mb-2">استعلام آنلاین شماره سریال لیزری</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md">شناسنامه متالوگرافی و برگه آزمون سختی‌سنجی قطعه خود را با درج شماره سریال حکاکی شده مشاهده کنید.</p>
+</div>
+<div class="relative z-10 pt-4">
+<div class="flex items-center max-w-sm bg-surface-container-lowest rounded p-1">
+<input class="bg-transparent px-3 py-1.5 text-on-surface font-label-sm text-label-sm focus:outline-none flex-1 text-right" placeholder="شماره سریال حکاکی شده (GRD-...)" type="text"/>
+<button class="px-4 py-1.5 bg-primary-fixed text-on-primary-fixed font-body-sm text-body-sm font-semibold rounded hover:bg-secondary transition-colors">استعلام</button>
+</div>
+</div>
+<div class="absolute -left-10 -bottom-10 w-44 h-44 bg-secondary-container/20 rounded-full blur-3xl pointer-events-none"></div>
+</div>
+<!-- Wide Banner 2 -->
+<div class="relative bg-surface-container-high rounded-xl p-8 overflow-hidden flex flex-col justify-between min-h-[220px] shadow-lg group">
+<div class="relative z-10">
+<div class="flex items-center gap-2 text-secondary font-label-sm text-label-sm mb-2">
+<span class="material-symbols-outlined text-[16px]">build_circle</span>
+<span>سفارش‌های پروژه‌ای اختصاصی</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-bold text-primary mb-2">ماشین‌کاری تیتانیوم گرید ۵ و آلیاژ خاص</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md">ارسال فایل‌های STEP و CAD نقشه‌کشی جهت ساخت ادوات انحصاری ستاپ، شاسی و رک‌های آزمایشگاهی مهندسی.</p>
+</div>
+<div class="relative z-10 pt-4">
+<a class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-container hover:bg-surface-bright text-primary font-body-sm text-body-sm rounded transition-colors" href="#">
+<span>آپلود نقشه مهندسی و استعلام بها</span>
+<span class="material-symbols-outlined text-[16px]">upload_file</span>
+</a>
+</div>
+<div class="absolute -left-10 -bottom-10 w-44 h-44 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+</div>
+</div>
+</section>
+<!-- 8. ENGINEERING JOURNAL & WORKSHOP ARTICLES (مجله مهندسی ستاپ) -->
+<section class="w-full px-4 lg:px-12 py-10">
+<div class="flex items-center justify-between mb-8 pb-4 border-b border-outline-variant/40">
+<div>
+<span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">TECHNICAL RESEARCH</span>
+<h2 class="font-headline-md text-headline-md font-bold text-primary">مطالب منتخب مجله مهندسی ستاپ گُردیه</h2>
+</div>
+<a class="flex items-center gap-1 text-secondary hover:text-primary font-body-sm text-body-sm transition-colors" href="#">
+<span>مشاهده آرشیو مقالات</span>
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Article 1 -->
+<article class="flex flex-col bg-surface-container rounded-xl overflow-hidden group hover:bg-surface-container-high transition-colors shadow-md">
+<div class="w-full h-44 bg-surface-container-lowest overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Acoustic frequency wave resonance oscilloscope testing on aluminium keyboard chassis in anechoic chamber" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNZrfHItZzTwMMyBZRdsPFlCzqXUMDSi0Xw8UvIPGbxo54Sq-VOUFq8bmhA3KpvqR8Q3it7eElEn_uLdmPAeZuR-Lea3njnIS5urgWJVJir5z9r8uvqFG-jYaT6kXOo1lj0eSOrG23j0lht2-eXnbAltYY1QVhrvXB4WECfYhF103okhITI0nai7-klyA2VL0eoPQyd-U6A3-yV01OQP8ER1g8soE2f8eehZMIbxw"/>
+</div>
+<div class="p-5 flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-center justify-between text-outline text-label-sm font-label-sm mb-2">
+<span>آکوستیک سازه</span>
+<span>زمان مطالعه: ۷ دقیقه</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary group-hover:text-primary-fixed transition-colors mb-2 line-clamp-2">
+              کالبدشکافی فرکانسی شاسی‌های مونوکاک در برابر ارتعاشات تایپ ممتد
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-3">
+              بررسی رفتار ماده الاستیک و میرایی ارتعاشات ضربه‌ای در چیدمان‌های گسکت‌مانت آلومینیوم T6 نسبت به کامپوزیت‌های کربنی.
+            </p>
+</div>
+<div class="pt-4 mt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline text-label-sm font-label-sm">
+<span>دکتر س. رضوانی (متالورژی)</span>
+<span class="text-secondary font-medium">مطالعه مقاله ←</span>
+</div>
+</div>
+</article>
+<!-- Article 2 -->
+<article class="flex flex-col bg-surface-container rounded-xl overflow-hidden group hover:bg-surface-container-high transition-colors shadow-md">
+<div class="w-full h-44 bg-surface-container-lowest overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Thermal imaging FLIR camera heat distribution comparison between copper and aluminum heatsinks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9_zX3fgCinvwSkJrJf1NBqI8fDB7HNKTodcd6L51gRJ1Kxw8V1TRaZ8xS73nsqpYzyuBWrC4BXRzOafxqJIA9efSDs8NICl2X6V30BUDVPk_212Cqz42_aIbv7wa7OsYIejwZRFjunYIaLAoKP5Vji2apYj1HGqeMJ-ms6FjDfFyTSTs8f3r2DTEVTnBBcY0DPWXWjIZDxTRuEytywsXfGIA6WUk107Pc-ZBEYvg"/>
+</div>
+<div class="p-5 flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-center justify-between text-outline text-label-sm font-label-sm mb-2">
+<span>ترمودینامیک</span>
+<span>زمان مطالعه: ۱۱ دقیقه</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary group-hover:text-primary-fixed transition-colors mb-2 line-clamp-2">
+              مقایسه دفع حرارت آلیاژ آلومینیوم ۷۰۷۵ با مس C11000 در داک‌های توان بالا
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-3">
+              آنالیز حرارتی تجربی توان ۹۶ وات تحت بار کاری ممتد رندرهای گرافیکی و تأثیر هندسه فین‌های انتقال حرارت غیرفعال.
+            </p>
+</div>
+<div class="pt-4 mt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline text-label-sm font-label-sm">
+<span>تیم تحقیق و توسعه گُردیه</span>
+<span class="text-secondary font-medium">مطالعه مقاله ←</span>
+</div>
+</div>
+</article>
+<!-- Article 3 -->
+<article class="flex flex-col bg-surface-container rounded-xl overflow-hidden group hover:bg-surface-container-high transition-colors shadow-md">
+<div class="w-full h-44 bg-surface-container-lowest overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Ergonomic wrist angle posture biomechanics diagrams next to basalt wrist rest engineering drawing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxkKv8OBGX63hR3huf46ejfpFyVxZQ765kaHKFgm3_UrevvAfZCjqs3hxKhLV5K3rwjhhllLlriKKrFTOf520TF9PdsM5JZPNbjYRhHvwnXRx9rd2hwvsZBXJqaQNtZ9NlAxFkUhwLMjxMVafFOdty6KoOnJz0cLFF9lnhqy-M0e2XaomGgEZb3v5KqVr0agsLpoWMUl18QmqkKKCvwTN8ttp26jN1BnqG0rHpbXw"/>
+</div>
+<div class="p-5 flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-center justify-between text-outline text-label-sm font-label-sm mb-2">
+<span>بیومکانیک کارگاهی</span>
+<span>زمان مطالعه: ۵ دقیقه</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary group-hover:text-primary-fixed transition-colors mb-2 line-clamp-2">
+              ارگونومی مچ دست در زوایای ۵ تا ۹ درجه ستاپ‌های مدرن توسعه‌دهندگان
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-3">
+              کاهش فشار کانال کارپال با تکیه‌گاه‌های سنگی با سختی یکنواخت و بررسی زوایای بهینه شیب شاسی صفحه کلید در ساعات کاری طولانی.
+            </p>
+</div>
+<div class="pt-4 mt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline text-label-sm font-label-sm">
+<span>مهندس م. فرهمند</span>
+<span class="text-secondary font-medium">مطالعه مقاله ←</span>
+</div>
+</div>
+</article>
+<!-- Article 4 -->
+<article class="flex flex-col bg-surface-container rounded-xl overflow-hidden group hover:bg-surface-container-high transition-colors shadow-md">
+<div class="w-full h-44 bg-surface-container-lowest overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Military hardcoat anodizing chemical bath electroplating laboratory test specimens corrosion salt spray" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB0en-sjyihTk-htSnE3gX9hSBfzbtlW5GyOE3DUzHmooQyzJUTtoLA65xg0-6c83yFVCov0zny2scYUFs5_i_thx8d6sMtRrd8KkPOWgzXfo8SkBb3u1YxlR3I1DKCVrPkRQm8ZWMvAQyMaN0_eyo8tLMKaapf1EfT17y6hOmhbBZMfWUs3knfsSGTlW0cLjdu-CwEuCuMSW6bIjaYvWwoauIlh8ZX7wvLhS3Dvs"/>
+</div>
+<div class="p-5 flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-center justify-between text-outline text-label-sm font-label-sm mb-2">
+<span>مهندسی سطح</span>
+<span>زمان مطالعه: ۹ دقیقه</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary group-hover:text-primary-fixed transition-colors mb-2 line-clamp-2">
+              فرایند آنودایز نظامی Hardcoat Type III و ماندگاری رنگ در اقلیم مرطوب
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-3">
+              آزمون پاشش نمک ۵۰۰ ساعته بر روی لایه‌های اکسیداسیون ۵۰ میکرونی و پایدارسازی پیگمنت‌های مات نفتی در مواجهه با عرق دست.
+            </p>
+</div>
+<div class="pt-4 mt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline text-label-sm font-label-sm">
+<span>آزمایشگاه سطوح صنعتی</span>
+<span class="text-secondary font-medium">مطالعه مقاله ←</span>
+</div>
+</div>
+</article>
+</div>
+</section>
+<!-- 9. TRUST & BRAND PILLARS BAR (ستون‌های اعتماد و استانداردهای ۴گانه گُردیه) -->
+<section class="w-full px-4 lg:px-12 py-8 bg-surface-container-lowest border-t border-outline-variant/30">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container/50">
+<div class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center shrink-0 text-primary-fixed">
+<span class="material-symbols-outlined text-[28px]">precision_manufacturing</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-body-sm text-body-sm font-bold text-primary">تضمین تلورانس ۵ میکرون</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant">آلیاژ خالص هوانوردی T6-7075</span>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container/50">
+<div class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center shrink-0 text-primary-fixed">
+<span class="material-symbols-outlined text-[28px]">flight_takeoff</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-body-sm text-body-sm font-bold text-primary">ارسال با بسته‌بندی هوانوردی</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant">محفظه ضدضربه صنعتی کالیبره</span>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container/50">
+<div class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center shrink-0 text-primary-fixed">
+<span class="material-symbols-outlined text-[28px]">verified_user</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-body-sm text-body-sm font-bold text-primary">۳۶ ماه ضمانت تعویض</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant">پشتیبانی بی قید و شرط کارگاه</span>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container/50">
+<div class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center shrink-0 text-primary-fixed">
+<span class="material-symbols-outlined text-[28px]">support_agent</span>
+</div>
+<div class="flex flex-col">
+<h4 class="font-body-sm text-body-sm font-bold text-primary">مشاوره مستقیم مهندسی</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant">طراحی اختصاصی ستاپ و ارگونومی</span>
+</div>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-lowest border-t border-outline-variant text-on-surface-variant mt-margin"><div class="w-full px-6 lg:px-12 py-space-xl border-b border-outline-variant/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><img alt="GORDIYEH" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1U4GgT5BVVUMA3-A8NDiPyCO6XFQmVZxT3OJ3JUa5hM3Ti2fWUCOW6d6nVCl8KsaDq2bEVZnqU-JuQhiKwWKX97fCpfeYK7ljSVVeyEvYxn1C2T2M7qpusguPT7_DLTk3g1p_PBTruaPD3GYRpKX5z6i3iQESVJQihRXIEVPo2W7jJ2mmQgqfKC46v76QoxpWDGMW6O9XxiG3fYf0R0kwqEkiZW7q49azGcRgs1Txag"/><div class="flex flex-col text-right"><span class="font-headline-sm text-headline-sm text-primary font-bold">گُردیـه</span><span class="font-label-sm text-label-sm text-outline">کارگاه متالورژی، شاسی و ادوات محاسباتی فوق‌دقیق</span></div></div><div class="flex items-center gap-space-lg text-on-surface font-label-md text-label-md"><span class="text-outline">تلفن پشتیبانی مهندسی: ۰۲۱-۸۸۹۹۰۰۰۲</span><a class="flex items-center gap-space-xs border border-outline-variant px-space-md py-2 hover:border-primary transition-colors text-primary" href="#"><span class="material-symbols-outlined text-[16px]">keyboard_arrow_up</span><span>بازگشت به بالا</span></a></div></div><div class="w-full px-6 lg:px-12 py-space-xl grid grid-cols-2 md:grid-cols-4 gap-space-lg border-b border-outline-variant/50 text-right"><div class="flex flex-col gap-space-sm"><div class="font-label-lg text-label-lg text-primary uppercase border-r-2 border-primary pr-space-xs mb-space-xs">راهنمای خرید از گُردیه</div><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">روال ثبت سفارش پروژه‌های سفارشی</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">شیوه‌های ارسال بارنامه هوایی و زمینی</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">روش‌های پرداخت اعتباری مهندسی</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">راهنمای استعلام برگه آنالیز متالورژی</a></div><div class="flex flex-col gap-space-sm"><div class="font-label-lg text-label-lg text-primary uppercase border-r-2 border-primary pr-space-xs mb-space-xs">خدمات مشتریان و پشتیبانی</div><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">پرسش‌های متداول فرزکاری CNC</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">درخواست آزمون تلورانس ابعادی</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">فرم ارجاع قطعه و گارانتی تعویض</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">ارتباط با مدیر ارشد متالورژی</a></div><div class="flex flex-col gap-space-sm"><div class="font-label-lg text-label-lg text-primary uppercase border-r-2 border-primary pr-space-xs mb-space-xs">قوانین و اصالت متالورژی</div><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">اصالت‌سنجی آلیاژ T6-7075</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">استانداردهای ایمنی آزمایشگاه</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">حریم خصوصی داده‌های نقشه‌کشی</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">ضوابط برگشت کالا و شمش مصرفی</a></div><div class="flex flex-col gap-space-sm"><div class="font-label-lg text-label-lg text-primary uppercase border-r-2 border-primary pr-space-xs mb-space-xs">درباره هویت معماری گُردیه</div><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">مانیفست ساختارگرایی مونوکروم</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">تور کارگاه ماشین‌کاری تهران</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">همکاری در پروژه‌های صنعتی خاص</a><a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">فرصت‌های شغلی مهندسی ساخت</a></div></div><div class="w-full px-6 lg:px-12 py-space-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md border-b border-outline-variant/50"><div class="flex items-center gap-space-md p-space-sm bg-surface-container/40 border border-outline-variant/40"><span class="material-symbols-outlined text-primary text-[28px]">precision_manufacturing</span><div><div class="font-label-md text-label-md text-primary font-bold">تضمین آلیاژ T6-7075</div><div class="font-label-sm text-label-sm text-outline">برگه متالوگرافی رسمی</div></div></div><div class="flex items-center gap-space-md p-space-sm bg-surface-container/40 border border-outline-variant/40"><span class="material-symbols-outlined text-primary text-[28px]">verified_user</span><div><div class="font-label-md text-label-md text-primary font-bold">گارانتی تعویض ۳۶ ماهه</div><div class="font-label-sm text-label-sm text-outline">بدون قید و شرط تلورانسی</div></div></div><div class="flex items-center gap-space-md p-space-sm bg-surface-container/40 border border-outline-variant/40"><span class="material-symbols-outlined text-primary text-[28px]">support_agent</span><div><div class="font-label-md text-label-md text-primary font-bold">پشتیبانی تخصصی ستاپ</div><div class="font-label-sm text-label-sm text-outline">مشاوره مهندسی سازه</div></div></div><div class="flex items-center gap-space-md p-space-sm bg-surface-container/40 border border-outline-variant/40"><span class="material-symbols-outlined text-primary text-[28px]">flight_takeoff</span><div><div class="font-label-md text-label-md text-primary font-bold">بسته‌بندی هوانوردی</div><div class="font-label-sm text-label-sm text-outline">محفظه ضدضربه صنعتی</div></div></div></div><div class="w-full px-6 lg:px-12 py-space-md flex flex-col sm:flex-row items-center justify-between text-on-surface-variant font-label-sm text-label-sm gap-space-sm"><div>کلیه حقوق این سامانه متعلق به استودیو طراحی مهندسی گُردیه (GORDIYEH) است.</div><div class="flex items-center gap-space-md"><span class="text-outline">کد ثبت متالورژی: ۹۸۲۳-IR</span><span>تولید محدود ۲۰۲۵</span></div></div></footer></body></html>

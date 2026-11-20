@@ -1,0 +1,22 @@
+{
+  "id": "piece_dropship_dispatcher",
+  "name": "مدیریت حواله‌های دراپ‌شیپینگ ایران و وایت‌لیبل (Phase 2)",
+  "version": "1.0.0",
+  "category": "fulfillment",
+  "grid": {
+    "defaultSpan": "two-thirds",
+    "minSpan": "half",
+    "maxSpan": "full"
+  },
+  "security": {
+    "allowedEmits": [
+      "v1.dropship.slip_generated",
+      "v1.dropship.tracking_assigned"
+    ],
+    "allowedSubscribes": [
+      "v1.kernel.ready"
+    ]
+  },
+  "isOptional": false,
+  "fallbackBehavior": "error_notice"
+}

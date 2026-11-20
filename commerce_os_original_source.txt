@@ -1,0 +1,444 @@
+The presentation is ready—7 slides in Persian covering the "Commerce OS" backend analysis. I kept the design simple to ensure a fast and reliable build. I haven't fully reviewed or rendered the slides, so please double-check the right-to-left (RTL) orientation and table layouts. Let me know if anything looks off, and I’ll fix it.
+
+Backend Analysis Results
+
+Architecture: An Express/TypeScript server featuring 41 API routes, an SQLite database with 15 tables, and server-side-only calls to Gemini. Unlike the previous version, which relied on static data in `mockData.ts`, this version utilizes a real database.
+Data Protection: Customer names, phone numbers, order details, customer memory, and connection keys are encrypted using AES-256-GCM. Searches are performed via "blind indexing," ensuring phone numbers are never stored in plain text.
+Integrations: WooCommerce/TaminTo (syncing 20 products), Torob feed, n8n webhooks for social media, and five "smart" services. In intranet or offline modes, these services fall back to rule-based responses.
+Data Status: No orders have been placed yet; the system currently contains only initial seed data (10 products, 8 suppliers, and 9 rules).
+
+Risks to Address Before Launch
+
+No routes are authenticated; the admin panel, product editing, and rule management are currently accessible to everyone.
+Pricing and order costs are calculated based on browser-side input, making them vulnerable to manipulation by the user.
+Users can define webhook and WooCommerce URLs, which effectively creates an SSRF (Server-Side Request Forgery) vulnerability.
+No actual payment gateway is integrated; orders are automatically marked as "paid" upon creation. The `data` folder is not included in `.gitignore`, and the default encryption key is generated right next to the database. If the project is pushed to Git, both will be exposed.
+The order placement and inventory deduction processes lack atomicity (they aren't a single transaction), and order IDs are generated randomly. I identified this by reviewing the code; I haven't executed it to verify.
+
+I’ve included these points for your reference on Slide 6. If you’d prefer the client not to see them before they are resolved, I can move that slide to a separate version.
+
+The final slide is divided into two columns: next steps for the client, and specific states that the UI/UX designer needs to address (e.g., orders awaiting supervisor approval, various automation states, masked phone numbers, and the AI's offline mode).
+
+I can expand the slides further if you’d like—for instance, by creating dedicated slides for each API group, an order flow diagram, or presentation notes.
+
+Provide your report as text.
+Outline the site's features and capabilities.
+List the current bugs.
+You are falling short regarding the design requirements and similar tasks. Is this code actually ready for a public release? If not, explain why in detail—and stop making slides for now.
+
+You’re right; my previous work was too superficial. This time, I installed and built the project, ran the server on a separate instance, and tested for bugs using actual requests. I reviewed the frontend by examining the code and the build output, though I didn't perform a step-by-step walkthrough in the browser. I haven't altered any of your files.
+
+Is it ready for public release?
+
+No. There are three main reasons:
+
+The project fails to build in its current state.
+None of the routes have authentication.
+Pricing is determined by the browser, and there is no actual payment processing. Suitable as an internal demo or a proof-of-concept (PoC) for a client; not intended for handling real customer funds or live data.
+
+1) Features
+
+Customer-Facing Storefront:
+
+Header and category mega-menu; filtering and sorting (including a mobile drawer); product cards; product comparison; product detail pages featuring review videos.
+Shopping cart and multi-step checkout; city/location selection.
+Dedicated sections for supermarket items, discounts, best-sellers, "Vitrin Plus" (VIP subscription), a vendor hub, user dashboard with order tracking, and a help center.
+Blog, category management, static pages, content studio, visual site editor, and customizable visual themes.
+Social media sharing; live support with an AI assistant; privacy center and customer memory (personalization/history).
+
+Admin/Supervisor Panel:
+
+Daily summary; manual task management; approval queues; a rules engine; and a three-mode automation matrix (Autopilot, Copilot, and Manual).
+Product catalog and "Product DNA"; supplier management; campaign simulator; decision history/memory.
+"Ask Commerce" assistant (with role-based access); security and COCA (Commerce Operations & Control Architecture); network resilience mode (intranet/offline capability); and dropshipping order routing.
+
+Backend:
+
+41 API endpoints and 15 SQLite tables.
+AES-256-GCM encryption with blind indexing for order lookups.
+Integration with Torob (shopping aggregator), n8n webhooks, and WooCommerce/Tamin-to synchronization; five Gemini AI services with an offline fallback mode.
+Modular COCA architecture consisting of three core components. Which parts actually work, and which are merely for show?
+
+Functional: Product storage, orders and rules, encryption, Torob feed, and webhooks.
+For show or incomplete: Payments, rule execution and autopilot, server-side CMS storage, videos, and WooCommerce synchronization (which is currently in an error state). Details can be found in the "Bugs" section.
+
+2) Bugs
+
+A) Build Error:
+
+In `StorefrontView.tsx`, the "Customer Memory Hub" modal is not properly closed (around line 1347). A `</div>` and a `)}` are missing, causing both `tsc` and `vite build` to fail. Once these are added, the type-check passes, and the build succeeds. The resulting JavaScript bundle is a single chunk of approximately 960 KB. 
+</PieceErrorBoundary>
+</div>
+</div>      {/* These two lines were missing */}
+)}
+
+B) Security and Critical Issues:
+
+No routes are protected by authentication (verified).
+The order list and connection settings are accessible to everyone.
+Without logging in, I was able to change a product's title to "HACKED" and its price to 1.
+Rules and approvals can also be modified without logging in.
+There are no access controls (gatekeepers) on the frontend for the admin/supervisor panel.
+Product pricing is sourced from the browser (verified).
+An order was successfully placed with a product price of 1 Toman, resulting in a total of 65,001 Tomans—covering only the shipping cost.
+A large discount resulted in a negative total (-9,834,999, with a status of "PAID").
+Inventory levels are not validated (verified). An order for 99,999 units was accepted, simply driving the inventory down to zero.
+Customer data exposure (verified). Tracking an order using the string "0912" returned the name, phone number, and address of another customer's order.
+There is no identity verification.
+Customer memory is shared (based on the code). The `cust_guest_me` identifier is static within the storefront; consequently, all visitors read from and write to the same shared memory.
+SSRF (verified): Users can provide a webhook URL, and the server successfully makes requests to the internal address `127.0.0.1`. The same applies to the WooCommerce URL.
+No rate limiting (verified): 30 consecutive requests to the support chat all returned a `200 OK` status. Using a real Gemini API key, this could result in arbitrary costs for you.
+Encryption keys and access control:
+The default encryption key is generated in the `data/` directory alongside the database, and `data/` is not included in `.gitignore`.
+A static salt value is hardcoded.
+The `commerce.db` file was included in your ZIP archive.
+The WooCommerce `consumerKey` is returned via the publicly accessible `/api/integrations` endpoint (based on the code).
+Error and configuration leakage:
+Error responses expose `err.message`.
+Security headers and CORS policies are not configured.
+The application uses a fixed port (3000), ignoring the `PORT` environment variable.
+
+C) Business Logic:
+
+No actual payment processing takes place. The checkout process merely triggers a `POST /api/orders` request, registering the order as "paid." The term "Shaparak" (the Iranian payment gateway system) is merely UI text.
+"Admin approval" has no functional effect. It only updates the item's approval status and adds a log entry. The order remains in a `HIGH_RISK_HOLD` state, while the log falsely states "execution authorization granted"—without any actual action being performed.
+The rules engine and autopilot features are non-functional; the backend lacks both a scheduler and a mechanism for evaluating rules. Order risk is handled via hardcoded values ​​(5 and 4 million) within the application code, rather than through database constraints.
+Order numbers are 5-digit random integers with a `UNIQUE` constraint. This results in a collision probability of approximately 5% for every 100 orders, and about 40% for every 300 orders—triggering a 500 error during order placement.
+Order placement lacks atomicity (it is not a single transaction). The order record, inventory deduction, financial summary, and item confirmation are written as separate operations; an error occurring midway leaves the system in an inconsistent state.
+Timestamps are effectively useless. The `createdAt` field for an order contains only the time, omitting the date. Decision logs are always timestamped as "now," rendering auditing and reporting impossible. Furthermore, I could find no logic in the code for the daily reset of the "Today's Revenue" metric.
+Dropshipping shipping labels print the wrong address (verified).
+Decrypted data is subjected to `JSON.parse()` a second time, causing the system to default to a hardcoded address: "No. 24, Valiasr, Tehran."
+An order for a customer in Shiraz was printed with a Tehran address.
+If an order cannot be found, the system creates a fake customer named "Alireza Mohammadi."
+The real-world consequence: packages are shipped to the wrong address.
+WooCommerce synchronization:
+If the API key is invalid or the site is unreachable, the system creates a "test product" in the live catalog and returns `success: true` (verified).
+The secret key is stored as `***`, meaning a subsequent sync cannot be performed without re-entering the credentials.
+The system only retrieves the first 20 products, as it lacks pagination.
+The cost (calculated as 75% of the price) and the supplier reliability score (92) are entirely fabricated.
+The CMS configuration is not persisted on the server. The frontend never makes requests to `/api/site-config`, `/api/blog-posts`, `/api/static-pages`, or `/api/categories`. Visual editor settings are stored solely in the browser's `localStorage`, while other data is derived from `cmsStore` constants. In other words, the "no-code studio" has no effect on the experience of public visitors.
+The product videos are fabricated; the channel names and view counts are fake. The embed link is static—it is the infamous "Rickroll" video (`dQw4w9WgXcQ`).
+Smart Assistant: If the frontend fails to send a `storeContext`, the system defaults to displaying "24.8 million Tomans" and "42 orders" as the actual status (as hardcoded in the source).
+
+D) Technical and Infrastructure:
+
+`node:sqlite` remains an experimental module in Node (as of version 22.5). The database is a single file and lacks support for migrations, backups, or automated testing.
+The admin panel and the storefront are bundled together into a single 960 KB package; consequently, the admin panel code is delivered to every visitor.
+Images are linked directly from Unsplash—a risky dependency for a site based in Iran.
+
+3) Scope of Design (for the UI/UX Designer)
+
+Login and Roles: Customer login/registration via OTP; login for administrators, operators, and vendors; and an "Access Denied" page.
+Payments: Redirection to the payment gateway; handling successful, failed, or cancelled returns; and an "Awaiting Payment" status.
+Error and Empty States: Insufficient stock; price changes within the shopping cart; "Order awaiting review" (for customers); server errors during submission; loading states; and empty list views.
+Order Tracking: Identity verification via SMS code and the display of real-time order statuses. Order Management in the Panel: The admin menu lacks a dedicated page for orders. It requires a view for order lists and details, risk flags, and functional "approve" and "reject" buttons that actually update the order status.
+Content Management: Features for drafts, previews, publishing, version rollback, and image uploads. (Currently, only image URLs are supported).
+Connection Settings: Accurate status reporting (connected, error, or test mode). The system must not display "successful" if the connection has failed.
+Artificial Intelligence: Includes an "AI-generated" label, support for offline/intranet modes, error handling, and a human-in-the-loop verification step prior to publication.
+Privacy and Legal: Consent forms regarding customer data storage, terms and privacy policies, and a designated space for trust seals/certifications.
+Unique Visual Identity: The current structure and naming convention (e.g., "VitrinPlus," "Seller Center") too closely resemble Digikala. To establish an independent brand and mitigate legal risks, a unique identity and distinct naming are required.
+Mobile and RTL Support: Mobile-responsive versions for both the storefront and the admin panel, support for Persian numerals and the Solar Hijri calendar, and general accessibility compliance.
+
+4) Recommended Roadmap to Launch
+
+Resolve build errors (as noted above).
+Implement authentication and role-based access control (RBAC) across all routes; restrict administrative routes to authorized supervisors only.
+Handle price, discount, and inventory calculations on the server side, utilizing atomic transactions and non-random (sequential/unique) order numbers.
+Integrate a live payment gateway and link order status updates to the payment outcome.
+Mitigate SSRF vulnerabilities, implement rate limiting, configure CORS and security headers, move encryption keys to environment variables, and add the `data/` directory to `.gitignore`. Removing dummy data: videos, WooCommerce sample products, customers, and default shipping addresses.
+Connecting the CMS to the API, and either actually implementing the rules or removing the claim of their existence from... UI.
+
+Regarding strengths, I noted the following: server-side cryptographic design, a modular architecture, and an AI-based fallback mode for offline scenarios. These form a solid foundation, though the accompanying security model remains incomplete.
+
+If you wish, I can address risks 2–4, 17, and 18 within the copied version and provide the modified files.
+
+I have investigated, and your suspicion was correct. The copy was not merely a structural skeleton; it included concepts, entire pages, specific claims, and even the names of competitors. My findings, followed by two sets of text (shared formatting plus specific additions for each designer), are provided below.
+
+1) Review Findings
+
+Out of the 10 pages in the showcase, 5 are unsubstantiated copies.
+
+A) Features not supported by your business:
+
+Supermarket: Includes a dedicated page, a homepage banner, and a menu item. The text claims: "Nationwide delivery in under 1 hour (averaging 35–45 minutes) via an active motorcycle fleet."
+Vitrin Plus: A direct replica of "DigiPlus," featuring unlimited free shipping, 4% cashback, a 30-day return policy, and installment payment options.
+Seller Center: While your platform is single-vendor, this page assumes a marketplace model, citing "40+ million monthly buyers" and "300,000+ sellers"—both of which are fabricated figures.
+Amazing Offers & Best Sellers: Features countdown timers, "sold" indicators, and "official rankings updated hourly." The backend contains no logic for ranking systems or time-limited discounts.
+User Account: Includes a digital wallet, a "favorites" list, discount codes, and saved addresses—none of which are supported by the backend. Payment Methods: SnappPay, card-to-card transfer, cash on delivery (COD), and express courier service in Tehran (available in morning/afternoon shifts). Additionally, the names "Behpardakht Mellat" and "Saman Kish" are displayed, even though no actual payment gateways are connected.
+
+B) Fabricated Claims (Pose Legal Risks)
+
+"Sourced directly from official representatives" and "100% guarantee of physical authenticity."
+A landline number (021-88223344) appears in the footer, though its ownership is unverified.
+A video channel labeled "Digiato (Exclusive Review)"—using the name of a real media outlet.
+
+C) References to Competitors and Direct Copying
+
+The category menu displays names like "Webpoosh," "Modiseh," and "Khanoomi."
+The source code contains references to "Digikala," "Technolife," "Modiseh," "Esam," and "ShahrSakhtAfzar."
+Identifiers and file names include "DigiPlusPage" and "DIGI_PLUS."
+
+D) Inconsistent Categorization
+
+Actual products (10 items): Digital goods (4), smart home appliances (3), travel and camping gear (2), and health and beauty (1).
+Database categories: Digital & Accessories, Hardware & Gaming, Audio, and Fashion & Apparel.
+Mega-menu: 5 additional categories.
+Homepage: 8 further categories, including "Laptops," "Fashion & Apparel," and "Gifts & Souvenirs."
+
+Result: A customer clicks on "Fashion & Apparel," but no products are found.
+
+E) Admin Tools Visible on the Customer-Facing Interface
+
+Header: Network mode switcher, manual task queue, and a link to the supervisor/admin panel.
+Purchase Box: Buttons for "Content Studio" and "Share on Social Media." Footer: "Commerce OS" branding and an open-source architecture modal.
+
+f) Business Transparency for the Customer
+
+The product page displays "Other suppliers for this item" along with their respective prices, allowing the customer to switch between offers.
+A "Pricing Formula" tab explains the cost structure and the supplier breakdown to the customer.
+
+g) Structural SEO Issue (The most critical point for you)
+
+There is no router; the product page is implemented as a modal. Page transitions occur via state changes, meaning individual pages lack unique, independent URLs.
+JSON-LD data is generated only when the modal is opened, rendering it invisible to search engine bots.
+There are no dedicated `robots.txt` files, sitemaps, or unique title/meta tags for individual pages.
+Effectively, Google perceives the entire site as a single page.
+
+Verdict: The page layout and structural framework (the skeleton) can be retained. However, the concepts, copy, value propositions, and technical architecture must be replaced. The rule: Keep the template, discard the content/messaging.
+
+2) The "Keep the Template, Discard the Content" Rule
+Retained (Layout/Template):
+Sticky header with a centered search bar; mega-menu for categories.
+List views with sidebar filters; three-column product page layout featuring a sticky "buy" box.
+Shopping cart, multi-step checkout, and user account section.
+Replaced: Brand names, color schemes and visual identity, icons, text/copy, specific programs (e.g., "DigiPlus"), and any claims or figures that lack backing by real data. 3) Sitemap and URLs for Version 1 (Shared)
+/ Home
+/category/{slug} Category listing (with ?sort=, ?page=, and filters)
+/search?q=
+/product/{id}-{slug} (Standalone page, not a modal)
+/compare
+/cart, /checkout (3 steps), /payment/result/{orderNumber}
+/login (via SMS code)
+/account, /account/orders, /account/orders/{orderNumber}, /account/privacy
+/blog, /blog/{slug}
+/page/{slug} (About, Terms, Privacy, Returns, Shipping)
+/help (FAQs and Order Tracking)
+404 and 500
+/admin/* Admin panel only (requires login)
+
+Removed from Version 1: Supermarket, Vitrin Plus, Seller Center, "Amazing Offers" page, "Best Sellers" page, Category Map, and City Selection in the header.
+
+"Discounted" becomes a filter within the listing.
+"Best Selling" becomes a sorting option.
+4) Shared Layout for Both Designers
+
+4-1) Vitrin Grid System
+
+Canvas: 1440px; Container: 1280px (max-width), centered.
+12 columns; gutter: 24px (desktop), 16px (mobile).
+Side margins: 16px (mobile), 24px (tablet), and auto (desktop).
+Breakpoints: 390, 768, 1024, and 1440.
+
+4-2) Vitrin Global Shell
+
+Desktop Header:
+
+Main row: 72px height, sticky.
+Right side: Logo (width: 140px to 180px). Center: Search (flexible width, max 640px, height 48px, live suggestions).
+Left: "Login/Account" and "Cart" (with an item count indicator).
+Menu Row: Height 48px. Includes a "Categories" button (mega menu) and up to 4 links: "Discounts," "Best Sellers," "Magazine," and "Help & Support." The first two links lead to a list page featuring filters and sorting options.
+Mega Menu: Top-level categories displayed vertically on the right; subcategories arranged in three columns on the left. Supports up to 2 levels of depth; data is pulled from the categories table. If there are 6 or fewer categories, a simple drop-down menu is used instead.
+
+Mobile Header (Height 60px):
+
+Hamburger menu (opens a full-screen category drawer), logo in the center, search icon (triggers a full-width search bar), and cart.
+Fixed bottom navigation bar with 4 items: Home, Categories, ... Bad, account.
+
+Prohibited in the header: Network mode switch, manual task queue, supervisor panel link, city selector.
+
+Footer (4 columns; accordion-style on mobile):
+
+About the store and trust badges (included only if provided by the client).
+Shopping Guide: Placing orders, order tracking, shipping, returns.
+Support: Operating hours and contact details (pulled from settings).
+Popular blog posts and social media links.
+
+Product Card:
+
+1:1 aspect ratio image, 2-line title, price.
+Strikethrough price and discount percentage displayed only when there is a genuine discount.
+"Only X left" badge displayed when stock ≤ 5.
+Star ratings and review counts are not displayed in the initial version (as real data is unavailable).
+
+4-3) Page Templates
+
+T1 Home Page (from top to bottom):
+
+Hero Section: 420px height (desktop) / 200px height (mobile); max 4 slides; no auto-play; includes navigation arrows and pagination dots.
+Category Tiles (4 to 8 items; using Lucide icons; based on actual categories).
+"Active Discounts": Displayed only if at least 3 products have a genuine discount. Horizontal scroll; no countdown timer or "sold" indicators.
+"Our Picks": 4-column × 2-row grid.
+Two half-width banners (managed via the panel).
+Trust/Feature Columns (max 4; only those enabled in settings).
+3 cards featuring the latest blog posts.
+Footer.
+
+Removed elements: Supermarket banner, 4-card strip, and the full catalog with filters on the homepage. A single "All Products" button is sufficient.
+
+T2 Category Listing:
+
+Top section: Breadcrumb navigation, H1 (category name), and result count. Desktop: Filters in the 3 right-hand columns; a 3-column product grid in the 9 left-hand columns.
+Filters: Category tree, price range, brand, "in stock only," and "discounted."
+Sorting Bar: Relevance, newest, lowest price, highest price, best-selling, and biggest discount.
+Tablet and Mobile: 2-column layout; filters accessible via a bottom sheet.
+24 ​​products per page with numbered pagination (not infinite scroll), for SEO purposes.
+Bottom of the page: "Category descriptive text" (150–400 words; collapsible; managed via the admin panel).
+
+T3 Product Page:
+
+Breadcrumb navigation.
+Desktop: 3 columns (arranged right-to-left).
+Gallery (4 columns).
+Product Information (5 columns): Title, brand, key features, and color (displayed only if the product has color variants).
+Sticky Purchase Box (3 columns): Price, discount, stock status, quantity selector, "Add to Cart" button, shipping estimate, and up to 3 active trust badges.
+Mobile: Single-column layout with a fixed bottom bar (containing the price and action button).
+Tabs (below the main section): Technical specifications, description/review, and videos (displayed only if a video is available).
+Bottom section: Carousel of related products.
+Removed elements: List of suppliers, pricing formula, Q&A section, user reviews, and "Studio" or "Publish" buttons.
+
+T4 Cart and Checkout:
+
+Cart: 2-column layout on desktop (8 columns for items, 4 columns for a sticky summary). Mobile: Single-column layout with a fixed summary bar.
+Checkout: 3-step process ("Address & Delivery," "Order Review," "Payment"). Main column (8 units wide) and invoice summary (4 units wide). Online payment only; one shipping method (configured via settings).
+
+T5 Payment Result: Centered card (max width 560px); four possible states: Success, Failure, Cancelled, Pending.
+
+T6 Account: Right-aligned menu (3-column width) containing Orders, Profile, Privacy, and Logout; main content area (9-column width). Includes order details with a status timeline.
+
+T7 Content:
+
+Blog: 3-column grid.
+Article: Single column (width 720px).
+Static Pages: Single column (width 760px).
+
+T8 Help/Support: FAQ accordion, order tracking card, and contact information (pulled from settings).
+
+T9 Login: Centered card (width 420px) for phone number and verification code.
+
+T10 Error Pages: 404, 500, and Maintenance mode.
+
+4-4) Admin Panel Layout
+
+Right sidebar: 260px wide (collapsible to 72px); top bar: 64px high (includes search, notifications, profile, and network status).
+Content area: Max width 1440px, based on a 12-column grid.
+Menu Grouping:
+Operations: Daily Summary, Orders, Approval Queue, Manual Tasks.
+Catalog: Products, Suppliers, Categories.
+Growth: Rules, Campaigns, Ask Commerce, Decision Logs.
+Content: Blog, Pages, Media, Site Editor.
+Settings: Integrations, Policies, Users, Security.
+Four Page Templates:
+A-List: Table view with filters and bulk actions.
+A-Detail: Two-column layout (8:4 ratio).
+A-Form.
+A-Queue: Queue cards. 4-5) SEO Structure (from your perspective as an SEO specialist)
+
+Each page must have one H1, breadcrumbs, a canonical tag, a title (≤ 60 characters), and a description (≤ 160 characters).
+Schema markup: Organization, BreadcrumbList, Product, Article, and FAQPage (only where actual Q&A content exists).
+Pagination (`?page=N`) with a self-referencing canonical tag.
+`noindex` for search result pages and URLs containing more than one filter parameter.
+Dynamic `robots.txt` and `sitemap.xml`.
+Explicit image dimensions (width/height) to prevent CLS (Cumulative Layout Shift).
+
+5) Addendum for AI Studio (append to the end of the main prompt)
+
+After that, append Section 4 of this message (Formatting) below it to serve as the "LAYOUT SPEC."
+
+text
+WORKSTREAM W11 — Storefront restructure: remove copied competitor concepts, one real taxonomy, real URLs, SSR/SEO
+Rules A1–A10 and gate A4 apply. The layout of every public page MUST follow the "LAYOUT SPEC" pasted below this prompt. Allowed new dependency for W11: react-router-dom only.
+
+W11.1 Delete features this business does not have
+- Delete: SupermarketPage, DigiPlusPage (and the DIGI_PLUS route/menu item), SellerCenterPage, DealsPage, BestSellersPage, the "categories map" page, the city/province selector modal, and its corresponding header button.
+- Replace "Deals" and "BestSellers" with listing features: a "Discounted" (تخفیف‌دار) filter and a "Best-selling" (پرفروش‌ترین) sort option (calculate units sold based on the orders table; hide the sort option if there are no orders).
+- Home page: remove the supermarket banner, the 4-card feature strip (BNPL/installments), and the full catalog section. The home page should contain exactly the sections defined in LAYOUT SPEC T1. - Customer dashboard: remove wallet, wishlist, discount codes and saved-addresses tabs (no backend). Keep orders, order details, profile, privacy center.
+- Checkout: remove payment methods snappay, card_to_card, cod; remove the express courier and time-slot shift options; keep ONE shipping method driven by settings; keep the coupon input only if a coupons table exists (W2); otherwise, remove it.
+- Product page: Remove the "other suppliers" list, supplier-offer selection, the pricing-formula tab, the Q&A and user-reviews tabs, and the "Content Studio" / "Social Publisher" buttons. Customers must never see suppliers, costs, margins, or formulas. Retain the following tabs: Technical Specifications, Introduction & Review, and Videos (only if the product has associated videos).
+- Header/footer: Remove the network-mode switch, the manual-tasks queue, and any "Admin Panel" links from the storefront. The admin interface should only be accessible via the `/admin` path, protected by a login. Remove the "Commerce OS" text and the "open-source architecture" modal from the storefront.
+- Remove all fabricated figures or claims, such as: "40+ million," "300+ thousand," delivery in under 1 hour / 35–45 minutes, references to a motorcycle delivery fleet, 4% cashback, unlimited free shipping, "direct sourcing from official representatives," "100% guarantee of physical authenticity," the fixed-line number 021-88223344, fake "sold" counts, fake countdown timers, and specific bank names (e.g., BehPardakht Mellat, Saman Kish)—unless explicitly configured.
+- Store name, support phone/email/hours, return policy duration, shipping information, and "trust pillars" must be pulled EXCLUSIVELY from the settings table (using the following keys: `storeName`, `supportPhone`, `supportEmail`, `supportHours`, `returnDays`, and `trustPillars`—where each entry contains `icon`, `title`, `text`, and `enabled`). By default, set `enabled` to `false` for all trust pillars. Replace the hardcoded store name "Vitrin" (ویترین) with the value from `settings.storeName`.
+- Remove any references to competitors or other brands from all customer-facing UI elements, comments, file names, and identifiers—including: Digikala, Technolife, Modiseh, Esam, ShahrSakhtAfzar, WebPush, Khanoumi, and Digiato. (Admin competitor-radar texts may still name competitors as analysis targets.)
+
+W11.2 One category taxonomy
+- Single source of truth: a categories table (max 2 levels; slug, name, parentId, sortOrder, seoTitle, seoDescription, introText). The mega menu, home tiles, listing filters, admin pickers and content-generation defaults all read from it. Delete every hardcoded category array (home, mega menu, Deals/Best Sellers, content studio defaults).
+- Migration: seed the 4 current product categories (digital goods, smart home appliances, travel and camping, beauty and health) and attach every product to a category by id. Remove seeded categories no product references (cat_hardware, cat_audio, cat_wear...). A category with zero published products is hidden from customers.
+
+W11.3 Real URLs and routing
+- Public routes: / ; /category/:slug ; / search ; /product/:id-:slug ; /compare; /cart; /checkout; /payment/result/:orderNumber; / login ; /account; /account/orders; /account/orders/:orderNumber ; /account/privacy; /blog; /blog/:slug ; /page/: slug ; / help * (404). Admin: /admin/* only.
+- The product page is a PAGE, never a modal. The cart may remain a drawer, but the cart must also work as a page.
+- Listing state lives in the URL (?sort=&page=&min=&max=&inStock=1&discounted=1&brand=). Browser back/forward must work.
+
+W11.4 Server-side rendering and SEO (storefront only)
+- Server-render with Vite SSR + react-dom/server inside the existing Express server. Load data directly from the DB layer (no HTTP self-calls) and hydrate on the client. The admin stays client-rendered.
+- Every public page returns a correct <title> (<=60 chars), meta description (<=160), canonical, exactly ONE <h1>, Open Graph tags, and the right HTTP status (404 for unknown slugs, 301 from an old slug to the current slug).
+- JSON-LD: Organization (home), BreadcrumbList (all pages), Product with offers/availability (product page; price from the DB), Article (blog), FAQPage only where real FAQs exist.
+- robots.txt (disallow /admin, /api, /cart, /checkout, /account, /payment, /login, search/sort/filter URLs) and a dynamic sitemap.xml (published products, categories, posts, pages; lastmod from the DB). noindex on /search and on any URL with more than one filter parameter. Category pagination uses ?page=N with a self-referencing canonical.
+- Images: width/height attributes, alt text from the product title, lazy-load below the fold. No layout shift.
+- Keep the Torob feed.
+- Add `npm run test:seo`: for /, a category, a product, a blog post and a missing slug, fetch the RAW HTML (no JS) and assert: title, exactly one h1, canonical, JSON-LD parses, price present in the HTML, status codes 200/404/301, and the contents of robots.txt and sitemap.xml.
+
+W11.5 Acceptance (add to the final report)
+- A `grep` search across `src/components/storefront`, the files succeeding `StorefrontView`, `cmsStore`, and the seed data must yield ZERO matches for the following terms: Digikala, دیجی‌کالا, دیجی کالا, DigiPlus, DIGI_PLUS, دیجی‌پلاس, ویترین‌پلاس, دیجیاتو, Modiseh, مدیسه, وب‌پوش, خانومی, Technolife, Esam, ShahrSakhtAfzar, شگفت‌انگیز, Supermarket, سوپرمارکت, SellerCenter, مرکز فروشندگان, snappay, card_to_card, and `cod`. (Note: Do NOT match the generic term "دیجیتال".)
+- Output the final route table; demonstrate that the product page loads at its designated URL; perform type-checking, build the project, and verify that SEO tests pass.
+- Provide a list of all removed features, along with the corresponding files that were deleted.
+6) Addendum for the UI/UX Designer
+
+This section amends the previous brief. In the event of any discrepancies, the information provided here takes precedence.
+
+1) New Scope (replaces the scope defined in the previous brief) (Previous: Vitrin)
+
+Pages for the first version:
+
+S01 Home, S02 Category List (including a "Discounted" filter and "Best-Selling" sorting), S03 Search, S04 Product Page.
+S05 Comparison, S06 Cart, S07 Checkout (3 steps), S08 Payment Result.
+S09 Login via SMS code, S10 Order List, S11 Order Details, S12 Privacy Center.
+S13 Support Chat Widget, S14 Shopping Assistant & Gifting (optional module in the header).
+S15 Blog List, S16 Article, S17 Static Pages, S18 Help/Guide, S19 Error Pages.
+
+Do not design:
+
+Supermarket, Vitrin Plus, Seller Center.
+"Amazing Offers" (Flash Sales) page and "Best-Sellers" page.
+City selection in the header, digital wallet, favorites/wishlist, discount codes.
+Installment plans, Cash on Delivery (COD), card-to-card transfers, user reviews, Q&A.
+
+2) Visual Originality
+
+The layout structure should follow section 4 of this message. Colors, typography, card shapes, icons, and banners must reflect a unique, proprietary identity.
+Before submitting M1, provide an "Originality Check": place your design alongside those of 3 competitors. Similarities are acceptable only in terms of layout structure—not in colors, icons, terminology, or banner style.
+The use of terms like "Amazing" (Shegeft-angiz), "Plus," or the names of any loyalty programs used by competitors is prohibited.
+
+3) Content
+
+Do not include any figures or claims in the design unless they are based on real data. Sample text should appear only in the design file, labeled as "Sample."
+Trust blocks (fast shipping, returns, authenticity) should be implemented as optional, toggleable modules. Please provide a design state for when these are "off."
+Store name, phone number, business hours, and return policy duration should be treated as dynamic variables within the design.
+
+4) Exclusion of Internal Data from the Storefront
+
+Supplier details, purchase costs, profit margins, and pricing formulas must never appear on any customer-facing page.
+Administrative controls (network status, task queues, studio tools, social publishing, etc.) must not be visible on the storefront.
+
+5) SEO Requirements Influencing the Design
+
+Include space for an H1 heading, breadcrumbs, and an expandable/collapsible descriptive text section at the bottom of category pages.
+Implement numbered pagination, active filter indicators (with a "clear" option), and fixed image dimensions to prevent Cumulative Layout Shift (CLS).
+
+6) Additional Deliverables for M1: A site map (flowchart) and a "structural specification" for each template (T1 through T10), detailing heights and column layouts. Provide three versions for each template: 390px, 768px, and 1440px.
+
+Points for Confirmation
+Categories: I have based this on the current 4 product categories. If the sales strategy involves different categories, only the category table will need to be updated.
+SSR and `react-router-dom`: Implementing SSR and a router is a significant undertaking. If you prefer to avoid this, a lower-cost alternative is static pre-rendering for product and category pages; however, this is less effective for a store with dynamic inventory.
+"Frequently Bought Together" and Support Chat: I have retained these as they are backed by actual backend functionality. If you do not wish to include them, items S13 and S14 can be removed from the brief.
+Comparison Page: I have kept this, as it is already included in the UI. If you don’t want it, removing it is simple.
+If you’d like, I can merge the original prompt and this addition into a single, unified final version for AI Studio.

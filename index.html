@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var originalFetch = typeof window !== 'undefined' && window.fetch ? window.fetch.bind(window) : undefined;
+          var currentFetch = originalFetch;
+
+          // Provide writable getter/setter on window to prevent "Cannot set property fetch of #<Window> which has only a getter"
+          Object.defineProperty(window, 'fetch', {
+            get: function() {
+              return currentFetch;
+            },
+            set: function(fn) {
+              currentFetch = fn;
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          try {
+            var proto = Object.getPrototypeOf(window) || (typeof Window !== 'undefined' && Window.prototype);
+            if (proto) {
+              var protoFetch = window.fetch ? window.fetch.bind(window) : undefined;
+              var activeProtoFetch = protoFetch;
+              Object.defineProperty(proto, 'fetch', {
+                get: function() {
+                  return activeProtoFetch;
+                },
+                set: function(fn) {
+                  activeProtoFetch = fn;
+                },
+                configurable: true,
+                enumerable: true
+              });
+            }
+          } catch (e2) {}
+        }
+      })();
+
+      // Gracefully silence expected sandbox Vite HMR WebSocket connection notices
+      window.addEventListener('unhandledrejection', function(event) {
+        try {
+          var reason = event.reason;
+          var msg = (reason && reason.message) ? reason.message : (typeof reason === 'string' ? reason : '');
+          if (msg && msg.indexOf('WebSocket') !== -1) {
+            event.preventDefault();
+          }
+        } catch (e) {}
+      });
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Commerce OS | فروشگاه آنلاین و سیستم عامل بازرگانی</title>
+    <meta name="description" content="سیستم عامل جامع تجارت الکترونیک شامل ویترین آنلاین فروشگاه برای خریداران، سبد خرید، درگاه پرداخت شاپرک و پنل ناظر هوشمند مجهز به موتور قوانین، اتوپایلوت، پایش رقبا و صف تأیید" />
+    <meta property="og:title" content="Commerce OS | فروشگاه آنلاین و سیستم عامل بازرگانی" />
+    <meta property="og:description" content="سیستم عامل جامع تجارت الکترونیک شامل ویترین آنلاین فروشگاه برای خریداران، سبد خرید، درگاه پرداخت شاپرک و پنل ناظر هوشمند مجهز به موتور قوانین، اتوپایلوت، پایش رقبا و صف تأیید" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Non-blocking sovereign font loading with instantaneous local fallback -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    </noscript>
+    <meta name="theme-color" content="#1E4635" />
+  </head>
+  <body class="bg-[#F7F3EA] text-[#182B22] font-sans antialiased selection:bg-[#1E4635] selection:text-[#F7F3EA]" style="font-family: Vazirmatn, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

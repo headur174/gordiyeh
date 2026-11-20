@@ -1,0 +1,6 @@
+{
+  "name": "Commerce OS",
+  "description": "سیستم عامل جامع تجارت الکترونیک شامل ویترین آنلاین فروشگاه برای خریداران، سبد خرید، درگاه پرداخت شاپرک و پنل ناظر هوشمند مجهز به موتور قوانین، اتوپایلوت، پایش رقبا و صف تأیید",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

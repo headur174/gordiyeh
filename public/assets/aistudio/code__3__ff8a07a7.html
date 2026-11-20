@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="rtl" lang="fa"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Vazirmatn:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container-high": "#1a2a41", "outline-variant": "#49473f", "on-secondary-fixed": "#001d31", "secondary-container": "#2b4963", "tertiary-fixed": "#d1e4ff", "background": "#02142a", "on-background": "#d5e3ff", "on-error": "#690005", "surface-bright": "#2a3a51", "primary-fixed-dim": "#cbc7b5", "surface-container": "#0f2036", "secondary-fixed": "#cce5ff", "on-error-container": "#ffdad6", "inverse-primary": "#615f50", "primary": "#ffffff", "surface-container-lowest": "#000e23", "on-secondary": "#12334b", "on-secondary-container": "#9ab8d6", "primary-fixed": "#e7e3d0", "surface": "#02142a", "tertiary-fixed-dim": "#b0c8ea", "on-tertiary-fixed": "#001d36", "error": "#ffb4ab", "surface-variant": "#26354d", "secondary": "#abcae8", "inverse-surface": "#d5e3ff", "tertiary-container": "#d1e4ff", "on-tertiary": "#18324c", "surface-container-low": "#0b1c32", "on-primary-container": "#676556", "on-secondary-fixed-variant": "#2b4963", "surface-dim": "#02142a", "on-primary": "#323124", "on-surface-variant": "#cac6bb", "on-primary-fixed": "#1d1c10", "primary-container": "#e7e3d0", "tertiary": "#ffffff", "error-container": "#93000a", "outline": "#949187", "surface-container-highest": "#26354d", "inverse-on-surface": "#213148", "secondary-fixed-dim": "#abcae8", "on-primary-fixed-variant": "#494739", "on-surface": "#d5e3ff", "on-tertiary-fixed-variant": "#304864", "on-tertiary-container": "#4e6683", "surface-tint": "#cbc7b5" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-xs": "0.25rem", "space-md": "1rem", "space-xl": "2.5rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "margin-mobile": "1rem", "gutter-mobile": "0.75rem", "margin": "3rem", "gutter": "1.5rem" }, fontFamily: { "body-lg": ["Geist"], "headline-lg": ["Space Grotesk"], "label-sm": ["JetBrains Mono"], "headline-lg-mobile": ["Space Grotesk"], "label-lg": ["JetBrains Mono"], "body-sm": ["Geist"], "headline-md": ["Space Grotesk"], "label-md": ["JetBrains Mono"], "headline-sm": ["Space Grotesk"], "headline-xl": ["Space Grotesk"], "body-md": ["Geist"], "headline-xl-mobile": ["Space Grotesk"], "vazir": ["Vazirmatn", "sans-serif"] }, fontSize: { "body-lg": ["1.125rem", { lineHeight: "1.75rem", letterSpacing: "-0.01em", fontWeight: "400" }], "headline-lg": ["2.5rem", { lineHeight: "3rem", letterSpacing: "-0.025em", fontWeight: "600" }], "label-sm": ["0.6875rem", { lineHeight: "0.875rem", letterSpacing: "0.08em", fontWeight: "400" }], "headline-lg-mobile": ["1.75rem", { lineHeight: "2.25rem", letterSpacing: "-0.02em", fontWeight: "600" }], "label-lg": ["0.875rem", { lineHeight: "1.25rem", letterSpacing: "0.04em", fontWeight: "500" }], "body-sm": ["0.8125rem", { lineHeight: "1.25rem", letterSpacing: "0.01em", fontWeight: "400" }], "headline-md": ["1.75rem", { lineHeight: "2.25rem", letterSpacing: "-0.015em", fontWeight: "600" }], "label-md": ["0.75rem", { lineHeight: "1rem", letterSpacing: "0.06em", fontWeight: "500" }], "headline-sm": ["1.25rem", { lineHeight: "1.75rem", letterSpacing: "-0.01em", fontWeight: "500" }], "headline-xl": ["3.5rem", { lineHeight: "4rem", letterSpacing: "-0.03em", fontWeight: "700" }], "body-md": ["0.9375rem", { lineHeight: "1.5rem", letterSpacing: "0em", fontWeight: "400" }], "headline-xl-mobile": ["2.25rem", { lineHeight: "2.75rem", letterSpacing: "-0.02em", fontWeight: "700" }] } } } };</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-primary"><header class="fixed top-0 inset-x-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md"><div class="h-8 w-full px-gutter bg-surface-container-low flex items-center justify-between text-secondary font-label-sm text-label-sm"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs"><span class="w-1.5 h-1.5 bg-primary"></span><span class="uppercase tracking-wider">SQLite WAL Active</span></div><div class="hidden md:flex items-center gap-space-xs"><span class="material-symbols-outlined text-xs text-secondary">lock</span><span class="uppercase tracking-wider">Encrypted AES-256-GCM</span></div></div><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-xs text-secondary">dns</span><span class="tracking-wide">Node 01: Tehran North Facility [35.7219° N, 51.3347° E]</span></div></div><div class="h-20 w-full px-gutter flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md shrink-0"><img alt="High-end minimalist architectural portal archway emblem logo for commerce brand 'GORDIYEH' and Persian 'گردیه', adapting and evolving selected canvas reference IMAGE_78. Pure monochrome black vector on stark flat white background. A slender, elegant vertical portal arch structure with a subtle modernist stepped threshold at the base. Inside the archway: artistic yet ultra-legible Persian calligraphy 'گردیه' hovering above crisp, widely tracked typography 'GORDIYEH'. Pure 2D vector graphic, ultra-sharp vector contours, high elegance, no 3D." class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1U4GgT5BVVUMA3-A8NDiPyCO6XFQmVZxT3OJ3JUa5hM3Ti2fWUCOW6d6nVCl8KsaDq2bEVZnqU-JuQhiKwWKX97fCpfeYK7ljSVVeyEvYxn1C2T2M7qpusguPT7_DLTk3g1p_PBTruaPD3GYRpKX5z6i3iQESVJQihRXIEVPo2W7jJ2mmQgqfKC46v76QoxpWDGMW6O9XxiG3fYf0R0kwqEkiZW7q49azGcRgs1Txag"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm font-semibold text-primary tracking-tight">گُردیه</span><span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">GORDIYEH ARCHITECTURAL CNC</span></div></div><div class="hidden lg:flex flex-1 max-w-md mx-space-lg"><div class="relative w-full flex items-center bg-surface-container-high"><span class="material-symbols-outlined absolute right-space-sm text-secondary text-sm">search</span><input class="w-full bg-transparent pr-space-xl pl-space-md py-space-xs font-label-md text-label-md text-primary placeholder:text-secondary focus:outline-none focus:bg-surface-variant transition-colors" placeholder="جستجوی پارت‌نامبر قطعه متالورژی یا کد شیت CNC..." type="text"/></div></div><div class="flex items-center gap-space-md"><nav class="hidden xl:flex items-center gap-space-xs" data-active-classes="text-primary bg-surface-container-high"><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="catalog" href="#">کاتالوگ آثار [S02]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="cnc-customization" href="#">سفارشی‌سازی CNC</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="engineering-journal" href="#">مجله مهندسی [S15]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="fabrication-manifesto" href="#">مانیفست ساخت [S17]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="help-center" href="#">مرکز راهنما [S18]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="order-tracking" href="#">رهگیری سفارشات [S10]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="cart" href="#">سبد خرید</a></nav><div class="flex items-center gap-space-sm"><a class="p-space-xs text-secondary hover:text-primary transition-colors relative" data-path="cart" href="#"><span class="material-symbols-outlined text-lg">shopping_bag</span><span class="absolute -top-1 -right-1 w-4 h-4 bg-primary text-on-primary font-label-sm text-[10px] flex items-center justify-center font-bold">0</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-28 bg-surface"><div class="flex flex-col w-full font-vazir text-on-surface">
+<!-- TOP TELEMETRY STRIP -->
+<section class="w-full bg-surface-container-lowest px-gutter py-space-sm flex flex-wrap items-center justify-between gap-space-md font-label-sm text-label-sm text-secondary">
+<div class="flex items-center gap-space-md">
+<span class="flex items-center gap-space-xs text-primary font-mono">
+<span class="w-2 h-2 bg-primary"></span>
+        STATUS: 404_NOT_FOUND
+      </span>
+<span class="text-secondary/60">|</span>
+<span class="font-mono text-secondary tracking-widest">SYS_VECTOR: [-35.7219, +51.3347, NaN]</span>
+</div>
+<div class="flex items-center gap-space-md font-mono text-secondary/80">
+<span>TOPOLOGY_FAULT // DISCONNECTED_NODE</span>
+<span class="text-primary-fixed bg-surface-container-high px-space-xs py-0.5">OFFSET_WAL_#44019</span>
+</div>
+</section>
+<!-- HERO: 404 TOPOLOGY ERROR GRAPHIC & ARCH MOTIF -->
+<section class="w-full bg-surface-dim relative px-gutter py-space-xl overflow-hidden">
+<!-- Subtle Architectural Background Grid (SVG) -->
+<div class="absolute inset-0 opacity-15 pointer-events-none">
+<svg class="w-full h-full text-secondary" height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="48" id="archGrid" patternunits="userSpaceOnUse" width="48">
+<path d="M 48 0 L 0 0 0 48" fill="none" stroke="currentColor" stroke-width="0.75"></path>
+<circle cx="24" cy="24" fill="currentColor" r="1"></circle>
+</pattern>
+</defs>
+<rect fill="url(#archGrid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<div class="max-w-6xl mx-auto flex flex-col items-center relative z-10 text-center">
+<!-- Monolithic Architectural Portal Visualizer with Broken Axis -->
+<div class="relative w-full max-w-2xl mx-auto flex flex-col items-center justify-center pt-space-md pb-space-lg">
+<!-- Architectural Arch Diagram Frame -->
+<div class="relative w-72 sm:w-96 h-80 flex items-center justify-center">
+<svg class="absolute inset-0 w-full h-full text-secondary/40 overflow-visible" fill="none" viewbox="0 0 320 360" xmlns="http://www.w3.org/2000/svg">
+<!-- Ground Base Stepped Profile -->
+<path d="M 30 350 L 290 350" stroke="currentColor" stroke-width="2"></path>
+<path d="M 50 338 L 270 338" stroke="currentColor" stroke-dasharray="4 4" stroke-width="1.5"></path>
+<path d="M 70 326 L 250 326" stroke="currentColor" stroke-width="1"></path>
+<!-- Left Arch Pillar with Cadastral Ticks -->
+<path d="M 70 326 L 70 160" stroke="currentColor" stroke-width="2"></path>
+<line stroke="currentColor" stroke-width="1.5" x1="60" x2="70" y1="280" y2="280"></line>
+<line stroke="currentColor" stroke-width="1.5" x1="60" x2="70" y1="220" y2="220"></line>
+<line stroke="currentColor" stroke-width="1.5" x1="60" x2="70" y1="170" y2="170"></line>
+<!-- Fractured Right Arch Pillar (Fault displacement angle) -->
+<path d="M 250 326 L 250 200" stroke="currentColor" stroke-width="2"></path>
+<!-- Offset Shear Crack -->
+<path d="M 250 200 L 265 190 L 258 140" stroke="#ffdad6" stroke-width="2"></path>
+<line stroke="currentColor" stroke-width="1.5" x1="250" x2="260" y1="280" y2="280"></line>
+<line stroke="currentColor" stroke-width="1.5" x1="250" x2="260" y1="230" y2="230"></line>
+<!-- Arch Vault Curves (Segmented parabolic curve) -->
+<path d="M 70 160 C 70 60, 258 60, 258 140" stroke="currentColor" stroke-dasharray="6 3" stroke-width="2"></path>
+<circle cx="164" cy="105" fill="#ffffff" r="4"></circle>
+<!-- Displaced Coordinate Axes -->
+<line stroke="#abcae8" stroke-dasharray="3 3" stroke-width="0.75" x1="20" x2="300" y1="180" y2="180"></line>
+<line stroke="#abcae8" stroke-dasharray="3 3" stroke-width="0.75" x1="160" x2="160" y1="30" y2="350"></line>
+<!-- Fracture Vector Marker -->
+<polygon fill="#ffb4ab" points="262,185 272,190 264,198"></polygon>
+<text fill="#abcae8" font-family="JetBrains Mono" font-size="9" x="275" y="195">Δθ = 14.83° ERR</text>
+<text fill="#cac6bb" font-family="JetBrains Mono" font-size="9" x="80" y="55">SECTOR: 0x404_VOID</text>
+</svg>
+<!-- The Gigantic 404 Typography Framed Within Portal -->
+<div class="relative z-10 flex flex-col items-center">
+<span class="font-vazir font-black text-[5.5rem] sm:text-[7.5rem] leading-none tracking-tighter text-primary select-none drop-shadow-md">
+              ۴۰۴
+            </span>
+<div class="flex items-center gap-space-xs -mt-2 bg-surface-container px-space-sm py-0.5">
+<span class="w-1.5 h-1.5 bg-error"></span>
+<span class="font-label-sm text-label-sm text-secondary font-mono tracking-wider">
+                NULL_TOPOLOGY_REFERENCE
+              </span>
+</div>
+</div>
+</div>
+<!-- Telemetry Data Tag -->
+<div class="mt-space-md bg-surface-container-high px-space-md py-space-xs font-label-sm text-label-sm text-secondary font-mono text-center">
+          ERROR_CODE: ERR_COORDINATES_OUT_OF_BOUNDS // SQLite WAL OFFSET #44019 PASS
+        </div>
+</div>
+<!-- Main Headline & Descriptive Text -->
+<div class="max-w-3xl flex flex-col items-center gap-space-md mt-space-sm">
+<h1 class="font-vazir font-bold text-headline-lg text-primary text-balance">
+          مختصات درخواستی در توپولوژی مهندسی گُردیه یافت نشد
+        </h1>
+<p class="font-vazir font-normal text-body-lg text-on-surface-variant max-w-2xl leading-relaxed text-justify sm:text-center">
+          قطعه، رساله صنعتی یا شیت ساختاری مدنظر شما بازتولید، متوقف یا با کدگذاری متالورژیک جدید بازنشانی شده است. با این حال دسترسی به زنجیره تولید، انبار تهران و درگاه‌های پردازش فلز فعال است.
+        </p>
+</div>
+<!-- Quick Action CTA Buttons -->
+<div class="flex flex-wrap items-center justify-center gap-space-md mt-space-lg w-full max-w-md">
+<a class="flex-1 min-w-[200px] h-12 bg-primary text-on-primary font-headline-sm text-headline-sm font-semibold flex items-center justify-center gap-space-xs hover:bg-secondary transition-all" data-path="catalog" href="#">
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+<span>بازگشت به صفحه اصلی گُردیه</span>
+</a>
+<a class="flex-1 min-w-[200px] h-12 bg-surface-container-high text-primary font-headline-sm text-headline-sm font-semibold flex items-center justify-center gap-space-xs hover:bg-surface-variant transition-all" data-path="fabrication-manifesto" href="#">
+<span class="material-symbols-outlined text-lg text-secondary">menu_book</span>
+<span>مشاهده کاتالوگ آثار [S02]</span>
+</a>
+</div>
+<!-- Direct Quick Catalog Search Box -->
+<div class="w-full max-w-2xl mt-space-xl bg-surface-container p-space-md shadow-md text-right">
+<div class="flex items-center justify-between mb-space-xs text-secondary font-label-sm text-label-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm text-secondary">terminal</span>
+<span>جستجوی مستقیم پایگاه قطعات و نقشه‌های CNC</span>
+</div>
+<span class="font-mono text-on-surface-variant">DB_STATUS: ONLINE</span>
+</div>
+<form class="flex flex-col sm:flex-row items-stretch gap-space-xs" onsubmit="event.preventDefault();">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute right-space-sm top-1/2 -translate-y-1/2 text-secondary text-sm">search</span>
+<input class="w-full h-12 bg-surface-container-high pr-space-xl pl-space-md font-vazir text-body-md text-primary placeholder:text-secondary focus:outline-none focus:bg-surface-variant transition-colors" placeholder="جستجوی کد پارت‌نامبر، تیتانیوم گرید ۵، بازالت یا نام سازه..." type="text"/>
+</div>
+<button class="h-12 px-space-lg bg-surface-bright text-primary font-label-md text-label-md uppercase tracking-wider flex items-center justify-center gap-space-xs hover:bg-secondary-container transition-colors" type="submit">
+<span>جستجو در انبار</span>
+<span class="material-symbols-outlined text-base">arrow_back</span>
+</button>
+</form>
+</div>
+</div>
+</section>
+<!-- READY-TO-SHIP PHYSICAL WORKS (STOCK DISCOVERY SECTION) -->
+<section class="w-full bg-surface px-gutter py-space-xl">
+<div class="max-w-6xl mx-auto flex flex-col gap-space-lg">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md bg-surface-container-low p-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm font-mono uppercase">
+<span class="w-1.5 h-1.5 bg-primary"></span>
+            STOCK_ALLOCATION // TEHRAN LOGISTICS NODE
+          </div>
+<h2 class="font-vazir font-bold text-headline-md text-primary">
+            سازه‌های تاییدشده آماده ترخیص و تحویل فوری
+          </h2>
+<p class="font-vazir text-body-sm text-on-surface-variant">
+            قطعات زیر با گواهینامه متالورژیک و تلورانس زیر ۳ میکرون، در انبار تأسیسات شمالی آماده تخصیص هستند:
+          </p>
+</div>
+<div class="flex items-center gap-space-sm self-start md:self-auto font-label-sm text-label-sm">
+<a class="text-secondary hover:text-primary transition-colors flex items-center gap-space-xs" data-path="catalog" href="#">
+<span>مشاهده همه ۴۸ اثر تولیدی</span>
+<span class="material-symbols-outlined text-sm">west</span>
+</a>
+</div>
+</div>
+<!-- 4 Architectural Inventory Items Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- ITEM 1 -->
+<article class="bg-surface-container flex flex-col justify-between group hover:bg-surface-container-high transition-colors">
+<div class="relative w-full h-52 bg-surface-container-lowest overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="An ultra-detailed industrial monolithic 75 percent architectural mechanical keyboard chassis machined from heavy solid aeronautical aluminum 7075-T6 with dark slate obsidian anodized surface, chiseled bevels, subtle brass backplate weight, soft dramatic rim lighting on textured raw metal, studio tabletop architectural photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcRqQ0qB1OPS2vGNcR33SMAJQJCsEXDJ9m8S-7pvLIG_uHqTBynmKbYhwgSBoKFxbZJetSwoTT8zjbwfP0LfI64GfJ81ZUDTI3ODQsjx3A2ZV56hsBykYawB_gy3-8uKHVpZuSd0ckUItV-o7EWLkAZ5q3yu62sK2Chc5acDuOIfDfj7YasCY2T6i3BQuE1wRo2DFg51_nTZ8wpEZ-KTtH8LZGmVjY_CYMtswffuU"/>
+<div class="absolute top-space-xs right-space-xs bg-surface-container-lowest/90 px-space-xs py-0.5 font-label-sm text-label-sm text-secondary font-mono">
+              BATCH #KB-7075
+            </div>
+<div class="absolute bottom-space-xs left-space-xs bg-surface px-space-xs py-0.5 font-label-sm text-label-sm text-primary font-mono">
+              موجودی: ۲ عدد
+            </div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-secondary font-mono">CNC_MONOLITH // SPEC_01</span>
+<h3 class="font-vazir font-bold text-headline-sm text-primary group-hover:text-secondary-fixed transition-colors">
+                کیبورد شاسی یکپارچه KB75 Monolith
+              </h3>
+<p class="font-vazir text-body-sm text-on-surface-variant leading-relaxed">
+                آلیاژ هوافضای آلومینیوم ۷۰۷۵، پورت تایپ سی فرورفته، کف‌چین برنجی ۱.۲ کیلوگرمی با پوشش اکسید سرامیک.
+              </p>
+</div>
+<div class="pt-space-md flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between font-mono">
+<span class="font-label-sm text-secondary">قیمت تحویل:</span>
+<span class="font-vazir font-bold text-headline-sm text-primary">۲۸,۵۰۰,۰۰۰ <span class="font-label-sm font-normal text-secondary">تومان</span></span>
+</div>
+<a class="w-full h-10 bg-surface-container-high text-primary font-label-md text-label-md flex items-center justify-center gap-space-xs group-hover:bg-primary group-hover:text-on-primary transition-colors" data-path="catalog" href="#">
+<span class="material-symbols-outlined text-sm">visibility</span>
+<span>بررسی مشخصات فنی</span>
+</a>
+</div>
+</div>
+</article>
+<!-- ITEM 2 -->
+<article class="bg-surface-container flex flex-col justify-between group hover:bg-surface-container-high transition-colors">
+<div class="relative w-full h-52 bg-surface-container-lowest overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Monolithic architectural wrist rest milled from raw solid dark basalt volcanic stone paired with high precision acoustic poron dampening inlays, chamfered precision edges, architectural studio tabletop minimal aesthetic, obsidian dark slate color scheme, sharp precision shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFcbtQuPM0aRskzuneRdkWtNsR3GoaBb2PxcN_RStoBnY1AuxxaWkjMvWzaWu4LXc6e4MbXBPTIgm-Df1Ays-n2p_6K9RYh7_my7aRY3UumykCpKMf7s4bc9n_NIlyotcHTl0HRfF-76wztXLI2L0Pn6CUOfB_Q0Tg_rjO90xJq_9ZIyHpFTs8HNesqsl9_R4vwss20DzdVT43rsKJ1i1PNhEQZ_9wyU8QA9v_Ye0"/>
+<div class="absolute top-space-xs right-space-xs bg-surface-container-lowest/90 px-space-xs py-0.5 font-label-sm text-label-sm text-secondary font-mono">
+              BATCH #BST-880
+            </div>
+<div class="absolute bottom-space-xs left-space-xs bg-surface px-space-xs py-0.5 font-label-sm text-label-sm text-primary font-mono">
+              موجودی: ۶ عدد
+            </div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-secondary font-mono">GEOLOGICAL_ERGONOMICS // SPEC_02</span>
+<h3 class="font-vazir font-bold text-headline-sm text-primary group-hover:text-secondary-fixed transition-colors">
+                پد ارگونومیک سنگ بازالت و پورن
+              </h3>
+<p class="font-vazir text-body-sm text-on-surface-variant leading-relaxed">
+                سنگ آذرین بازالت متراکم برش‌خورده با فرز ۵ محوره، سنباده‌کاری خیس نانومتری و لایه زیرین عایق پورن ژاپن.
+              </p>
+</div>
+<div class="pt-space-md flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between font-mono">
+<span class="font-label-sm text-secondary">قیمت تحویل:</span>
+<span class="font-vazir font-bold text-headline-sm text-primary">۴,۶۰۰,۰۰۰ <span class="font-label-sm font-normal text-secondary">تومان</span></span>
+</div>
+<a class="w-full h-10 bg-surface-container-high text-primary font-label-md text-label-md flex items-center justify-center gap-space-xs group-hover:bg-primary group-hover:text-on-primary transition-colors" data-path="catalog" href="#">
+<span class="material-symbols-outlined text-sm">visibility</span>
+<span>بررسی مشخصات فنی</span>
+</a>
+</div>
+</div>
+</article>
+<!-- ITEM 3 -->
+<article class="bg-surface-container flex flex-col justify-between group hover:bg-surface-container-high transition-colors">
+<div class="relative w-full h-52 bg-surface-container-lowest overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A brutalist architectural Thunderbolt 4 passive docking station carved from a solid block of extruded deep blue-grey anodized aircraft grade alloy with heavy cooling fin heat dissipators, milled ports, minimalist precision chamfers, moody cinematic metallurgic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-cs9U1rLnwfSM7uuOi6Ihp8BCAoVlaqm4iZM3vGx3irlY1pmFCiQzAs1PlcKew8exevBR-sDwKVOv8m-Gc6ZaQHGHoNizNNbzMvPUXtx6UmO2XPntS69Olyq-p-Qk8vJxjlm9DWKIOP9t40Yc1CXLx6K3XoPSCbwM3dAdsK3kTyaMDnH2BdJCdaPSsSyzxPlrLQlax6NLTI4PHBu2OWqMO2JFbwZ-fTOy3iXkbkM"/>
+<div class="absolute top-space-xs right-space-xs bg-surface-container-lowest/90 px-space-xs py-0.5 font-label-sm text-label-sm text-secondary font-mono">
+              BATCH #TB4-PASSIVE
+            </div>
+<div class="absolute bottom-space-xs left-space-xs bg-surface px-space-xs py-0.5 font-label-sm text-label-sm text-primary font-mono">
+              موجودی: ۱ عدد
+            </div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-secondary font-mono">THERMAL_DISSIPATOR // SPEC_03</span>
+<h3 class="font-vazir font-bold text-headline-sm text-primary group-hover:text-secondary-fixed transition-colors">
+                داک استیشن ۱۲ پورت پسیو تاندربولت ۴
+              </h3>
+<p class="font-vazir text-body-sm text-on-surface-variant leading-relaxed">
+                رادیاتور خنک‌کننده پیوسته تراش‌خورده با جریان هوای طبیعی بدون فن، ۴۰Gbps پهنای باند و خروجی برق ۱۰۰ وات.
+              </p>
+</div>
+<div class="pt-space-md flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between font-mono">
+<span class="font-label-sm text-secondary">قیمت تحویل:</span>
+<span class="font-vazir font-bold text-headline-sm text-primary">۱۹,۸۰۰,۰۰۰ <span class="font-label-sm font-normal text-secondary">تومان</span></span>
+</div>
+<a class="w-full h-10 bg-surface-container-high text-primary font-label-md text-label-md flex items-center justify-center gap-space-xs group-hover:bg-primary group-hover:text-on-primary transition-colors" data-path="catalog" href="#">
+<span class="material-symbols-outlined text-sm">visibility</span>
+<span>بررسی مشخصات فنی</span>
+</a>
+</div>
+</div>
+</article>
+<!-- ITEM 4 -->
+<article class="bg-surface-container flex flex-col justify-between group hover:bg-surface-container-high transition-colors">
+<div class="relative w-full h-52 bg-surface-container-lowest overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Heavy industrial avionics monitor chassis stand GRD-MON-01, dark gunmetal finish, micro-machined counterbalanced hinge mechanisms with visible brass hex fasteners, monolithic slate aesthetic, extreme engineering precision, dramatic dark studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXWXNF6ew2FtvILEbLMuMPaFgjFUMXUDbaicGWolOY0FB6RTb1DQ-wDlLwt8jPDprSIm5w4xenmqE9E3HKlLE80Ip2bLgR7VQCMnfdRFQLSwkNHbd2nc6RjGzCftVarBGfoO0UmjyRniNe9Ii6O8JNmNhN6uO1CeVr9k_DrUWSSu02OcIzR6W1hCZMASe_JyD92Sj0pAOFrfRtTgJxKYQrntCpNW2T9LhfPPb6XXY"/>
+<div class="absolute top-space-xs right-space-xs bg-surface-container-lowest/90 px-space-xs py-0.5 font-label-sm text-label-sm text-secondary font-mono">
+              BATCH #GRD-MON-01
+            </div>
+<div class="absolute bottom-space-xs left-space-xs bg-surface px-space-xs py-0.5 font-label-sm text-label-sm text-primary font-mono">
+              موجودی: ۳ عدد
+            </div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1 justify-between">
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-secondary font-mono">AVIONICS_STAND // SPEC_04</span>
+<h3 class="font-vazir font-bold text-headline-sm text-primary group-hover:text-secondary-fixed transition-colors">
+                شاسی مانیتور هوانوردی GRD-MON-01
+              </h3>
+<p class="font-vazir text-body-sm text-on-surface-variant leading-relaxed">
+                مفصل بالانس وزنی دقیق برنج-فولاد، مانت استاندارد VESA 100x100 با تحمل وزن تا ۱۵ کیلوگرم بدون لرزش سازه.
+              </p>
+</div>
+<div class="pt-space-md flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between font-mono">
+<span class="font-label-sm text-secondary">قیمت تحویل:</span>
+<span class="font-vazir font-bold text-headline-sm text-primary">۱۶,۲۰۰,۰۰۰ <span class="font-label-sm font-normal text-secondary">تومان</span></span>
+</div>
+<a class="w-full h-10 bg-surface-container-high text-primary font-label-md text-label-md flex items-center justify-center gap-space-xs group-hover:bg-primary group-hover:text-on-primary transition-colors" data-path="catalog" href="#">
+<span class="material-symbols-outlined text-sm">visibility</span>
+<span>بررسی مشخصات فنی</span>
+</a>
+</div>
+</div>
+</article>
+</div>
+</div>
+</section>
+<!-- ENGINEERING SUPPORT & TELEMETRY DEBUG PANEL -->
+<section class="w-full bg-surface-container-lowest px-gutter py-space-xl">
+<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+<!-- Box 1: Support Escalation -->
+<div class="bg-surface-container p-space-lg flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm font-mono">
+<span class="material-symbols-outlined text-sm">support_agent</span>
+<span>DIRECT_SUPPORT_DESK</span>
+</div>
+<h3 class="font-vazir font-bold text-headline-sm text-primary">
+            ارتباط مستقیم با سرپرستی کارگاه
+          </h3>
+<p class="font-vazir text-body-sm text-on-surface-variant leading-relaxed">
+            در صورتی که پارت‌نامبر قطعه متوقف‌شده‌ای را دنبال می‌کنید، کارشناسان متالورژی گُردیه می‌توانند آرشیو نقشه‌های سال‌های قبل را بازخوانی کنند.
+          </p>
+</div>
+<a class="h-10 bg-surface-container-high text-primary font-label-md text-label-md flex items-center justify-center gap-space-xs hover:bg-surface-variant transition-colors" data-path="help-center" href="#">
+<span>ثبت تیکت فنی در مرکز راهنما [S18]</span>
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+</a>
+</div>
+<!-- Box 2: Fabrication Manifesto -->
+<div class="bg-surface-container p-space-lg flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm font-mono">
+<span class="material-symbols-outlined text-sm">architecture</span>
+<span>PHILOSOPHY_DOC</span>
+</div>
+<h3 class="font-vazir font-bold text-headline-sm text-primary">
+            مانیفست ساخت ابنیه و فرم‌های ماندگار
+          </h3>
+<p class="font-vazir text-body-sm text-on-surface-variant leading-relaxed">
+            مطالعه اصول طراحی بروتالیستی، کنترل تلورانس شمش‌های آلیاژی و رویکرد طراحی پایدار با عمر مفید چند دهه‌ای.
+          </p>
+</div>
+<a class="h-10 bg-surface-container-high text-primary font-label-md text-label-md flex items-center justify-center gap-space-xs hover:bg-surface-variant transition-colors" data-path="fabrication-manifesto" href="#">
+<span>مطالعه مانیفست ساخت [S17]</span>
+<span class="material-symbols-outlined text-sm">menu_book</span>
+</a>
+</div>
+<!-- Box 3: Realtime Node Diagnostics (HUD Widget) -->
+<div class="bg-surface-container p-space-lg flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between text-secondary font-label-sm text-label-sm font-mono">
+<span class="flex items-center gap-space-xs">
+<span class="w-1.5 h-1.5 bg-primary"></span>
+              NODE_TELEMETRY
+            </span>
+<span class="text-primary font-mono text-[10px]">PING: 14ms</span>
+</div>
+<h3 class="font-vazir font-bold text-headline-sm text-primary">
+            سامانه تشخیصی گره‌های سرور
+          </h3>
+<div class="bg-surface-container-lowest p-space-sm font-mono text-label-sm text-secondary flex flex-col gap-1 mt-space-xs">
+<div class="flex justify-between">
+<span>SQLITE_INDEX:</span>
+<span class="text-primary">SYNCED_WAL</span>
+</div>
+<div class="flex justify-between">
+<span>GEO_ROUTER:</span>
+<span class="text-secondary">IR-THR-NORTH-01</span>
+</div>
+<div class="flex justify-between">
+<span>HTTP_RESPONSE:</span>
+<span class="text-error">404 (OUT_OF_BOUNDS)</span>
+</div>
+<div class="flex justify-between">
+<span>UPTIME_REC:</span>
+<span class="text-primary">99.982%</span>
+</div>
+</div>
+</div>
+<button class="h-10 bg-surface-container-high text-secondary hover:text-primary font-label-md text-label-md flex items-center justify-center gap-space-xs transition-colors" onclick="window.history.back()">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>بازگشت به نقطه قبلی ناوبری</span>
+</button>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-lowest mt-space-xl"><div class="w-full px-gutter py-space-xl"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl"><div class="flex flex-col gap-space-md"><div class="flex items-center gap-space-sm"><span class="font-headline-sm text-headline-sm font-semibold text-primary">گُردیه</span><span class="font-label-sm text-label-sm text-secondary uppercase">PRECISION FABRICATION</span></div><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed text-justify">مجموعه مهندسی و متالورژی گُردیه؛ مرجع تخصصی ماشین‌کاری فوق دقیق ۵ محوره، تولید شیت‌های ساختاری و پوسته‌های معماری تیتانیوم، برنز اکسید و فولاد ابزار کروم-مولیبدن بر پایه استانداردهای تلورانس نانومتری.</p><div class="flex items-center gap-space-sm pt-space-xs"><div class="px-space-sm py-space-xs bg-surface-container-high text-primary font-label-sm text-label-sm">ISO 9001:2015 CERTIFIED</div><div class="px-space-sm py-space-xs bg-surface-container-high text-primary font-label-sm text-label-sm">MIL-SPEC COMPLIANT</div></div></div><div class="flex flex-col gap-space-md"><span class="font-label-lg text-label-lg uppercase text-primary tracking-wider">دسترسی‌های سیستمی</span><nav class="flex flex-col gap-space-sm font-body-sm text-body-sm" data-active-classes="text-primary font-bold"><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="catalog" href="#">کاتالوگ آثار معماری [S02]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="cnc-customization" href="#">ماژول سفارش‌سازی قطعات CNC</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="specifications" href="#">برگه مشخصات متالورژیک و آزمایشگاهی</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="order-tracking" href="#">پرتال رهگیری زنجیره ساخت [S10]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="qa-inspection" href="#">سامانه بازرسی ابعادی CMM</a></nav></div><div class="flex flex-col gap-space-md"><span class="font-label-lg text-label-lg uppercase text-primary tracking-wider">مستندات و استانداردها</span><nav class="flex flex-col gap-space-sm font-body-sm text-body-sm" data-active-classes="text-primary font-bold"><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="engineering-journal" href="#">مجله فنی مهندسی متالورژی [S15]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="fabrication-manifesto" href="#">مانیفست ساخت ابنیه پایدار [S17]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="help-center" href="#">مرکز راهنما و پایگاه دانش [S18]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="material-safety" href="#">پروتکل‌های ایمنی زیست‌محیطی شمش</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="api-docs" href="#">رابط‌های نرم‌افزاری CAD/CAM API</a></nav></div><div class="flex flex-col gap-space-md"><span class="font-label-lg text-label-lg uppercase text-primary tracking-wider">تاسیسات و موقعیت فیزیکی</span><div class="font-body-sm text-body-sm text-on-surface-variant flex flex-col gap-space-sm"><div class="flex items-start gap-space-xs"><span class="material-symbols-outlined text-sm text-secondary mt-0.5">location_on</span><span>تهران، منطقه صنعتی شمال، بلوار صنعت، فاز ۲ متالورژی سنگین، پلاک ۴۴، تاسیسات پایلوت گُردیه</span></div><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-sm text-secondary">call</span><span class="font-label-sm text-label-sm text-secondary" dir="ltr">+98 (21) 8800-4491</span></div><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-sm text-secondary">terminal</span><span class="font-label-sm text-label-sm text-secondary" dir="ltr">SECURE: ops@gordiyeh.eng</span></div></div><div class="p-space-sm bg-surface-container-high text-secondary font-label-sm text-label-sm flex items-center justify-between"><span>TELEMETRY: ACTIVE</span><span class="w-2 h-2 bg-primary"></span></div></div></div><div class="mt-space-xl pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md text-secondary font-label-sm text-label-sm"><div class="flex items-center gap-space-sm"><span>© ۲۰۲۵ پلتفرم معماری و صنایع ماشین‌کاری گُردیه (GORDIYEH CNC ARCHITECTURE). تمامی حقوق محفوظ است.</span></div><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm text-secondary">SHA-256 SIGNED BUILD 9.4.1</span><a class="text-secondary hover:text-primary transition-colors" data-path="privacy-terms" href="#">حریم خصوصی و الزامات حقوقی</a></div></div></div></footer></body></html>

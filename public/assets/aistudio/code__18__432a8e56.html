@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="rtl" lang="fa"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;font-family:'Vazirmatn',sans-serif;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-low":"#0b1c32","on-secondary-fixed-variant":"#2b4963","secondary-fixed-dim":"#abcae8","outline-variant":"#49473f","on-primary-fixed-variant":"#494739","on-primary":"#323124","on-error-container":"#ffdad6","primary-container":"#e7e3d0","surface-container-highest":"#26354d","outline":"#949187","tertiary-fixed-dim":"#b0c8ea","tertiary":"#ffffff","surface-bright":"#2a3a51","error-container":"#93000a","error":"#ffb4ab","on-secondary-fixed":"#001d31","secondary-container":"#2b4963","background":"#02142a","on-secondary-container":"#9ab8d6","on-secondary":"#12334b","on-surface-variant":"#cac6bb","surface-container-high":"#1a2a41","on-background":"#d5e3ff","on-tertiary-fixed-variant":"#304864","on-tertiary-fixed":"#001d36","on-primary-container":"#676556","secondary-fixed":"#cce5ff","inverse-surface":"#d5e3ff","surface-dim":"#02142a","tertiary-container":"#d1e4ff","secondary":"#abcae8","primary":"#ffffff","surface-tint":"#cbc7b5","tertiary-fixed":"#d1e4ff","primary-fixed-dim":"#cbc7b5","on-surface":"#d5e3ff","inverse-primary":"#615f50","surface-container-lowest":"#000e23","on-error":"#690005","primary-fixed":"#e7e3d0","on-tertiary":"#18324c","surface":"#02142a","on-primary-fixed":"#1d1c10","surface-container":"#0f2036","inverse-on-surface":"#213148","surface-variant":"#26354d","on-tertiary-container":"#4e6683"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-xl":"2.5rem","margin":"3rem","space-sm":"0.5rem","margin-mobile":"1rem","space-xs":"0.25rem","gutter":"1.5rem","space-md":"1rem","space-lg":"1.5rem","gutter-mobile":"0.75rem"},fontFamily:{"label-lg":["JetBrains Mono"],"headline-xl":["Space Grotesk"],"body-sm":["Geist"],"headline-lg-mobile":["Space Grotesk"],"headline-lg":["Space Grotesk"],"headline-md":["Space Grotesk"],"body-md":["Geist"],"headline-sm":["Space Grotesk"],"body-lg":["Geist"],"headline-xl-mobile":["Space Grotesk"],"label-md":["JetBrains Mono"],"label-sm":["JetBrains Mono"]},fontSize:{"label-lg":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0.04em","fontWeight":"500"}],"headline-xl":["3.5rem",{"lineHeight":"4rem","letterSpacing":"-0.03em","fontWeight":"700"}],"body-sm":["0.8125rem",{"lineHeight":"1.25rem","letterSpacing":"0.01em","fontWeight":"400"}],"headline-lg-mobile":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg":["2.5rem",{"lineHeight":"3rem","letterSpacing":"-0.025em","fontWeight":"600"}],"headline-md":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.015em","fontWeight":"600"}],"body-md":["0.9375rem",{"lineHeight":"1.5rem","letterSpacing":"0em","fontWeight":"400"}],"headline-sm":["1.25rem",{"lineHeight":"1.75rem","letterSpacing":"-0.01em","fontWeight":"500"}],"body-lg":["1.125rem",{"lineHeight":"1.75rem","letterSpacing":"-0.01em","fontWeight":"400"}],"headline-xl-mobile":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.02em","fontWeight":"700"}],"label-md":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.06em","fontWeight":"500"}],"label-sm":["0.6875rem",{"lineHeight":"0.875rem","letterSpacing":"0.08em","fontWeight":"400"}]}}}}</script></head><body class="bg-background text-on-surface antialiased selection:bg-secondary-container selection:text-secondary"><aside class="fixed right-0 top-0 h-full w-72 bg-surface-container border-l border-outline-variant/40 z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="flex flex-col"><div class="h-16 px-space-md border-b border-outline-variant/40 flex items-center justify-between bg-surface-container-low"><div class="flex items-center gap-space-xs"><span class="w-2 h-2 bg-primary"></span><span class="font-headline-sm text-headline-sm uppercase tracking-wider text-primary font-bold">GORDIYEH</span></div><span class="font-label-sm text-label-sm text-secondary bg-surface-container-high px-space-xs py-0.5 border border-outline-variant/30 font-mono">v4.8.2-WAL</span></div><div class="px-space-md py-space-sm bg-surface-container-lowest/60 border-b border-outline-variant/30 flex items-center justify-between"><span class="font-label-sm text-label-sm text-on-surface-variant font-mono uppercase tracking-widest">SYSTEM CORE / A-ROUTER</span><span class="font-label-sm text-label-sm text-secondary font-mono">OP-OS</span></div><nav class="flex flex-col p-space-xs space-y-1" data-active-classes="bg-surface-container-high text-primary border-r-2 border-primary font-semibold"><a class="flex items-center justify-between px-space-sm py-space-xs rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="operations-dashboard" href="#"><span class="flex items-center gap-space-xs"><span class="font-label-md text-label-md text-outline font-mono">A01</span><span class="font-body-md text-body-md">داشبورد عملیات</span></span><span class="w-1.5 h-1.5 bg-outline/50"></span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="receipts-war-room" href="#"><span class="flex items-center gap-space-xs"><span class="font-label-md text-label-md text-outline font-mono">A02</span><span class="font-body-md text-body-md">اتاق جنگ فیش‌ها</span></span><span class="w-1.5 h-1.5 bg-outline/50"></span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="metallurgy-inventory" href="#"><span class="flex items-center gap-space-xs"><span class="font-label-md text-label-md text-outline font-mono">A04</span><span class="font-body-md text-body-md">انبار متالورژی</span></span><span class="w-1.5 h-1.5 bg-outline/50"></span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="security-and-encryption" href="#"><span class="flex items-center gap-space-xs"><span class="font-label-md text-label-md text-outline font-mono">A05</span><span class="font-body-md text-body-md">امنیت و رمزنگاری</span></span><span class="w-1.5 h-1.5 bg-outline/50"></span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="editorial-articles" href="#"><span class="flex items-center gap-space-xs"><span class="font-label-md text-label-md text-outline font-mono">A06</span><span class="font-body-md text-body-md">تحریریه مقالات</span></span><span class="w-1.5 h-1.5 bg-outline/50"></span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="vip-helpdesk" href="#"><span class="flex items-center gap-space-xs"><span class="font-label-md text-label-md text-outline font-mono">A07</span><span class="font-body-md text-body-md">هلپ‌دسک VIP</span></span><span class="w-1.5 h-1.5 bg-outline/50"></span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="knowledge-base" href="#"><span class="flex items-center gap-space-xs"><span class="font-label-md text-label-md text-outline font-mono">A08</span><span class="font-body-md text-body-md">پایگاه دانش</span></span><span class="w-1.5 h-1.5 bg-outline/50"></span></a></nav></div><div class="p-space-md border-t border-outline-variant/40 bg-surface-container-low/80 flex flex-col gap-space-xs"><div class="flex items-center justify-between text-on-surface-variant font-mono font-label-sm text-label-sm"><span>LATENCY_SYNC</span><span class="text-secondary">1.42ms</span></div><div class="flex items-center justify-between text-on-surface-variant font-mono font-label-sm text-label-sm"><span>CRYPTO_NODE</span><span class="text-primary">STABLE // RSA-4096</span></div></div></aside><div class="pr-72"><header class="fixed top-0 right-72 left-0 h-16 bg-surface-container/90 backdrop-blur-xl border-b border-outline-variant/40 z-40 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-md"><img alt="High-end minimalist architectural portal archway emblem logo for commerce brand 'GORDIYEH' and Persian 'گردیه', adapting and evolving selected canvas reference IMAGE_78. Pure monochrome black vector on stark flat white background. A slender, elegant vertical portal arch structure with a subtle modernist stepped threshold at the base. Inside the archway: artistic yet ultra-legible Persian calligraphy 'گردیه' hovering above crisp, widely tracked typography 'GORDIYEH'. Pure 2D vector graphic, ultra-sharp vector contours, high elegance, no 3D." class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1U4GgT5BVVUMA3-A8NDiPyCO6XFQmVZxT3OJ3JUa5hM3Ti2fWUCOW6d6nVCl8KsaDq2bEVZnqU-JuQhiKwWKX97fCpfeYK7ljSVVeyEvYxn1C2T2M7qpusguPT7_DLTk3g1p_PBTruaPD3GYRpKX5z6i3iQESVJQihRXIEVPo2W7jJ2mmQgqfKC46v76QoxpWDGMW6O9XxiG3fYf0R0kwqEkiZW7q49azGcRgs1Txag"/><div class="hidden lg:flex items-center gap-space-xs border-r border-outline-variant/40 pr-space-md mr-space-xs"><span class="font-headline-sm text-headline-sm text-primary font-bold">سامانه پایش متالورژی و فرماندهی گردیه</span><span class="font-label-sm text-label-sm text-on-surface-variant font-mono">[OBSIDIAN_CORE]</span></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1 bg-surface-container-high border border-outline-variant/40 rounded"><span class="w-2 h-2 rounded-full bg-secondary-fixed-dim animate-pulse"></span><span class="font-label-sm text-label-sm font-mono text-secondary-fixed-dim uppercase">SQLite WAL: ACTIVE</span></div><div class="hidden md:flex items-center gap-space-xs px-space-sm py-1 bg-surface-container-low border border-outline-variant/40 rounded font-mono font-label-sm text-label-sm text-on-surface-variant"><span>CPU:</span><span class="text-primary font-bold">08.4%</span><span class="text-outline-variant">|</span><span>MEM:</span><span class="text-primary font-bold">4.12GB</span></div><div class="flex items-center gap-space-xs pl-space-xs border-l border-outline-variant/40"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden sm:flex flex-col text-right"><span class="font-label-md text-label-md text-primary font-bold leading-none">مهندس ارشد سیستم</span><span class="font-label-sm text-label-sm text-on-surface-variant font-mono">SEC_AUTH: 0x9AF2</span></div></div></div></header><main class="w-full pt-16 bg-background px-space-lg py-space-md min-h-screen"><div class="flex flex-col w-full gap-space-lg">
+<!-- TOP TELEMETRY & SLA COMMAND BAR (Zero ambient shadows, brutalist tonal tiering) -->
+<section class="w-full bg-surface-container-low p-space-md flex flex-col xl:flex-row items-stretch justify-between gap-space-md">
+<!-- Telemetry Badges & Context Rubric -->
+<div class="flex flex-col justify-between gap-space-xs min-w-0">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-label-sm text-label-sm font-mono text-secondary bg-surface-container-high px-space-xs py-0.5">AUTH_SCOPE: VIP_CONCIERGE // LVL-4</span>
+<span class="font-label-sm text-label-sm font-mono text-outline">TERMINAL_ID: GOR-VIP-A07</span>
+<span class="flex items-center gap-1.5 text-secondary text-label-sm font-mono">
+<span class="w-2 h-2 bg-primary"></span>
+          پروتکل استجابت آنی فعال
+        </span>
+</div>
+<div class="flex items-baseline gap-space-md">
+<h1 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">میز پاسخگویی تیکت‌های پشتیبانی VIP و خدمات متالورژی</h1>
+<span class="font-label-md text-label-md font-mono text-on-surface-variant">NODE_A07</span>
+</div>
+</div>
+<!-- 4 Key SLA Architectural Instrumentation Blocks -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-sm">
+<!-- KPI 1 -->
+<div class="bg-surface-container p-space-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant uppercase">پرونده‌های فعال VIP</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">inbox</span>
+</div>
+<div class="flex items-baseline gap-space-xs mt-space-xs">
+<span class="font-headline-md text-headline-md font-mono text-primary font-bold">۱۲</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">CASES</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 mt-space-xs">
+<div class="bg-primary h-1" style="width: 65%;"></div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container p-space-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant uppercase">پاسخ اولیه SLA</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+</div>
+<div class="flex items-baseline gap-space-xs mt-space-xs">
+<span class="font-headline-md text-headline-md font-mono text-primary font-bold">۰۴:۲۰</span>
+<span class="font-label-sm text-label-sm text-secondary font-mono">MIN</span>
+</div>
+<div class="flex items-center gap-1 mt-space-xs text-label-sm font-mono text-secondary">
+<span class="material-symbols-outlined text-[12px]">check_circle</span>
+<span>۹۸.۳٪ درون تارگت</span>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container p-space-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant uppercase">شاخص رضایت اعیان</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+</div>
+<div class="flex items-baseline gap-space-xs mt-space-xs">
+<span class="font-headline-md text-headline-md font-mono text-primary font-bold">۹۸.۷٪</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">CSAT</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 mt-space-xs">
+<div class="bg-primary h-1" style="width: 98.7%;"></div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container p-space-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant uppercase">ارجاع به آزمایشگاه</span>
+<span class="material-symbols-outlined text-[16px] text-primary">biotech</span>
+</div>
+<div class="flex items-baseline gap-space-xs mt-space-xs">
+<span class="font-headline-md text-headline-md font-mono text-primary font-bold">۲</span>
+<span class="font-label-sm text-label-sm text-secondary font-mono">VICKERS_HV</span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-outline mt-space-xs">تست آلتراسونیک و سختی</span>
+</div>
+</div>
+</section>
+<!-- MAIN DUAL-PANE COCKPIT (Queue & Detailed Selected VIP Case File) -->
+<section class="grid grid-cols-1 xl:grid-cols-12 gap-space-md w-full items-start">
+<!-- LEFT SIDE: VIP TICKETS QUEUE (Col 1-4) -->
+<div class="xl:col-span-4 flex flex-col gap-space-sm">
+<!-- Filter and Status Tools -->
+<div class="bg-surface-container p-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-md text-label-md font-bold text-primary">صف نوبت مشتریان اعیان</span>
+<span class="font-label-sm text-label-sm font-mono bg-surface-container-high px-1.5 py-0.5 text-secondary">۸ منتظر</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="bg-surface-container-high hover:bg-secondary-container text-primary p-1 text-label-sm transition-colors" title="فیلتر اولویت">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+</button>
+<button class="bg-surface-container-high hover:bg-secondary-container text-primary p-1 text-label-sm transition-colors" title="تازه‌سازی صف">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+</button>
+</div>
+</div>
+<!-- Ticket Queue Item: 1 (SELECTED CASE - ACTIVE STATE) -->
+<div class="bg-surface-container-high p-space-md flex flex-col gap-space-xs cursor-pointer relative" id="ticket-item-1">
+<div class="absolute right-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="flex items-center justify-between pl-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm font-mono px-1 bg-surface-container-lowest text-secondary">#TK-8941</span>
+<span class="font-label-sm text-label-sm font-mono text-error font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-error"></span> فوق‌بحرانی
+            </span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-outline">۱۲ دقیقه پیش</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary font-bold mt-1">کالیبراسیون زاویه اکویشن سوئیچ‌های تیتانیوم KB75 Monolith</h2>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant mt-1">
+<span>دکتر علیرضا صدری (عضو هیئت امنا)</span>
+<span class="font-label-sm text-label-sm font-mono text-secondary">KB75-TI-9082</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs mt-1 bg-surface-container p-space-xs">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant">ارجاع: کارگاه فرزکاری دقیق</span>
+<span class="font-label-sm text-label-sm font-mono text-primary bg-surface-container-highest px-1.5 py-0.5">LAB_STAGE_2</span>
+</div>
+</div>
+<!-- Ticket Queue Item: 2 -->
+<div class="bg-surface-container p-space-md flex flex-col gap-space-xs cursor-pointer hover:bg-surface-container-high transition-colors" id="ticket-item-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm font-mono px-1 bg-surface-container-lowest text-secondary">#TK-8939</span>
+<span class="font-label-sm text-label-sm font-mono text-secondary bg-surface-container-high px-1">استعلام هوانوردی</span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-outline">۳۵ دقیقه پیش</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary font-medium">ردگیری محموله شمش برنز فسفر و بارنامه ماهان-کارگو فرودگاه امام</h2>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span>مهندس فرزام پیروز</span>
+<span class="font-label-sm text-label-sm font-mono text-outline">AWB: 084-91029</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<span class="font-label-sm text-label-sm font-mono text-secondary">گمرک پاویون VIP تهران</span>
+<span class="font-label-sm text-label-sm font-mono text-outline">ترخیص موقت</span>
+</div>
+</div>
+<!-- Ticket Queue Item: 3 -->
+<div class="bg-surface-container p-space-md flex flex-col gap-space-xs cursor-pointer hover:bg-surface-container-high transition-colors" id="ticket-item-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm font-mono px-1 bg-surface-container-lowest text-secondary">#TK-8935</span>
+<span class="font-label-sm text-label-sm font-mono text-primary bg-surface-container-highest px-1">بررسی فریمور متالیک</span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-outline">۱ ساعت پیش</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary font-medium">ناسازگاری فریمور v2.4 سنسور هال افکت داک استیشن دمشقی</h2>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span>بانو شمس‌آوری (استودیو مانی)</span>
+<span class="font-label-sm text-label-sm font-mono text-outline">DS-DAMASCUS-04</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant">کنترل کیفیت فیزیکی تایید شد</span>
+<span class="font-label-sm text-label-sm font-mono text-secondary">پچ در صف OTA</span>
+</div>
+</div>
+<!-- Ticket Queue Item: 4 -->
+<div class="bg-surface-container p-space-md flex flex-col gap-space-xs cursor-pointer hover:bg-surface-container-high transition-colors" id="ticket-item-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm font-mono px-1 bg-surface-container-lowest text-secondary">#TK-8928</span>
+<span class="font-label-sm text-label-sm font-mono text-outline bg-surface-container-high px-1">سفارشی‌سازی نقره</span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-outline">۳ ساعت پیش</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary font-medium">درخواست حکاکی لیزری نشان خاندان صنیع‌الملک روی پلاک شاسی</h2>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+<span>جناب صنیع‌الملک</span>
+<span class="font-label-sm text-label-sm font-mono text-outline">CH-SLV-0019</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant">تاییدیه خط و اسکن میکرومتری</span>
+<span class="font-label-sm text-label-sm font-mono text-primary">تایید گرافیکی</span>
+</div>
+</div>
+<!-- Quick Action: Shift Filter / Archive -->
+<div class="p-space-sm bg-surface-container-low flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-mono text-outline">صفحه ۱ از ۴ (۳۸ پرونده بایگانی)</span>
+<button class="bg-surface-container-highest hover:bg-primary hover:text-on-primary text-primary px-space-sm py-1 font-label-sm text-label-sm font-mono transition-colors">
+          بارگذاری موارد کهنه
+        </button>
+</div>
+</div>
+<!-- RIGHT SIDE: SELECTED CASE DETAILED WORKBENCH (Col 5-12) -->
+<div class="xl:col-span-8 flex flex-col gap-space-md">
+<!-- 1. VIP Identity & Metallurgic Spec Card -->
+<div class="bg-surface-container p-space-md flex flex-col gap-space-md relative overflow-hidden">
+<!-- Visual Accent Corner Marker -->
+<div class="absolute top-0 left-0 bg-primary text-on-primary px-space-sm py-0.5 font-label-sm text-label-sm font-mono uppercase font-bold">
+          VIP_PASSPORT: LEVEL_ALPHA
+        </div>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-sm pt-space-xs">
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm font-mono text-secondary">پرونده: TK-8941 // شاسی اختصاصی تیتانیوم گرید ۵</span>
+<span class="w-1.5 h-1.5 bg-primary"></span>
+<span class="font-label-sm text-label-sm font-mono text-primary">GARANTY_ACTIVE</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary font-bold mt-1">دکتر علیرضا صدری</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">عضو دائمی کلوب صنعت‌گران متالورژی گُردیه و دارنده ۳ شاسی مونوکرافت</p>
+</div>
+<div class="flex flex-wrap items-center gap-space-xs">
+<button class="bg-surface-container-high hover:bg-surface-container-highest text-primary px-space-sm py-space-xs font-label-sm text-label-sm font-mono transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">call</span>
+              تماس امن رمزگذاری شده
+            </button>
+<button class="bg-primary hover:bg-secondary text-on-primary px-space-sm py-space-xs font-label-sm text-label-sm font-mono font-bold transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+              تغییر وضعیت پرونده
+            </button>
+</div>
+</div>
+<!-- Spec Data Grid with Architectural Tonal Insets -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-xs bg-surface-container-lowest p-space-xs">
+<div class="bg-surface-container p-space-sm">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant block">شماره سفارش رسمی</span>
+<span class="font-label-md text-label-md font-mono text-primary font-bold mt-1 block">GOR-ORD-2024-9182</span>
+</div>
+<div class="bg-surface-container p-space-sm">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant block">شناسه ریخته‌گری شاسی</span>
+<span class="font-label-md text-label-md font-mono text-secondary font-bold mt-1 block">TI-6AL-4V // LOT_88</span>
+</div>
+<div class="bg-surface-container p-space-sm">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant block">پوشش گارانتی</span>
+<span class="font-label-md text-label-md font-mono text-primary font-bold mt-1 block">۳۶ ماه تعویض بی‌قید</span>
+</div>
+<div class="bg-surface-container p-space-sm">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant block">ناظر آزمایشگاه</span>
+<span class="font-label-md text-label-md font-mono text-secondary font-bold mt-1 block">دکتر کیا (سختی‌سنجی)</span>
+</div>
+</div>
+</div>
+<!-- 2. Architectural Audit Trail / Case Timeline -->
+<div class="bg-surface-container p-space-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">timeline</span>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">تاریخچه مکاتبات رسمی حاکمیتی و فنی</h3>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-outline">SECURE_CHAIN // 4 ENTRIES</span>
+</div>
+<!-- Entry 1: VIP Client Original Ticket Issue -->
+<div class="bg-surface-container-low p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-md text-label-md text-primary font-bold">دکتر علیرضا صدری</span>
+<span class="font-label-sm text-label-sm font-mono bg-surface-container px-1 text-secondary">مشتری VIP</span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-outline">امروز - ساعت ۰۹:۱۴</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed mt-1">
+            درود بر تیم مهندسی گُردیه. در فرآیند تایپ ممتد با سوئیچ‌های تیتانیومی روی شاسی KB75 Monolith، زاویه اکویشن کلید Space و ردیف Tab با زاویه لبه ارگونومیک سازگاری تلورانس ۰.۰۲ میلی‌متر گزارش‌شده همخوانی ندارد. صدای بازخورد برخورد استم تیتانیومی فرکانس بمی حدود ۴۲۰ هرتز تولید می‌کند که نشان از خروج زاویه از محدوده دقیق ۱.۲ درجه دارد. فایل ضبط های‌فای استودیو ارسال گردید.
+          </p>
+<div class="mt-space-xs flex items-center gap-space-sm bg-surface-container-high p-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">graphic_eq</span>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between text-label-sm font-mono">
+<span class="text-primary truncate">Acoustic_Resonance_96kHz_Master.flac</span>
+<span class="text-secondary">42.8 MB // 96kHz 24-bit</span>
+</div>
+<!-- Inline Audio Waveform Representation -->
+<div class="w-full h-4 flex items-center gap-0.5 mt-1">
+<div class="w-1 bg-secondary h-2"></div>
+<div class="w-1 bg-secondary h-4"></div>
+<div class="w-1 bg-secondary h-3"></div>
+<div class="w-1 bg-primary h-4"></div>
+<div class="w-1 bg-primary h-3"></div>
+<div class="w-1 bg-secondary h-1"></div>
+<div class="w-1 bg-secondary h-3"></div>
+<div class="w-1 bg-primary h-4"></div>
+<div class="w-1 bg-secondary h-2"></div>
+<div class="w-1 bg-outline h-1"></div>
+<div class="w-1 bg-secondary h-3"></div>
+<div class="w-1 bg-primary h-4"></div>
+<div class="w-1 bg-secondary h-2"></div>
+<div class="w-1 bg-secondary h-3"></div>
+<div class="w-1 bg-secondary h-1"></div>
+<div class="w-1 bg-primary h-4"></div>
+<div class="w-1 bg-secondary h-2"></div>
+<div class="w-1 bg-outline h-1"></div>
+<div class="w-1 bg-secondary h-3"></div>
+<div class="w-1 bg-primary h-4"></div>
+</div>
+</div>
+<button class="bg-surface-container-lowest hover:bg-surface-container px-space-xs py-1 text-label-sm font-mono text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+              پخش
+            </button>
+</div>
+</div>
+<!-- Entry 2: Internal Confidential Workshop Note (Petrol / High Contrast styling) -->
+<div class="bg-secondary-container/30 p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">lock</span>
+<span class="font-label-md text-label-md text-primary font-bold">یادداشت محرمانه داخلی کارگاه فرزکاری پنج‌محوره CNC</span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-secondary">امروز - ساعت ۰۹:۳۸ // CONFIDENTIAL</span>
+</div>
+<p class="font-body-md text-body-md text-on-secondary-container leading-relaxed">
+            گزارش مهندس ناصری: بازبینی جی‌کد سری LOT_88 نشان داد در مرحله ماشین‌کاری ثانویه اسلات کلید Space، به علت تغییر نرخ فرسایش الماسه اندمیل ۰.۵ میکرونی، خطای زاویه‌ای معادل ۰.۰۱۸ درجه ایجاد شده است. با اینکه تلورانس نهایی در محدوده استانداردهای تجاری است، اما با معیارهای لوکس ارگونومی گُردیه مغایرت دارد. شاسی جایگزین با متالورژی تیتانیوم کوره خلأ آماده و تست ارتعاش هارمونیک با موفقیت گذرانده شده است.
+          </p>
+<div class="flex items-center gap-space-md mt-space-xs font-mono font-label-sm text-label-sm text-primary">
+<span>آزمون سختی ویکرز: ۳۹۲ HV</span>
+<span>انحراف زاویه: ۰.۰۰۲ درجه (ایده‌آل)</span>
+</div>
+</div>
+<!-- Entry 3: Formal Official Engineering Response with Digital Seal -->
+<div class="bg-surface-container-high p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-md text-label-md text-primary font-bold">دکتر مسعود کیا (سرپرست آزمایشگاه متالورژی)</span>
+<span class="font-label-sm text-label-sm font-mono bg-surface-container-lowest px-1 text-primary">پاسخ رسمی مهندسی</span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-outline">امروز - ساعت ۱۰:۰۲</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+            جناب دکتر صدری گرامی، مراتب آزمون فرکانسی اسپکتروگرام فایل ارسالی با پایگاه داده رزونانس کارگاه مطابقت داده شد. دقت نظر جنابعالی در تشخیص ارتعاش ۴۲۰ هرتز نشان‌دهنده تبحر بی‌نظیر شماست. بلافاصله دستور خروج شاسی شماره جایگزین کالیبره شده با شماره ریخته‌گری TI-6AL-4V/9091 از انبار مرکزی تهران با پروتکل پیک اختصاصی صادر شد. شاسی پیشین نیز در محل با حضور کارشناس متالورژی ما با احترام بازپس گرفته خواهد شد.
+          </p>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+<span class="font-label-sm text-label-sm font-mono text-primary font-bold">مهر دیجیتال تاییدیه متالورژی کارگاه گُردیه (SHA-512: 8f9b...a1)</span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-outline">ارسال شده به ایمیل و پیام‌رسان امن VIP</span>
+</div>
+</div>
+</div>
+<!-- 3. Engineering Formal Response Composer Console -->
+<div class="bg-surface-container p-space-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">terminal</span>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">کنسول صدور پاسخ رسمی و دستورات متالورژی</h3>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm font-mono text-secondary">حالت کاربری:</span>
+<span class="font-label-sm text-label-sm font-mono bg-surface-container-lowest px-2 py-0.5 text-primary">SUPERVISOR_RW</span>
+</div>
+</div>
+<!-- Canned Responses Quick Metallurgic Pills -->
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant">پاسخ‌های آماده تخصصی متالورژی و استانداردهای صنعتی (Canned Responses):</span>
+<div class="flex flex-wrap items-center gap-space-xs">
+<button class="bg-surface-container-lowest hover:bg-surface-container-high text-on-surface hover:text-primary px-space-xs py-1 font-label-sm text-label-sm font-mono transition-colors" onclick="insertCanned('ارسال شاسی تیتانیوم کالیبره جدید با پیک حفاظتی')">
+              + ارسال شاسی کالیبره جدید
+            </button>
+<button class="bg-surface-container-lowest hover:bg-surface-container-high text-on-surface hover:text-primary px-space-xs py-1 font-label-sm text-label-sm font-mono transition-colors" onclick="insertCanned('هماهنگی آزمون سختی‌سنجی ویکرز و تست تنش در آزمایشگاه')">
+              + فراخوان تست سختی‌سنجی HV
+            </button>
+<button class="bg-surface-container-lowest hover:bg-surface-container-high text-on-surface hover:text-primary px-space-xs py-1 font-label-sm text-label-sm font-mono transition-colors" onclick="insertCanned('صدور بارنامه هوایی اختصاصی ماهان-کارگو فرودگاه امام')">
+              + صدور بارنامه هوانوردی ماهان
+            </button>
+<button class="bg-surface-container-lowest hover:bg-surface-container-high text-on-surface hover:text-primary px-space-xs py-1 font-label-sm text-label-sm font-mono transition-colors" onclick="insertCanned('بروزرسانی فرمور سنسور هال افکت با کالیبراسیون دستی')">
+              + کالیبراسیون زاویه اکویشن
+            </button>
+</div>
+</div>
+<!-- Textarea with Monolithic Dark Surface -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between text-label-sm font-mono text-outline">
+<span>متن ابلاغیه مهندسی گُردیه</span>
+<span>تعداد کاراکتر: <span id="char-counter">۱۹۲</span> / ۴۰۰۰</span>
+</div>
+<textarea class="w-full bg-surface-container-lowest p-space-md font-body-md text-body-md text-primary placeholder-on-surface-variant/40 focus:outline-none focus:bg-surface-container-low transition-colors resize-none leading-relaxed" id="reply-box" placeholder="متن پاسخ مکتوب یا دستورات فنی کارگاهی را اینجا بنویسید..." rows="5">بسته اختصاصی شاسی کالیبره‌شده KB75 Monolith با هاردباکس کربنی و گواهی آزمون متالورژی آزمایشگاه مرکزی پلمپ گردید. مرسوله توسط نماینده ویژه گُردیه تا ساعت ۱۶:۰۰ تحویل دفتر جناب صدری خواهد شد.</textarea>
+</div>
+<!-- Action Command Buttons (Primary brutalist luxury style) -->
+<div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-sm pt-space-xs">
+<div class="flex flex-wrap items-center gap-space-xs">
+<!-- Laboratory Certificate Attachment Button -->
+<button class="bg-surface-container-high hover:bg-surface-container-highest text-primary px-space-sm py-space-xs font-label-sm text-label-sm font-mono transition-colors flex items-center gap-1.5" onclick="triggerLabModal()">
+<span class="material-symbols-outlined text-[16px]">attachment</span>
+              الصاق تاییدیه آزمایشگاه متالورژی
+            </button>
+<!-- Refer Direct to Workshop Master Button -->
+<button class="bg-surface-container-high hover:bg-surface-container-highest text-secondary px-space-sm py-space-xs font-label-sm text-label-sm font-mono transition-colors flex items-center gap-1.5" onclick="referWorkshop()">
+<span class="material-symbols-outlined text-[16px]">engineering</span>
+              ارجاع مستقیم به سرپرست کارگاه فرزکاری
+            </button>
+</div>
+<!-- Dispatch Release Order for Calibrated Chassis from Central Warehouse -->
+<div class="flex items-center gap-space-xs">
+<button class="bg-primary hover:bg-secondary text-on-primary px-space-md py-space-xs font-label-sm text-label-sm font-mono uppercase font-bold tracking-wider transition-colors flex items-center gap-2" onclick="issueDispatchOrder()">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+              صدور حواله خروج شاسی کالیبره از انبار تهران
+            </button>
+</div>
+</div>
+<!-- Action Feedback Banner (Interactive JS target) -->
+<div class="hidden bg-surface-container-highest p-space-sm flex items-center justify-between" id="dispatch-banner">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+<span class="font-body-md text-body-md text-primary font-bold">حواله شماره WH-OUT-9912 صادر شد: شاسی کالیبره‌شده TI-6AL-4V/9091 به واحد ارسال تحویل گردید.</span>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-secondary">پیک اختصاصی: اعزام فوری</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive JavaScript logic for micro-actions and Canned Response Injection -->
+<script>
+    function insertCanned(text) {
+      const replyBox = document.getElementById('reply-box');
+      if (replyBox) {
+        replyBox.value = replyBox.value ? replyBox.value + '\n' + text : text;
+        updateCharCount();
+      }
+    }
+
+    function updateCharCount() {
+      const replyBox = document.getElementById('reply-box');
+      const counter = document.getElementById('char-counter');
+      if (replyBox && counter) {
+        counter.innerText = replyBox.value.length;
+      }
+    }
+
+    const replyBoxEl = document.getElementById('reply-box');
+    if (replyBoxEl) {
+      replyBoxEl.addEventListener('input', updateCharCount);
+      updateCharCount();
+    }
+
+    function issueDispatchOrder() {
+      const banner = document.getElementById('dispatch-banner');
+      if (banner) {
+        banner.classList.remove('hidden');
+        banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function triggerLabModal() {
+      insertCanned('ضمیمه آزمایشگاه متالورژی: برگه تست سختی ویکرز (۳۹۲ HV) و آزمون آکوستیک ۴۲۰Hz به این پرونده پیوست گردید.');
+    }
+
+    function referWorkshop() {
+      insertCanned('دستور کار فوری به مهندس شیفت کارگاه پنج‌محوره CNC ابلاغ گردید تا تلورانس زاویه ۰.۰۱۸ درجه مجدداً روی شابلون آزمایش شود.');
+    }
+  </script>
+</div></main></div></body></html>

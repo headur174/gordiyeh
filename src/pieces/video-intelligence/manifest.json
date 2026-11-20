@@ -1,0 +1,22 @@
+{
+  "id": "piece_video_intelligence",
+  "name": "هوش ویدیویی و سیاست تازگی ۵-اسلات (Phase 10)",
+  "version": "1.0.0",
+  "category": "ai",
+  "grid": {
+    "defaultSpan": "full",
+    "minSpan": "half",
+    "maxSpan": "full"
+  },
+  "security": {
+    "allowedEmits": [
+      "v1.video.impression",
+      "v1.video.played"
+    ],
+    "allowedSubscribes": [
+      "v1.kernel.ready"
+    ]
+  },
+  "isOptional": true,
+  "fallbackBehavior": "skeleton"
+}

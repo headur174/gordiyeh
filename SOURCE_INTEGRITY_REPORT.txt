@@ -1,0 +1,17 @@
+SOURCE INTEGRITY VERIFICATION REPORT
+====================================
+Result: PASS
+Canonical File: commerce_os_original_source.txt
+Master Prompt File: commerce_os_aistudio_master_prompt.txt
+
+Expected UTF-8 Byte Length: 37384
+Extracted UTF-8 Byte Length: 37384
+Canonical Unicode Code-Point Count: 37175
+
+Expected SHA-256: eef54813e9bced992bd9438b74590999e60b616b2f35ea3f1fdc6d45d7e557e2
+Observed SHA-256: eef54813e9bced992bd9438b74590999e60b616b2f35ea3f1fdc6d45d7e557e2
+Match Status: EXACT 100% BYTE-FOR-BYTE MATCH
+
+Markers Verified:
+- <<<IMMUTABLE_SOURCE_BEGIN>>> at byte offset 5328
+- <<<IMMUTABLE_SOURCE_END>>> at byte offset 42742

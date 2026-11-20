@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="rtl" lang="fa"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Vazirmatn:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container-high": "#1a2a41", "outline-variant": "#49473f", "on-secondary-fixed": "#001d31", "secondary-container": "#2b4963", "tertiary-fixed": "#d1e4ff", "background": "#02142a", "on-background": "#d5e3ff", "on-error": "#690005", "surface-bright": "#2a3a51", "primary-fixed-dim": "#cbc7b5", "surface-container": "#0f2036", "secondary-fixed": "#cce5ff", "on-error-container": "#ffdad6", "inverse-primary": "#615f50", "primary": "#ffffff", "surface-container-lowest": "#000e23", "on-secondary": "#12334b", "on-secondary-container": "#9ab8d6", "primary-fixed": "#e7e3d0", "surface": "#02142a", "tertiary-fixed-dim": "#b0c8ea", "on-tertiary-fixed": "#001d36", "error": "#ffb4ab", "surface-variant": "#26354d", "secondary": "#abcae8", "inverse-surface": "#d5e3ff", "tertiary-container": "#d1e4ff", "on-tertiary": "#18324c", "surface-container-low": "#0b1c32", "on-primary-container": "#676556", "on-secondary-fixed-variant": "#2b4963", "surface-dim": "#02142a", "on-primary": "#323124", "on-surface-variant": "#cac6bb", "on-primary-fixed": "#1d1c10", "primary-container": "#e7e3d0", "tertiary": "#ffffff", "error-container": "#93000a", "outline": "#949187", "surface-container-highest": "#26354d", "inverse-on-surface": "#213148", "secondary-fixed-dim": "#abcae8", "on-primary-fixed-variant": "#494739", "on-surface": "#d5e3ff", "on-tertiary-fixed-variant": "#304864", "on-tertiary-container": "#4e6683", "surface-tint": "#cbc7b5" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-xs": "0.25rem", "space-md": "1rem", "space-xl": "2.5rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "margin-mobile": "1rem", "gutter-mobile": "0.75rem", "margin": "3rem", "gutter": "1.5rem" }, fontFamily: { "body-lg": ["Geist"], "headline-lg": ["Space Grotesk"], "label-sm": ["JetBrains Mono"], "headline-lg-mobile": ["Space Grotesk"], "label-lg": ["JetBrains Mono"], "body-sm": ["Geist"], "headline-md": ["Space Grotesk"], "label-md": ["JetBrains Mono"], "headline-sm": ["Space Grotesk"], "headline-xl": ["Space Grotesk"], "body-md": ["Geist"], "headline-xl-mobile": ["Space Grotesk"], "vazir": ["Vazirmatn", "sans-serif"] }, fontSize: { "body-lg": ["1.125rem", { lineHeight: "1.75rem", letterSpacing: "-0.01em", fontWeight: "400" }], "headline-lg": ["2.5rem", { lineHeight: "3rem", letterSpacing: "-0.025em", fontWeight: "600" }], "label-sm": ["0.6875rem", { lineHeight: "0.875rem", letterSpacing: "0.08em", fontWeight: "400" }], "headline-lg-mobile": ["1.75rem", { lineHeight: "2.25rem", letterSpacing: "-0.02em", fontWeight: "600" }], "label-lg": ["0.875rem", { lineHeight: "1.25rem", letterSpacing: "0.04em", fontWeight: "500" }], "body-sm": ["0.8125rem", { lineHeight: "1.25rem", letterSpacing: "0.01em", fontWeight: "400" }], "headline-md": ["1.75rem", { lineHeight: "2.25rem", letterSpacing: "-0.015em", fontWeight: "600" }], "label-md": ["0.75rem", { lineHeight: "1rem", letterSpacing: "0.06em", fontWeight: "500" }], "headline-sm": ["1.25rem", { lineHeight: "1.75rem", letterSpacing: "-0.01em", fontWeight: "500" }], "headline-xl": ["3.5rem", { lineHeight: "4rem", letterSpacing: "-0.03em", fontWeight: "700" }], "body-md": ["0.9375rem", { lineHeight: "1.5rem", letterSpacing: "0em", fontWeight: "400" }], "headline-xl-mobile": ["2.25rem", { lineHeight: "2.75rem", letterSpacing: "-0.02em", fontWeight: "700" }] } } } };</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-primary"><header class="fixed top-0 inset-x-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md"><div class="h-8 w-full px-gutter bg-surface-container-low flex items-center justify-between text-secondary font-label-sm text-label-sm"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs"><span class="w-1.5 h-1.5 bg-primary"></span><span class="uppercase tracking-wider">SQLite WAL Active</span></div><div class="hidden md:flex items-center gap-space-xs"><span class="material-symbols-outlined text-xs text-secondary">lock</span><span class="uppercase tracking-wider">Encrypted AES-256-GCM</span></div></div><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-xs text-secondary">dns</span><span class="tracking-wide">Node 01: Tehran North Facility [35.7219° N, 51.3347° E]</span></div></div><div class="h-20 w-full px-gutter flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md shrink-0"><img alt="High-end minimalist architectural portal archway emblem logo for commerce brand 'GORDIYEH' and Persian 'گردیه', adapting and evolving selected canvas reference IMAGE_78. Pure monochrome black vector on stark flat white background. A slender, elegant vertical portal arch structure with a subtle modernist stepped threshold at the base. Inside the archway: artistic yet ultra-legible Persian calligraphy 'گردیه' hovering above crisp, widely tracked typography 'GORDIYEH'. Pure 2D vector graphic, ultra-sharp vector contours, high elegance, no 3D." class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1U4GgT5BVVUMA3-A8NDiPyCO6XFQmVZxT3OJ3JUa5hM3Ti2fWUCOW6d6nVCl8KsaDq2bEVZnqU-JuQhiKwWKX97fCpfeYK7ljSVVeyEvYxn1C2T2M7qpusguPT7_DLTk3g1p_PBTruaPD3GYRpKX5z6i3iQESVJQihRXIEVPo2W7jJ2mmQgqfKC46v76QoxpWDGMW6O9XxiG3fYf0R0kwqEkiZW7q49azGcRgs1Txag"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm font-semibold text-primary tracking-tight">گُردیه</span><span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">GORDIYEH ARCHITECTURAL CNC</span></div></div><div class="hidden lg:flex flex-1 max-w-md mx-space-lg"><div class="relative w-full flex items-center bg-surface-container-high"><span class="material-symbols-outlined absolute right-space-sm text-secondary text-sm">search</span><input class="w-full bg-transparent pr-space-xl pl-space-md py-space-xs font-label-md text-label-md text-primary placeholder:text-secondary focus:outline-none focus:bg-surface-variant transition-colors" placeholder="جستجوی پارت‌نامبر قطعه متالورژی یا کد شیت CNC..." type="text"/></div></div><div class="flex items-center gap-space-md"><nav class="hidden xl:flex items-center gap-space-xs" data-active-classes="text-primary bg-surface-container-high"><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="catalog" href="#">کاتالوگ آثار [S02]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="cnc-customization" href="#">سفارشی‌سازی CNC</a><a aria-current="page" class="px-space-sm py-space-xs font-label-md transition-colors text-primary bg-surface-container-high" data-path="engineering-journal" href="#">مجله مهندسی [S15]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="fabrication-manifesto" href="#">مانیفست ساخت [S17]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="help-center" href="#">مرکز راهنما [S18]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="order-tracking" href="#">رهگیری سفارشات [S10]</a><a class="px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="cart" href="#">سبد خرید</a></nav><div class="flex items-center gap-space-sm"><a class="p-space-xs text-secondary hover:text-primary transition-colors relative" data-path="cart" href="#"><span class="material-symbols-outlined text-lg">shopping_bag</span><span class="absolute -top-1 -right-1 w-4 h-4 bg-primary text-on-primary font-label-sm text-[10px] flex items-center justify-center font-bold">0</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-28 bg-surface"><div class="flex flex-col w-full text-on-surface font-vazir" dir="rtl">
+<!-- HUD Status Bar / Technical Metadata Strip -->
+<div class="w-full bg-surface-container-low px-gutter py-space-xs flex flex-wrap items-center justify-between gap-space-sm font-label-sm text-label-sm text-secondary">
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-1.5 h-1.5 bg-primary"></span>
+<span>LAB PROTOCOL: S15-JOURNAL-REV4</span>
+</div>
+<div class="hidden sm:flex items-center gap-space-xs">
+<span class="text-secondary/60">||</span>
+<span>ISO 6892-1 METALLURGICAL TENSILE</span>
+</div>
+<div class="hidden md:flex items-center gap-space-xs">
+<span class="text-secondary/60">||</span>
+<span>CMM RESOLUTION: 0.05µm</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[13px] text-secondary">tune</span>
+<span dir="ltr">SPECTRAL RANGE: 20Hz - 48kHz</span>
+</div>
+<div class="px-space-xs py-0.5 bg-surface-container-high text-primary font-bold">
+<span>ARCHIVE: PUBLIC R&amp;D</span>
+</div>
+</div>
+</div>
+<!-- Header & Architectural Brand Rubric -->
+<section class="w-full px-gutter pt-space-xl pb-space-lg flex flex-col gap-space-lg bg-surface">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
+<div class="flex flex-col gap-space-xs max-w-4xl">
+<div class="flex items-center gap-space-xs text-secondary font-label-md text-label-md">
+<span class="material-symbols-outlined text-base">architecture</span>
+<span class="tracking-widest uppercase">GORDIYEH ACOUSTIC &amp; METALLURGY RESEARCH LABORATORY</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary font-extrabold tracking-tight leading-tight">
+          مجله تخصصی ستاپ، آکوستیک سازه و متالورژی دقیق گُردیه
+        </h1>
+<p class="font-body-lg text-body-lg text-secondary leading-relaxed pt-space-xs">
+          مقالات تحلیلی، نتایج آزمون‌های ارتعاش فرکانسی، کالبدشکافی شاسی‌های ماشین‌کاری‌شده CNC و راهنمای ساخت ایستگاه‌های کاری ارگونومیک با متریال باستانی و آلیاژهای فوق پیشرفته.
+        </p>
+</div>
+<!-- Telemetry Badge Node -->
+<div class="flex lg:flex-col items-center lg:items-end justify-between p-space-md bg-surface-container-high shrink-0 gap-space-sm">
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm text-primary">verified</span>
+<span>تاییدیه پژوهشکده متالورژی ایران</span>
+</div>
+<div class="flex items-center gap-space-md font-label-sm text-label-sm text-secondary">
+<span>اسناد معتبر: ۲۴ سرفصل</span>
+<span class="text-primary font-mono" dir="ltr">[CRC-32: 0x9B2F]</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Paper (Hero Focal Piece with Archway Architecture) -->
+<section class="w-full px-gutter py-space-md">
+<div class="relative w-full bg-surface-container rounded-[24px_24px_12px_12px] overflow-hidden">
+<!-- Background Architectural Blueprint Watermark Graphic -->
+<div class="absolute inset-0 pointer-events-none opacity-5 bg-[radial-gradient(#abcae8_1px,transparent_1px)] [background-size:24px_24px]"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 relative z-10">
+<!-- Visual Column / Technical Diagram & Micro-Photo -->
+<div class="lg:col-span-5 relative min-h-[340px] lg:min-h-full bg-surface-container-lowest flex flex-col justify-between p-space-lg">
+<div class="absolute inset-0 bg-cover bg-center opacity-65" data-alt="High-contrast black and dark petrol-blue macro photograph of a precision CNC milled aircraft-grade 7075 aluminum keyboard frame, displaying crisp chamfered edges, hairline toolmarks, toolpath contour lines, and industrial anodized texture under cold cinematic studio rim lighting with deep slate shadows." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDHH-fkB9672macXiq-DcRb8m-ELBpSt0iebtbghRe9NWvf-hEMEOEYbBC00y_4W8SEYBQncum0vfIh29I-pfe42SbUbEZIF_tcDKt9yzSaX-IswBV_9Asq9RnL8pBYGlXWhDj0IeDWM553zFLbMQc6ZrH_N4W_sPTE6Y2cVuB0lJ-Bg-kaMK4F5_8KzENlrqWdFaiZGte1II5uyVK4KNbKZgBdttPu0500bi-WDn4')"></div>
+<!-- Gradient Scrim for contrast -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/40 to-transparent"></div>
+<!-- Top Badge in Arch -->
+<div class="relative z-10 flex items-center justify-between w-full">
+<span class="px-space-sm py-space-xs bg-surface-container text-primary font-label-sm text-label-sm tracking-wider uppercase">
+              پژوهش برگزیده شماره ۱۶
+            </span>
+<div class="flex items-center gap-space-xs bg-surface-container-low px-space-xs py-0.5 text-secondary font-label-sm text-label-sm">
+<span class="w-2 h-2 bg-primary"></span>
+<span>LIVE FREQUENCY LAB</span>
+</div>
+</div>
+<!-- Telemetry Waveform Overlay inside the Visual -->
+<div class="relative z-10 flex flex-col gap-space-xs p-space-md bg-surface-container-lowest/90 backdrop-blur-sm">
+<div class="flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<span>تداخل فرکانسی 7075 در برابر 6063</span>
+<span class="text-primary font-mono" dir="ltr">-14.2 dB Damping</span>
+</div>
+<!-- Lightweight SVG Waveform -->
+<svg class="w-full h-12 text-secondary stroke-current fill-none" viewbox="0 0 320 48">
+<path d="M0 24 Q 20 8, 40 24 T 80 24 T 120 24 T 160 24 T 200 24 T 240 24 T 280 24 T 320 24" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"></path>
+<path d="M0 24 C 30 2, 50 46, 80 24 C 110 2, 130 46, 160 24 C 190 12, 210 36, 240 24 C 270 18, 290 30, 320 24" stroke="#ffffff" stroke-width="1.8"></path>
+<path d="M0 24 Q 40 38, 80 24 T 160 24 T 240 24 T 320 24" stroke="#abcae8" stroke-dasharray="3 3" stroke-width="1"></path>
+</svg>
+<div class="flex items-center justify-between text-[11px] text-secondary font-label-sm">
+<span>رزونانس آکوستیک 6063: 420Hz</span>
+<span class="text-primary font-medium">افت رزونانس 7075-T6: 180Hz</span>
+</div>
+</div>
+</div>
+<!-- Editorial Content Column -->
+<div class="lg:col-span-7 p-space-lg lg:p-space-xl flex flex-col justify-between gap-space-lg">
+<div class="flex flex-col gap-space-md">
+<!-- Metadata Row -->
+<div class="flex flex-wrap items-center gap-y-2 gap-x-4 text-secondary font-label-sm text-label-sm">
+<span class="text-primary bg-surface-container-high px-space-sm py-space-xs font-semibold">مهندسی آکوستیک سازه</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">person_pin</span>
+<span>نویسنده: مهندس سهراب رادمنش (ناظر ارشد متالورژی)</span>
+</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+<span>مدت مطالعه: ۱۲ دقیقه</span>
+</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span>
+<span>۲۴ آبان ۱۴۰۳</span>
+</span>
+</div>
+<!-- Title -->
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary leading-tight">
+              کالبدشکافی شاسی یکپارچه آلومینیوم ۷۰۷۵ هوانوردی در برابر ۶۰۶۳ و اثر آن در حذف امواج رزونانس صوتی کیبورد
+            </h2>
+<!-- Paragraph -->
+<p class="font-body-md text-body-md text-secondary leading-relaxed text-justify">
+              بررسی مقایسه‌ای چگالی مولکولی، مدول یانگ (Elastic Modulus) و رفتار نوسانی ارتعاشات ضربه‌ای کلیدهای مکانیکی. چگونه تغییر ساختار متالورژیک از آلیاژ پایه سیلیسیوم-منیزیم (۶۰۶۳) به زینک-مس (۷۰۷۵-T6) نه‌تنها استحکام ساختاری را تا ۱۸۰٪ ارتقا می‌دهد، بلکه فرکانس‌های نامطلوب ترانسینت صوتی کلیک سوئیچ را به محدوده بم و خفه (Thock) منتقل می‌نماید.
+            </p>
+<!-- Key Findings Micro Table -->
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-space-sm pt-space-xs">
+<div class="p-space-sm bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary">مدول الاستیسیته (E)</span>
+<span class="font-label-lg text-label-lg text-primary font-bold" dir="ltr">71.7 GPa (7075)</span>
+<span class="text-[11px] text-secondary">در برابر ۶۸.۹ در آلیاژ ۶۰۶۳</span>
+</div>
+<div class="p-space-sm bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary">چگالی فیزیکی</span>
+<span class="font-label-lg text-label-lg text-primary font-bold" dir="ltr">2.81 g/cm³</span>
+<span class="text-[11px] text-secondary">جلوگیری از انعکاس موج صوتی</span>
+</div>
+<div class="p-space-sm bg-surface-container-low col-span-2 sm:col-span-1 flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary">شاخص زبری سطح (Ra)</span>
+<span class="font-label-lg text-label-lg text-primary font-bold" dir="ltr">0.4 µm Ra</span>
+<span class="text-[11px] text-secondary">فرزکاری ۵ محوره فوق‌دقیق</span>
+</div>
+</div>
+</div>
+<!-- CTA and Footnote -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md pt-space-sm">
+<div class="flex items-center gap-space-sm text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm text-primary">download</span>
+<span>شامل گزارش آزمایشگاه متالوگرافی و فایل طیف‌نگار صوتی FLAC</span>
+</div>
+<a class="inline-flex items-center justify-center gap-space-sm px-space-lg py-space-sm bg-primary text-on-primary font-label-lg text-label-lg font-bold hover:bg-secondary-container hover:text-primary transition-colors" data-path="paper-s16" href="#">
+<span>مطالعه کامل رساله تخصصی (S16)</span>
+<span class="material-symbols-outlined text-base">arrow_back</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Category & Research Focus Filter System -->
+<section class="w-full px-gutter py-space-md">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">
+          دسته‌بندی‌های پژوهشی و آزمایشگاهی گُردیه
+        </span>
+<span class="font-label-sm text-label-sm text-secondary" dir="ltr">[ACTIVE FILTER: ALL]</span>
+</div>
+<!-- Filter Buttons Horizon -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-2 scrollbar-none">
+<button class="px-space-md py-space-xs bg-primary text-on-primary font-label-md text-label-md whitespace-nowrap font-medium transition-colors" type="button">
+          همه مقالات (۲۴)
+        </button>
+<button class="px-space-md py-space-xs bg-surface-container text-secondary hover:text-primary hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors" type="button">
+          متالورژی و آلیاژها (۸)
+        </button>
+<button class="px-space-md py-space-xs bg-surface-container text-secondary hover:text-primary hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors" type="button">
+          آکوستیک و امواج صوتی (۶)
+        </button>
+<button class="px-space-md py-space-xs bg-surface-container text-secondary hover:text-primary hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors" type="button">
+          ارگونومی سنگ و بازالت (۳)
+        </button>
+<button class="px-space-md py-space-xs bg-surface-container text-secondary hover:text-primary hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors" type="button">
+          سیستم‌های دفع حرارت مس و گرافیت (۴)
+        </button>
+<button class="px-space-md py-space-xs bg-surface-container text-secondary hover:text-primary hover:bg-surface-container-high font-label-md text-label-md whitespace-nowrap transition-colors" type="button">
+          راهنمای ستاپ مینیمال (۳)
+        </button>
+</div>
+</div>
+</section>
+<!-- 3-Column Balanced Research Papers Grid -->
+<section class="w-full px-gutter py-space-md">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+<!-- Card 1: Poron Foam Frequency Analysis -->
+<article class="flex flex-col bg-surface-container justify-between group hover:bg-surface-container-high transition-colors">
+<div class="p-space-lg flex flex-col gap-space-md">
+<!-- Card Header Rubric -->
+<div class="flex items-center justify-between font-label-sm text-label-sm text-secondary pb-space-xs">
+<span class="px-space-xs py-0.5 bg-surface-container-low text-primary">آکوستیک و متریال میرایی</span>
+<span class="font-mono text-secondary" dir="ltr">DOC-ID: #AC-092</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary group-hover:text-primary leading-snug">
+            تحلیل فرکانسی فوم‌های میکروپورس Poron ژاپنی در دفع ضربات سوئیچ‌های مکانیکی
+          </h3>
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+            محاسبه ضریب تراکم‌پذیری ساختار سلول‌باز پلی‌اورتان فرمول LE-20 در مقایسه با سلیکون و فوم EVA در دفع هارمونیک‌های ۱ تا ۳ کیلوهرتز و حذف صدای زنگ کاسه کیبورد.
+          </p>
+<!-- Embedded Inline SVG Frequency Chart -->
+<div class="p-space-sm bg-surface-container-lowest flex flex-col gap-space-xs mt-space-xs">
+<div class="flex items-center justify-between text-[11px] font-label-sm text-secondary">
+<span>میرایی تداخل فرکانسی (Damping Curve)</span>
+<span class="text-primary font-mono">-22 dB @ 2.4kHz</span>
+</div>
+<svg class="w-full h-10 text-secondary stroke-current fill-none" viewbox="0 0 240 50">
+<path d="M0 45 L 30 40 L 60 38 L 90 20 L 120 12 L 150 16 L 180 28 L 210 38 L 240 44" stroke="#abcae8" stroke-width="1.5"></path>
+<path d="M0 45 L 30 30 L 60 15 L 90 8 L 120 5 L 150 7 L 180 18 L 210 32 L 240 42" stroke="#ffffff" stroke-width="2"></path>
+</svg>
+<div class="flex items-center justify-between text-[10px] text-secondary">
+<span>فوم استاندارد EVA</span>
+<span class="text-primary font-bold">پورون LE-20 ژاپن</span>
+</div>
+</div>
+</div>
+<div class="p-space-lg pt-0 flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>۸ دقیقه مطالعه</span>
+</div>
+<a class="inline-flex items-center gap-1 text-primary hover:text-secondary transition-colors font-bold" href="#">
+<span class="material-symbols-outlined text-sm">picture_as_pdf</span>
+<span>دانلود PDF دیاگرام</span>
+</a>
+</div>
+</article>
+<!-- Card 2: Damavand Basalt Stone Impact -->
+<article class="flex flex-col bg-surface-container justify-between group hover:bg-surface-container-high transition-colors">
+<div class="p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-secondary pb-space-xs">
+<span class="px-space-xs py-0.5 bg-surface-container-low text-primary">زمین‌شناسی و ایزولاسیون</span>
+<span class="font-mono text-secondary" dir="ltr">DOC-ID: #GL-401</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary leading-snug">
+            تاثیر سنگ آذرین بازالت دماوند بر جذب الکتریسیته ساکن و ارتعاشات ماکرو
+          </h3>
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+            کالبدشکافی ساختار متراکم بلوری پیروکسن و پلاژیوکلاز استخراجی از دامنه‌های دماوند؛ چرا وزن سنگین و مقاومت دی‌الکتریک طبیعی آن، بهترین پایه پایدار برای ایستگاه‌های ضبط و تایپ سنگین است.
+          </p>
+<!-- Microscopic Texture Placeholder -->
+<div class="relative w-full h-28 overflow-hidden bg-surface-container-lowest">
+<div class="w-full h-full bg-cover bg-center opacity-75" data-alt="Microscopic metallographic thin-section cross-section of Damavand volcanic basalt stone displaying mineral crystalline matrix, dark obsidian obsidian-like vesicles, pyroxene phenocrysts, and high-density basaltic texture under polarized petrographic microscope lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB_xKih4ofQcmwcIPgFoRVtpCfMgSI4VyVptdun42VuQ09W0b4lBpQFED_Dnno75qSwB2dkVtoTPj2g5k0EyS2ve7R927X6AvuqfY0ClImKnthvFW2hAHmD-lvuE5TDL7N6N2JARYgdE6671FKrXZ4pZHHsbpPQzZL_ZKPbX4-NlL7tatt2cmLSC-CLXyKh7euc-Y1e2O6m17JH-OgfRChD5WRv54VX6sgvquu_fmE')"></div>
+<div class="absolute bottom-1 right-2 bg-surface-container-lowest/80 px-space-xs py-0.5 text-[10px] text-secondary font-label-sm">
+              مقطع میکروسکوپی ۲۰۰X بافت بازالت
+            </div>
+</div>
+</div>
+<div class="p-space-lg pt-0 flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>۱۵ دقیقه مطالعه</span>
+</div>
+<a class="inline-flex items-center gap-1 text-primary hover:text-secondary transition-colors font-bold" href="#">
+<span>بررسی کانی‌شناسی ←</span>
+</a>
+</div>
+</article>
+<!-- Card 3: Military Anodizing Salt Spray 1000h -->
+<article class="flex flex-col bg-surface-container justify-between group hover:bg-surface-container-high transition-colors">
+<div class="p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-secondary pb-space-xs">
+<span class="px-space-xs py-0.5 bg-surface-container-low text-primary">پوشش‌های الکتروشیمیایی</span>
+<span class="font-mono text-secondary" dir="ltr">DOC-ID: #MT-881</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary leading-snug">
+            بررسی آزمون سالت اسپری (Salt Spray 1000h) روی سطوح آنودایز سخت نظامی Type III
+          </h3>
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+            نتایج مستند محفظه مه نمکی اسیدی ASTM B117 روی ضخامت لایه اکسیداسیون ۵۰ میکرونی آلومینیوم گُردیه. بررسی مقاومت در برابر اسیدهای ترشح‌شده از چربی دست انسان و سایش مکانیکی روزمره.
+          </p>
+<!-- Spec Stat Row -->
+<div class="p-space-sm bg-surface-container-lowest flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[11px] text-secondary">استاندارد پوشش</span>
+<span class="text-primary font-bold font-label-md text-label-md" dir="ltr">MIL-A-8625F Type III</span>
+</div>
+<div class="flex flex-col text-left" dir="ltr">
+<span class="text-[11px] text-secondary">سختی سطحی</span>
+<span class="text-primary font-bold font-label-md text-label-md">65 HRC</span>
+</div>
+</div>
+</div>
+<div class="p-space-lg pt-0 flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>۱۰ دقیقه مطالعه</span>
+</div>
+<a class="inline-flex items-center gap-1 text-primary hover:text-secondary transition-colors font-bold" href="#">
+<span>مشاهده تست آزمایشگاهی ←</span>
+</a>
+</div>
+</article>
+<!-- Card 4: Krytox Lubrication Methodology -->
+<article class="flex flex-col bg-surface-container justify-between group hover:bg-surface-container-high transition-colors">
+<div class="p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-secondary pb-space-xs">
+<span class="px-space-xs py-0.5 bg-surface-container-low text-primary">تریپولوژی و روان‌کاری</span>
+<span class="font-mono text-secondary" dir="ltr">DOC-ID: #TR-119</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary leading-snug">
+            راهنمای گام‌به‌گام روان‌کاری با گریس‌های هوانوردی کریلوکس (Krytox 205g0)
+          </h3>
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+            فرمولاسیون پلی‌تترافلوئورواتیلن (PTFE) و پایداری در دامنه دمایی ۴۰- تا ۲۴۰+ درجه سانتی‌گراد. روش محاسبه گرماژ میکرونی در استم سوئیچ و فنرهای سیم‌پیچ فولادی ژاپنی برای اجتناب از انباشتگی چسبنده.
+          </p>
+<!-- Micro Spec Pills -->
+<div class="grid grid-cols-2 gap-space-xs text-secondary font-label-sm text-label-sm">
+<div class="p-space-xs bg-surface-container-low flex items-center justify-between">
+<span>گرانروی:</span>
+<span class="text-primary font-mono" dir="ltr">160 cSt</span>
+</div>
+<div class="p-space-xs bg-surface-container-low flex items-center justify-between">
+<span>گرید سختی:</span>
+<span class="text-primary font-mono" dir="ltr">NLGI Grade 0</span>
+</div>
+</div>
+</div>
+<div class="p-space-lg pt-0 flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>۱۴ دقیقه مطالعه</span>
+</div>
+<a class="inline-flex items-center gap-1 text-primary hover:text-secondary transition-colors font-bold" href="#">
+<span>راهنمای کارگاهی ←</span>
+</a>
+</div>
+</article>
+<!-- Card 5: Ergonomic 6.5 to 7.5 Angle Calculation -->
+<article class="flex flex-col bg-surface-container justify-between group hover:bg-surface-container-high transition-colors">
+<div class="p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-secondary pb-space-xs">
+<span class="px-space-xs py-0.5 bg-surface-container-low text-primary">بیومکانیک و ارگونومی</span>
+<span class="font-mono text-secondary" dir="ltr">DOC-ID: #ER-304</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary leading-snug">
+            محاسبه زاویه شیب ارگونومیک ۶.۵ تا ۷.۵ درجه در جلوگیری از خستگی مچ دست در ساعات کاری طولانی
+          </h3>
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+            شبیه‌سازی فشار تاندون‌های اکستنسور مچ دست (Carpal Tunnel) در تایپینگ ممتد ۸ ساعته مهندسی نرم‌افزار. دلیل برتری شیب استاتیک ۶.۸ درجه در شاسی‌های تراش‌خورده گُردیه بر پایه‌های پلاستیکی تاشو.
+          </p>
+<!-- Biomechanic Graphic Mockup -->
+<div class="p-space-sm bg-surface-container-lowest flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-xl">straighten</span>
+<div class="flex flex-col">
+<span class="text-[11px] text-secondary">زاویه بهینه فرزکاری</span>
+<span class="text-primary font-bold font-label-md text-label-md" dir="ltr">Slope: 6.85° ± 0.05°</span>
+</div>
+</div>
+<span class="px-space-xs py-0.5 bg-surface-container text-primary font-label-sm text-label-sm">بیومکانیکال</span>
+</div>
+</div>
+<div class="p-space-lg pt-0 flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>۷ دقیقه مطالعه</span>
+</div>
+<a class="inline-flex items-center gap-1 text-primary hover:text-secondary transition-colors font-bold" href="#">
+<span>مشاهده نمودار بیومکانیک ←</span>
+</a>
+</div>
+</article>
+<!-- Card 6: C1100 Copper Heatsinks in TB4 Docking Stations -->
+<article class="flex flex-col bg-surface-container justify-between group hover:bg-surface-container-high transition-colors">
+<div class="p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-secondary pb-space-xs">
+<span class="px-space-xs py-0.5 bg-surface-container-low text-primary">ترمودینامیک و الکترونیک</span>
+<span class="font-mono text-secondary" dir="ltr">DOC-ID: #TH-520</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary leading-snug">
+            هیت‌سینک‌های مس خالص C1100 در داک‌استیشن‌های تاندربولت ۴ و جلوگیری از افت توان حرارتی
+          </h3>
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+            ضریب انتقال حرارتی مس الکترولیتی (390 W/m·K) در برابر شاسی‌های آلومینیومی ارزان قیمت. مهار داغی چیپست‌های اینتل و تگزاس اینسترومنت در انتقال تصاویر 8K و پهنای باند ۴۰ گیگابیت بر ثانیه بدون فن خنک‌کننده پر سر و صدا.
+          </p>
+<!-- Heat dissipation metric row -->
+<div class="p-space-sm bg-surface-container-lowest flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[11px] text-secondary">دمای چیپست در لود کامل</span>
+<span class="text-primary font-bold font-label-md text-label-md" dir="ltr">48.2°C (با مس C1100)</span>
+</div>
+<div class="flex flex-col text-left" dir="ltr">
+<span class="text-[11px] text-secondary">هدایت گرمایی</span>
+<span class="text-primary font-bold font-label-md text-label-md">390 W/m·K</span>
+</div>
+</div>
+</div>
+<div class="p-space-lg pt-0 flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>۱۱ دقیقه مطالعه</span>
+</div>
+<a class="inline-flex items-center gap-1 text-primary hover:text-secondary transition-colors font-bold" href="#">
+<span>کالبدشکافی ترمال ←</span>
+</a>
+</div>
+</article>
+</div>
+</section>
+<!-- Technical Pagination / Archive Navigation -->
+<section class="w-full px-gutter py-space-md flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<div class="flex items-center gap-space-sm">
+<span class="text-primary font-bold">صفحه ۱ از ۴</span>
+<span class="text-secondary/60">|</span>
+<span>نمایش ۶ مقاله از کل ۲۴ پرونده تحقیقاتی</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="px-space-md py-space-xs bg-surface-container text-secondary opacity-50 cursor-not-allowed">قبلی</button>
+<button class="px-space-sm py-space-xs bg-primary text-on-primary font-bold">۱</button>
+<button class="px-space-sm py-space-xs bg-surface-container text-secondary hover:text-primary">۲</button>
+<button class="px-space-sm py-space-xs bg-surface-container text-secondary hover:text-primary">۳</button>
+<button class="px-space-sm py-space-xs bg-surface-container text-secondary hover:text-primary">۴</button>
+<button class="px-space-md py-space-xs bg-surface-container text-secondary hover:text-primary">بعدی</button>
+</div>
+</section>
+<!-- Special Architectural Newsletter & Workshop Dispatch Box -->
+<section class="w-full px-gutter py-space-xl">
+<div class="relative w-full bg-surface-container-high rounded-[32px_32px_16px_16px] overflow-hidden p-space-lg lg:p-space-xl">
+<!-- Architectural Grid Backdrop -->
+<div class="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(to_right,#abcae8_1px,transparent_1px),linear-gradient(to_bottom,#abcae8_1px,transparent_1px)] bg-[size:32px_32px]"></div>
+<div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+<!-- Copy Column -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm">
+<span class="w-2 h-2 bg-primary"></span>
+<span class="tracking-widest uppercase">DISPATCH PROTOCOL: ARCHITECTURAL PAPERS &amp; CAD ASSETS</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold text-primary leading-tight">
+            عضویت در خبرنامه مهندسی و کانال فنی کارگاه ساخت گُردیه
+          </h3>
+<p class="font-body-md text-body-md text-secondary leading-relaxed">
+            دریافت ماهانه فایل‌های سه‌بعدی صنعتی (.STEP)، رندرهای فنی قطعات، مقالات جدید در خصوص آکوستیک محیط‌های کار، تلورانس ماشین‌کاری و اعلان دوره‌های آزمایشگاهی متالورژی بدون ارسال پیام‌های تبلیغاتی مزاحم.
+          </p>
+<div class="flex flex-wrap items-center gap-space-md text-secondary font-label-sm text-label-sm pt-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm text-primary">check_circle</span>
+<span>ارسال مستقیم فایل‌های CAD</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm text-primary">check_circle</span>
+<span>دسترسی به مقالات پی‌دی‌اف محرمانه</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm text-primary">check_circle</span>
+<span>رمزنگاری اختصاصی پیامک</span>
+</div>
+</div>
+</div>
+<!-- Form Column -->
+<div class="lg:col-span-5 bg-surface-container-low p-space-lg flex flex-col gap-space-md">
+<span class="font-label-md text-label-md text-primary font-bold">
+            درخواست دسترسی به اسناد فنی ستاپ گُردیه
+          </span>
+<form class="flex flex-col gap-space-sm" id="dispatch-form" onsubmit="event.preventDefault(); document.getElementById('dispatch-feedback').classList.remove('hidden');">
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-sm text-label-sm text-secondary" for="cellphone">شماره همراه متقاضی (جهت تایید هویت مهندسی):</label>
+<div class="relative w-full">
+<input class="w-full bg-surface-container px-space-md py-space-sm text-primary font-label-md text-label-md placeholder:text-secondary/50 focus:outline-none focus:bg-surface-variant transition-colors" dir="ltr" id="cellphone" name="cellphone" placeholder="09123456789" required="" type="tel"/>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-sm text-label-sm text-secondary" for="specialization">زمینه فعالیت تخصصی:</label>
+<select class="w-full bg-surface-container px-space-md py-space-sm text-primary font-label-md text-label-md focus:outline-none focus:bg-surface-variant" id="specialization" name="specialization">
+<option value="mech">مهندسی مکانیک / ساخت و تولید (CNC)</option>
+<option value="arch">معماری داخلی و طراحی ایستگاه‌های کاری</option>
+<option value="acoustic">مهندسی صدا و آکوستیک اتاق استودیو</option>
+<option value="software">توسعه‌دهنده نرم‌افزار / ستاپ‌های تخصصی</option>
+<option value="enthusiast">علاقه‌مند به متالورژی و کیبوردهای کاستوم</option>
+</select>
+</div>
+<button class="w-full py-space-sm px-space-md bg-primary text-on-primary font-label-lg text-label-lg font-bold hover:bg-secondary-container hover:text-primary transition-colors flex items-center justify-center gap-space-sm mt-space-xs" type="submit">
+<span class="material-symbols-outlined text-base">send</span>
+<span>ثبت درخواست و دریافت شناسه دسترسی</span>
+</button>
+</form>
+<div class="hidden p-space-sm bg-surface-container text-primary font-label-sm text-label-sm flex items-center gap-space-xs" id="dispatch-feedback">
+<span class="material-symbols-outlined text-sm text-secondary">check</span>
+<span>درخواست شما ثبت شد. پیامک حاوی لینک مخزن CAD و کاتالوگ S16 ارسال گردید.</span>
+</div>
+<div class="flex items-center justify-between text-[11px] text-secondary font-label-sm">
+<span>عضویت آنی در بات تلگرام:</span>
+<a class="text-primary hover:underline font-mono" dir="ltr" href="https://t.me" rel="noopener noreferrer" target="_blank">@GordiyehLab_Bot</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-lowest mt-space-xl"><div class="w-full px-gutter py-space-xl"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl"><div class="flex flex-col gap-space-md"><div class="flex items-center gap-space-sm"><span class="font-headline-sm text-headline-sm font-semibold text-primary">گُردیه</span><span class="font-label-sm text-label-sm text-secondary uppercase">PRECISION FABRICATION</span></div><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed text-justify">مجموعه مهندسی و متالورژی گُردیه؛ مرجع تخصصی ماشین‌کاری فوق دقیق ۵ محوره، تولید شیت‌های ساختاری و پوسته‌های معماری تیتانیوم، برنز اکسید و فولاد ابزار کروم-مولیبدن بر پایه استانداردهای تلورانس نانومتری.</p><div class="flex items-center gap-space-sm pt-space-xs"><div class="px-space-sm py-space-xs bg-surface-container-high text-primary font-label-sm text-label-sm">ISO 9001:2015 CERTIFIED</div><div class="px-space-sm py-space-xs bg-surface-container-high text-primary font-label-sm text-label-sm">MIL-SPEC COMPLIANT</div></div></div><div class="flex flex-col gap-space-md"><span class="font-label-lg text-label-lg uppercase text-primary tracking-wider">دسترسی‌های سیستمی</span><nav class="flex flex-col gap-space-sm font-body-sm text-body-sm" data-active-classes="text-primary font-bold"><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="catalog" href="#">کاتالوگ آثار معماری [S02]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="cnc-customization" href="#">ماژول سفارش‌سازی قطعات CNC</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="specifications" href="#">برگه مشخصات متالورژیک و آزمایشگاهی</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="order-tracking" href="#">پرتال رهگیری زنجیره ساخت [S10]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="qa-inspection" href="#">سامانه بازرسی ابعادی CMM</a></nav></div><div class="flex flex-col gap-space-md"><span class="font-label-lg text-label-lg uppercase text-primary tracking-wider">مستندات و استانداردها</span><nav class="flex flex-col gap-space-sm font-body-sm text-body-sm" data-active-classes="text-primary font-bold"><a aria-current="page" class="transition-colors text-primary font-bold" data-path="engineering-journal" href="#">مجله فنی مهندسی متالورژی [S15]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="fabrication-manifesto" href="#">مانیفست ساخت ابنیه پایدار [S17]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="help-center" href="#">مرکز راهنما و پایگاه دانش [S18]</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="material-safety" href="#">پروتکل‌های ایمنی زیست‌محیطی شمش</a><a class="text-on-surface-variant hover:text-primary transition-colors" data-path="api-docs" href="#">رابط‌های نرم‌افزاری CAD/CAM API</a></nav></div><div class="flex flex-col gap-space-md"><span class="font-label-lg text-label-lg uppercase text-primary tracking-wider">تاسیسات و موقعیت فیزیکی</span><div class="font-body-sm text-body-sm text-on-surface-variant flex flex-col gap-space-sm"><div class="flex items-start gap-space-xs"><span class="material-symbols-outlined text-sm text-secondary mt-0.5">location_on</span><span>تهران، منطقه صنعتی شمال، بلوار صنعت، فاز ۲ متالورژی سنگین، پلاک ۴۴، تاسیسات پایلوت گُردیه</span></div><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-sm text-secondary">call</span><span class="font-label-sm text-label-sm text-secondary" dir="ltr">+98 (21) 8800-4491</span></div><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-sm text-secondary">terminal</span><span class="font-label-sm text-label-sm text-secondary" dir="ltr">SECURE: ops@gordiyeh.eng</span></div></div><div class="p-space-sm bg-surface-container-high text-secondary font-label-sm text-label-sm flex items-center justify-between"><span>TELEMETRY: ACTIVE</span><span class="w-2 h-2 bg-primary"></span></div></div></div><div class="mt-space-xl pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md text-secondary font-label-sm text-label-sm"><div class="flex items-center gap-space-sm"><span>© ۲۰۲۵ پلتفرم معماری و صنایع ماشین‌کاری گُردیه (GORDIYEH CNC ARCHITECTURE). تمامی حقوق محفوظ است.</span></div><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm text-secondary">SHA-256 SIGNED BUILD 9.4.1</span><a class="text-secondary hover:text-primary transition-colors" data-path="privacy-terms" href="#">حریم خصوصی و الزامات حقوقی</a></div></div></div></footer></body></html>
