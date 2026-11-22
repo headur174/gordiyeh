@@ -311,3 +311,47 @@ export interface StoreFinancialSummary {
   priceOpportunitiesCount: number;
   campaignOpportunitiesCount: number;
 }
+
+export type SupervisorAlertCategory =
+  | 'BESTSELLER_OUT_OF_STOCK'
+  | 'COMPETITOR_PRICE_SPIKE'
+  | 'HIGH_RISK_ORDER'
+  | 'SUPPLIER_RISK'
+  | 'SYSTEM';
+
+export type SupervisorAlertSeverity = 'CRITICAL' | 'HIGH' | 'WARNING';
+
+export interface SupervisorNotificationMetrics {
+  currentStock?: number;
+  thresholdStock?: number;
+  currentPrice?: number;
+  competitorPrice?: number;
+  previousCompetitorPrice?: number;
+  deltaPercent?: number;
+  fallbackOfferId?: string;
+  fallbackSupplierName?: string;
+  fallbackStock?: number;
+  orderNumber?: string;
+  riskScore?: number;
+}
+
+export interface SupervisorNotification {
+  id: string;
+  dedupeKey: string;
+  category: SupervisorAlertCategory;
+  severity: SupervisorAlertSeverity;
+  title: string;
+  message: string;
+  productId?: string;
+  productTitle?: string;
+  sku?: string;
+  metrics?: SupervisorNotificationMetrics;
+  recommendedActionLabel?: string;
+  targetTab?: string;
+  createdAt: string;
+  timestampMs: number;
+  isRead: boolean;
+  isResolved: boolean;
+  source: 'REACT_REACTIVE_WATCHER' | 'SERVER_EVENT_BUS' | 'RULE_ENGINE_SCAN';
+}
+

@@ -36,12 +36,12 @@ export const PortalProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
       {/* Global Floating Toast */}
       {toast && (
-        <div className="fixed bottom-6 left-6 z-50 animate-in slide-in-from-bottom duration-300">
+        <div className="fixed bottom-4 left-4 right-4 sm:right-auto sm:bottom-6 sm:left-6 z-50 animate-in slide-in-from-bottom duration-300">
           <div className={`px-4 py-2.5 rounded-xl shadow-lg border text-sm font-medium flex items-center gap-2 ${
-            toast.type === 'success' ? 'bg-emerald-950 text-emerald-100 border-emerald-800' :
-            toast.type === 'error' ? 'bg-rose-950 text-rose-100 border-rose-800' :
-            toast.type === 'warning' ? 'bg-amber-950 text-amber-100 border-amber-800' :
-            'bg-slate-900 text-slate-100 border-slate-800'
+            toast.type === 'success' ? 'bg-emerald-700 dark:bg-emerald-950 text-white dark:text-emerald-100 border-emerald-600 dark:border-emerald-800' :
+            toast.type === 'error' ? 'bg-rose-700 dark:bg-rose-950 text-white dark:text-rose-100 border-rose-600 dark:border-rose-800' :
+            toast.type === 'warning' ? 'bg-amber-600 dark:bg-amber-950 text-white dark:text-amber-100 border-amber-500 dark:border-amber-800' :
+            'bg-[var(--bg-surface)] text-[var(--text-main)] border-[var(--border-active)]'
           }`}>
             <span>{toast.message}</span>
           </div>

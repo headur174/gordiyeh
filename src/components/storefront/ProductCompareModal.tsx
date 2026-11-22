@@ -101,7 +101,7 @@ export const ProductCompareModal: React.FC<ProductCompareModalProps> = ({
                         >
                           {p.title}
                         </span>
-                        <div className="text-[var(--accent-primary)] font-mono font-bold">
+                        <div className="text-[var(--accent-primary)] tabular-nums font-bold text-[13px]">
                           {formatCurrency(p.retailPrice, currency)}
                         </div>
                       </div>
@@ -139,25 +139,25 @@ export const ProductCompareModal: React.FC<ProductCompareModalProps> = ({
                   ))}
                 </tr>
                 <tr>
-                  <td className="p-3 font-semibold text-[var(--text-muted)] bg-[var(--bg-main)]/70">ویژگی‌های اصلی</td>
+                  <td className="p-3 font-medium text-[var(--text-secondary)] bg-[var(--bg-main)]/70">ویژگی‌های اصلی</td>
                   {compareList.map(p => (
-                    <td key={p.id} className="p-3 text-[var(--text-main)] text-right text-[11px] leading-relaxed align-top">
+                    <td key={p.id} className="p-3 text-[var(--text-secondary)] text-right text-xs leading-[1.8] align-top">
                       {p.keyFeatures && p.keyFeatures.length > 0 ? p.keyFeatures.slice(0, 3).join(' • ') : 'ثبت‌شده در صفحه‌ی محصول'}
                     </td>
                   ))}
                 </tr>
                 <tr>
-                  <td className="p-3 font-semibold text-[var(--text-muted)] bg-[var(--bg-main)]/70">برای چه کسی مناسبه؟</td>
+                  <td className="p-3 font-medium text-[var(--text-secondary)] bg-[var(--bg-main)]/70">برای چه کسی مناسبه؟</td>
                   {compareList.map(p => (
-                    <td key={p.id} className="p-3 text-emerald-700 dark:text-emerald-400 text-right text-[11px] leading-relaxed align-top">
+                    <td key={p.id} className="p-3 text-emerald-700 dark:text-emerald-400 text-right text-xs leading-[1.8] align-top">
                       {p.suitableFor || 'ثبت‌شده در صفحه‌ی محصول'}
                     </td>
                   ))}
                 </tr>
                 <tr>
-                  <td className="p-3 font-semibold text-[var(--text-muted)] bg-[var(--bg-main)]/70">برای چه کسی مناسب نیست؟</td>
+                  <td className="p-3 font-medium text-[var(--text-secondary)] bg-[var(--bg-main)]/70">برای چه کسی مناسب نیست؟</td>
                   {compareList.map(p => (
-                    <td key={p.id} className="p-3 text-rose-700 dark:text-rose-400 text-right text-[11px] leading-relaxed align-top">
+                    <td key={p.id} className="p-3 text-rose-700 dark:text-rose-400 text-right text-xs leading-[1.8] align-top">
                       {p.notSuitableFor || 'ثبت‌شده در صفحه‌ی محصول'}
                     </td>
                   ))}

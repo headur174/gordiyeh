@@ -264,11 +264,11 @@ export const BlogView: React.FC<BlogViewProps> = ({
               </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--text-main)] leading-tight">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-[var(--text-main)] leading-[1.5]">
               {selectedPost.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--text-muted)] pt-2 border-y border-[var(--border-color)] py-3 font-mono">
+            <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--text-secondary)] pt-2 border-y border-[var(--border-color)] py-3 tabular-nums">
               <span className="flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                 {selectedPost.author}
@@ -297,7 +297,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
           )}
 
           {/* Article Body: Render either BlockRenderer or plain content */}
-          <div className="bg-[var(--bg-surface)] p-6 sm:p-8 rounded-3xl border border-[var(--border-color)] leading-relaxed text-sm text-[var(--text-main)] space-y-5 font-sans shadow-sm">
+          <div className="bg-[var(--bg-surface)] p-6 sm:p-8 rounded-3xl border border-[var(--border-color)] leading-[1.85] text-sm text-[var(--text-main)] space-y-5 font-sans shadow-sm">
             {selectedPost.blocks && selectedPost.blocks.length > 0 ? (
               <BlockRenderer
                 blocks={selectedPost.blocks}
@@ -306,7 +306,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                 onOpenProduct={onSelectProduct}
               />
             ) : (
-              <div className="whitespace-pre-line leading-relaxed">
+              <div className="whitespace-pre-line leading-[1.85] text-[var(--text-secondary)]">
                 {selectedPost.content}
               </div>
             )}
@@ -336,11 +336,11 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   className="w-20 h-20 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-main)] shrink-0"
                 />
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-[var(--text-muted)] tracking-wider">
+                  <span className="text-[11px] font-medium text-[var(--text-muted)] tracking-normal">
                     محصول مرتبط با این راهنما
                   </span>
                   <h3 className="text-sm font-bold text-[var(--text-main)] line-clamp-1">{connectedProduct.title}</h3>
-                  <p className="text-xs text-[var(--accent-primary)] font-mono font-semibold">
+                  <p className="text-[13px] text-[var(--accent-primary)] tabular-nums font-bold">
                     قیمت: {(connectedProduct.retailPrice || (connectedProduct as any).sellPrice || 0).toLocaleString()} تومان
                   </p>
                 </div>
@@ -362,15 +362,15 @@ export const BlogView: React.FC<BlogViewProps> = ({
         /* BLOG ARCHIVE LIST */
         <div className="space-y-8">
           {/* Clean Botanical Hero Banner */}
-          <div className="relative rounded-[28px] overflow-hidden p-8 sm:p-12 border border-[var(--border-color)] bg-[var(--bg-card)] shadow-sm">
-            <div className="relative z-10 max-w-2xl space-y-3">
-              <span className="inline-block px-3 py-1 rounded-full bg-[var(--accent-soft)] text-[var(--accent-primary)] text-[11px] font-semibold">
+          <div className="relative rounded-[28px] overflow-hidden min-h-[200px] sm:min-h-[220px] p-6 sm:p-10 flex items-end border border-[var(--border-color)] bg-[var(--bg-card)] shadow-sm">
+            <div className="relative z-10 max-w-2xl space-y-3 text-right">
+              <span className="inline-block px-3 py-1 rounded-full bg-[var(--accent-soft)] text-[var(--accent-primary)] text-xs font-medium">
                 مجله و راهنمای انتخاب گُردیه
               </span>
-              <h1 className="text-2xl sm:text-3xl font-black text-[var(--text-main)]">
+              <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-main)] leading-[1.45]">
                 بلاگ گُردیه
               </h1>
-              <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+              <p className="text-[13px] sm:text-sm text-[var(--text-secondary)] leading-[1.85]">
                 راهنمای خرید و یادداشت‌های واقعی قبل از خرید گجت؛ عددها و محدودیت‌ها رو ساده و بی‌اغراق می‌نویسیم.
               </p>
             </div>
@@ -430,10 +430,10 @@ export const BlogView: React.FC<BlogViewProps> = ({
                 {/* Content */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    <h2 className="text-sm font-bold text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition-colors line-clamp-2 leading-snug">
+                    <h2 className="text-sm font-bold text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition-colors line-clamp-2 leading-[1.7]">
                       {post.title}
                     </h2>
-                    <p className="text-xs text-[var(--text-muted)] line-clamp-3 leading-relaxed">
+                    <p className="text-xs text-[var(--text-secondary)] line-clamp-3 leading-[1.8]">
                       {post.excerpt}
                     </p>
                   </div>

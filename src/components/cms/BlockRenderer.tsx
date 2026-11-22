@@ -212,14 +212,14 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
 
   const renderCallout = (block: CalloutBlock) => {
     let containerClass = "bg-[var(--bg-card)] border-[var(--border-color)] text-[var(--text-main)]";
-    let icon = <Info className="w-5 h-5 text-[var(--accent-primary)] shrink-0" />;
+    let icon = <Info className="w-5 h-5 text-[var(--accent-text)] shrink-0" />;
 
     if (block.intent === 'warning') {
-      containerClass = "bg-amber-950/20 border-amber-500/40 text-amber-200";
-      icon = <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />;
+      containerClass = "bg-amber-500/10 border-amber-600/35 text-[var(--text-main)]";
+      icon = <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />;
     } else if (block.intent === 'tip') {
-      containerClass = "bg-emerald-950/20 border-emerald-500/40 text-emerald-200";
-      icon = <Lightbulb className="w-5 h-5 text-emerald-400 shrink-0" />;
+      containerClass = "bg-[var(--accent-soft)] border-[var(--border-active)] text-[var(--text-main)]";
+      icon = <Lightbulb className="w-5 h-5 text-[var(--accent-text)] shrink-0" />;
     }
 
     return (

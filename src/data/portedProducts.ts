@@ -15,10 +15,10 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'شیکر و بلندر شارژی',
     brand: 'FreshJuice',
     brandFa: 'فرش جوس',
-    image: 'https://images.unsplash.com/photo-1570831739435-6601aa3fa4fb?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1570831739435-6601aa3fa4fb?w=600&auto=format&fit=crop&q=75&fm=webp',
     gallery: [
-      'https://images.unsplash.com/photo-1570831739435-6601aa3fa4fb?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1570831739435-6601aa3fa4fb?w=600&auto=format&fit=crop&q=75&fm=webp',
+      'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600&auto=format&fit=crop&q=75&fm=webp'
     ],
     retailPrice: 580000,
     originalPrice: 750000,
@@ -138,9 +138,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'پروژکتور هوشمند',
     brand: 'Magcubic',
     brandFa: 'مگ‌کیوبیک',
-    image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&auto=format&fit=crop&q=75&fm=webp',
     gallery: [
-      'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&auto=format&fit=crop&q=75&fm=webp'
     ],
     retailPrice: 4250000,
     originalPrice: 4900000,
@@ -260,9 +260,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'دوربین ورزشی',
     brand: 'Eken',
     brandFa: 'اکن',
-    image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=75&fm=webp',
     gallery: [
-      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=75&fm=webp'
     ],
     retailPrice: 2450000,
     originalPrice: 2990000,
@@ -369,9 +369,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'جارو رباتیک هوشمند',
     brand: 'CleanBot',
     brandFa: 'کلین‌بات',
-    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=75&fm=webp',
     gallery: [
-      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=75&fm=webp'
     ],
     retailPrice: 14850000,
     originalPrice: 16500000,
@@ -477,9 +477,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'چراغ هوشمند چندکاره',
     brand: 'Gordiyeh Audio',
     brandFa: 'گُردیه',
-    image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&auto=format&fit=crop&q=75&fm=webp',
     gallery: [
-      'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&auto=format&fit=crop&q=75&fm=webp'
     ],
     retailPrice: 890000,
     originalPrice: 1250000,
@@ -587,9 +587,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'چراغ خواب کهکشانی',
     brand: 'Starry Sky',
     brandFa: 'استاری اسکای',
-    image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=75&fm=webp',
     gallery: [
-      'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=75&fm=webp'
     ],
     retailPrice: 940000,
     originalPrice: 1350000,
@@ -692,9 +692,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'دستگاه میکرودرم خانگی',
     brand: 'InFace',
     brandFa: 'این‌فیس',
-    image: '/assets/products/microderm.jpg',
+    image: '/assets/products/microderm.webp',
     gallery: [
-      '/assets/products/microderm.jpg'
+      '/assets/products/microderm.webp'
     ],
     retailPrice: 490000,
     originalPrice: 680000,
@@ -794,9 +794,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'اسپرسوساز همراه',
     brand: 'Wacaco',
     brandFa: 'واکاکو',
-    image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=75&fm=webp',
     gallery: [
-      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=75&fm=webp'
     ],
     retailPrice: 2850000,
     originalPrice: 3400000,
@@ -898,9 +898,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'تشک بادی خودرو',
     brand: 'TravelRest',
     brandFa: 'تراول‌رست',
-    image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&auto=format&fit=crop&q=75&fm=webp',
     gallery: [
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&auto=format&fit=crop&q=75&fm=webp'
     ],
     retailPrice: 1180000,
     originalPrice: 1550000,
@@ -1002,9 +1002,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'دسته بازی بی‌سیم',
     brand: 'TSCO',
     brandFa: 'تسکو',
-    image: 'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=600&auto=format&fit=crop&q=75&fm=webp',
     gallery: [
-      'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=600&auto=format&fit=crop&q=75&fm=webp'
     ],
     retailPrice: 780000,
     originalPrice: 990000,
@@ -1107,9 +1107,9 @@ export const PORTED_PRODUCTS: CanonicalProduct[] = [
     subCategory: 'ماساژورهای عضلانی',
     brand: 'Booster',
     brandFa: 'بوستر',
-    image: '/assets/products/massage-gun.jpg',
+    image: '/assets/products/massage-gun.webp',
     gallery: [
-      '/assets/products/massage-gun.jpg'
+      '/assets/products/massage-gun.webp'
     ],
     retailPrice: 1250000,
     originalPrice: 1690000,

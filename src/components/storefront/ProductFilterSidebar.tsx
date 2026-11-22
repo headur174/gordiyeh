@@ -316,7 +316,7 @@ export const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                         {b.brandFa || b.brand}
                       </span>
                     </div>
-                    <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                    <span className="text-[11px] tabular-nums text-[var(--text-muted)]">
                       ({b.count})
                     </span>
                   </label>
@@ -340,9 +340,9 @@ export const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
         {openSections.price && (
           <div className="space-y-3 mt-2">
             <div className="space-y-2">
-              <div className="flex justify-between text-[11px] text-[var(--text-muted)]">
+              <div className="flex justify-between text-xs text-[var(--text-secondary)]">
                 <span>از:</span>
-                <span className="font-mono font-bold text-[var(--text-main)]">
+                <span className="tabular-nums font-bold text-[var(--text-main)]">
                   {filters.minPrice.toLocaleString()} تومان
                 </span>
               </div>
@@ -358,9 +358,9 @@ export const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
             </div>
 
             <div className="space-y-2">
-              <div className="flex justify-between text-[11px] text-[var(--text-muted)]">
+              <div className="flex justify-between text-xs text-[var(--text-secondary)]">
                 <span>تا:</span>
-                <span className="font-mono font-bold text-[var(--text-main)]">
+                <span className="tabular-nums font-bold text-[var(--text-main)]">
                   {filters.maxPrice.toLocaleString()} تومان
                 </span>
               </div>

@@ -68,6 +68,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             width={176}
             height={176}
             loading="lazy"
+            decoding="async"
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -93,13 +94,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               e.preventDefault();
               handleSelect(product);
             }}
-            className="block text-sm sm:text-base font-bold text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition-colors line-clamp-2 leading-relaxed"
+            className="block text-[13px] sm:text-sm font-bold text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition-colors line-clamp-2 leading-[1.8]"
           >
             {product.title}
           </a>
 
           {product.keyFeatures && product.keyFeatures.length > 0 && (
-            <div className="hidden md:flex flex-wrap gap-2 pt-1 text-[11px] text-[var(--text-muted)]">
+            <div className="hidden md:flex flex-wrap gap-2 pt-1 text-xs text-[var(--text-secondary)] leading-[1.8]">
               {product.keyFeatures.slice(0, 2).map((feat, idx) => (
                 <span key={idx}>{idx > 0 ? `· ${feat}` : feat}</span>
               ))}
@@ -110,11 +111,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <div className="sm:border-r border-[var(--border-color)] sm:pr-5 flex flex-col items-end justify-between self-stretch gap-3 w-full sm:w-56">
           <div className="text-left w-full space-y-1">
             {product.originalPrice && product.originalPrice > product.retailPrice && (
-              <div className="text-[11px] text-[var(--text-muted)] line-through font-mono tabular-nums">
+              <div className="text-xs text-[var(--text-muted)] line-through tabular-nums">
                 {formatCurrency(product.originalPrice, currency)}
               </div>
             )}
-            <div className="text-base font-black text-[var(--text-main)] font-mono tabular-nums">
+            <div className="text-[15px] sm:text-base font-bold text-[var(--text-main)] tabular-nums leading-[1.65]">
               {formatCurrency(product.retailPrice, currency)}
             </div>
             {isLowStock && (
@@ -170,17 +171,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               width={320}
               height={320}
               loading="lazy"
+              decoding="async"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </a>
 
           {discountPercent > 0 ? (
-            <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-[var(--accent-primary)] text-white text-[10px] font-bold tabular-nums shadow-sm pointer-events-none">
+            <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-[var(--accent-primary)] text-white text-[11px] font-medium tabular-nums shadow-sm pointer-events-none">
               {discountPercent}٪ تخفیف
             </span>
           ) : isExpress ? (
-            <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-[var(--bg-glass)] border border-[var(--border-color)] text-[var(--text-main)] text-[10px] font-semibold inline-flex items-center gap-1 backdrop-blur-sm pointer-events-none">
+            <span className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-[var(--bg-glass)] border border-[var(--border-color)] text-[var(--text-main)] text-[11px] font-medium inline-flex items-center gap-1 backdrop-blur-sm pointer-events-none">
               <Truck className="w-3 h-3 text-[var(--accent-text)]" aria-hidden="true" />
               <span>ارسال سریع</span>
             </span>
@@ -210,11 +212,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   key={c.name}
                   title={c.name}
                   style={{ backgroundColor: c.hex }}
-                  className="w-3.5 h-3.5 rounded-full border border-slate-900/35 ring-1 ring-inset ring-black/15 inline-block shadow-xs"
+                  className="w-3.5 h-3.5 rounded-full border border-[var(--border-color)] ring-1 ring-inset ring-black/15 inline-block shadow-xs"
                 />
               ))}
               {product.colors.length > 4 && (
-                <span className="text-[10px] text-[var(--text-muted)] font-mono tabular-nums">
+                <span className="text-[11px] text-[var(--text-muted)] tabular-nums">
                   +{product.colors.length - 4}
                 </span>
               )}
@@ -229,7 +231,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             e.preventDefault();
             handleSelect(product);
           }}
-          className="block px-0.5 text-sm font-bold text-[var(--text-main)] group-hover:text-[var(--accent-text)] transition-colors cursor-pointer line-clamp-2 leading-snug min-h-[2.6rem]"
+          className="block px-0.5 text-[13px] sm:text-sm font-bold text-[var(--text-main)] group-hover:text-[var(--accent-text)] transition-colors cursor-pointer line-clamp-2 leading-[1.8] min-h-[3.1rem]"
         >
           {product.title}
         </a>
@@ -240,7 +242,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             {shortSpecs.map((spec, idx) => (
               <span
                 key={idx}
-                className="px-2 py-0.5 rounded-md bg-[var(--bg-card)]/70 border border-[var(--border-color)] text-[11px] font-medium text-[var(--text-main)]/85 truncate max-w-[132px]"
+                className="px-2 py-0.5 rounded-md bg-[var(--bg-subtle)] border border-[var(--border-color)] text-[11px] font-medium text-[var(--text-secondary)] truncate max-w-[138px]"
                 title={spec}
               >
                 {spec}
@@ -252,14 +254,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* 5. Aligned Price & Primary Add-to-Cart Bar */}
       <div className="pt-3 mt-3 border-t border-[var(--border-color)] space-y-2.5 px-0.5">
-        <div className="flex items-center justify-between gap-2 min-h-[34px]">
+        <div className="flex items-center justify-between gap-2 min-h-[36px]">
           <div>
             {isLowStock ? (
-              <div className="text-[11px] text-amber-700 dark:text-amber-400 font-semibold tabular-nums">
+              <div className="text-[11px] text-amber-700 dark:text-amber-400 font-medium tabular-nums">
                 فقط {activeOffer?.stock} عدد مونده
               </div>
             ) : isExpress && discountPercent > 0 ? (
-              <span className="text-[11px] text-[var(--text-muted)] inline-flex items-center gap-1 font-medium">
+              <span className="text-[11px] text-[var(--text-secondary)] inline-flex items-center gap-1 font-medium">
                 <Truck className="w-3.5 h-3.5 text-[var(--accent-text)]" aria-hidden="true" />
                 <span>ارسال سریع</span>
               </span>
@@ -268,11 +270,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
           <div className="text-left mr-auto">
             {product.originalPrice && product.originalPrice > product.retailPrice && (
-              <div className="text-[11px] text-[var(--text-muted)] line-through font-mono tabular-nums">
+              <div className="text-[11px] text-[var(--text-muted)] line-through tabular-nums">
                 {formatCurrency(product.originalPrice, currency)}
               </div>
             )}
-            <div className="text-sm sm:text-base font-black text-[var(--text-main)] font-mono tabular-nums leading-tight">
+            <div className="text-[15px] sm:text-base font-bold text-[var(--text-main)] tabular-nums leading-[1.5]">
               {formatCurrency(product.retailPrice, currency)}
             </div>
           </div>

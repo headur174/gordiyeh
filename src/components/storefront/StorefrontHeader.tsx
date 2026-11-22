@@ -14,8 +14,6 @@ import {
   Moon,
   ChevronDown,
   Sparkles,
-  Palette,
-  Check,
 } from 'lucide-react';
 import { Currency } from '../../types';
 import { formatCurrency } from '../../utils';
@@ -74,19 +72,21 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
   isHomeView = false,
 }) => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const [showThemeDropdown, setShowThemeDropdown] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<GordiyehTheme>(getInitialTheme());
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const themeMenuRef = useRef<HTMLDivElement>(null);
   const searchPanelRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleSelectTheme = (themeId: GordiyehTheme) => {
     setCurrentTheme(themeId);
     applyTheme(themeId);
-    setShowThemeDropdown(false);
+  };
+
+  const handleToggleForestTheme = () => {
+    const next: GordiyehTheme = currentTheme === 'forest-dark' ? 'forest-light' : 'forest-dark';
+    handleSelectTheme(next);
   };
 
   useEffect(() => {
@@ -111,9 +111,6 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
     const handleClickOutside = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
         setShowUserDropdown(false);
-      }
-      if (themeMenuRef.current && !themeMenuRef.current.contains(e.target as Node)) {
-        setShowThemeDropdown(false);
       }
       if (searchPanelRef.current && !searchPanelRef.current.contains(e.target as Node)) {
         setIsSearchOpen(false);
@@ -143,7 +140,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
 
   return (
     <>
-      <header className="w-full bg-[var(--bg-glass)] backdrop-blur-xl supports-[backdrop-filter]:bg-[var(--bg-main)]/72 border-b border-[var(--border-color)] shadow-sm sticky top-0 z-30 font-sans text-right select-none transition-colors duration-200">
+      <header className="w-full gordiyeh-sticky-header border-b border-[var(--border-color)] sticky top-0 z-30 font-sans text-right select-none transition-colors duration-200">
       {/* Single-Row Clean Header (Brand Lockup — Nav Links — Icon Actions) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-[70px] flex items-center justify-between gap-4 lg:gap-8">
         {/* Zone 1: Brand Lockup & Mobile Menu Trigger */}
@@ -165,13 +162,17 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
             <img
               src={GORDIYEH_BRAND.logoAsset}
               alt={GORDIYEH_BRAND.nameFa}
-              className="h-10 sm:h-11 w-auto object-contain gordiyeh-adaptive-logo transition-transform group-hover:scale-105"
+              width={48}
+              height={48}
+              fetchPriority="high"
+              decoding="async"
+              className="h-11 sm:h-12 w-auto object-contain gordiyeh-adaptive-logo transition-transform group-hover:scale-105"
             />
             <div className="flex flex-col leading-none">
-              <span className="text-lg sm:text-xl font-black text-[var(--accent-text)] tracking-tight whitespace-nowrap">
+              <span className="text-lg sm:text-xl font-bold text-[var(--accent-text)] tracking-tight whitespace-nowrap">
                 {GORDIYEH_BRAND.nameFa}
               </span>
-              <span className="text-[9px] sm:text-[10px] font-mono tracking-[0.22em] text-[var(--text-muted)] mt-0.5 whitespace-nowrap">
+              <span className="text-[10px] font-mono tracking-[0.22em] text-[var(--text-muted)] mt-0.5 whitespace-nowrap">
                 GORDIYEH
               </span>
             </div>
@@ -179,7 +180,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
         </div>
 
         {/* Zone 2: Clean Single-Line Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-7 text-sm font-medium text-[var(--text-main)]" aria-label="ناوبری اصلی">
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-7 text-[13px] xl:text-sm font-medium leading-[1.8] text-[var(--text-main)]" aria-label="ناوبری اصلی">
           {!isHomeView && (
             <button
               type="button"
@@ -187,7 +188,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
               className={`py-1.5 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
                 activeStorePage === 'HOME'
                   ? 'border-[var(--accent-text)] text-[var(--accent-text)] font-bold'
-                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-main)]'
               }`}
             >
               خانه
@@ -204,7 +205,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
                 className={`py-1.5 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
                   isActive
                     ? 'border-[var(--accent-text)] text-[var(--accent-text)] font-bold'
-                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                    : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-main)]'
                 }`}
               >
                 {item.label}
@@ -218,7 +219,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
             className={`py-1.5 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
               activeStorePage === 'BLOG'
                 ? 'border-[var(--accent-text)] text-[var(--accent-text)] font-bold'
-                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-main)]'
             }`}
           >
             مجله
@@ -258,117 +259,36 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
             </button>
           )}
 
-          {/* 4-Theme Selector Dropdown (2 Modern Violet + 2 Organic Forest) */}
-          <div ref={themeMenuRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setShowThemeDropdown((prev) => !prev)}
-              className="px-2.5 py-1.5 rounded-full bg-[var(--bg-card)]/70 hover:bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-[var(--border-active)] text-[var(--text-main)] transition-all min-h-[38px] flex items-center gap-1.5 cursor-pointer"
-              title={`تم فعلی: ${getThemeMeta(currentTheme).label}`}
-              aria-label="تغییر تم و حالت نمایش"
-              aria-expanded={showThemeDropdown}
+          {/* Direct 1-Click Forest Day / Night Switcher (Icon-Only Sun & Moon) */}
+          <button
+            type="button"
+            onClick={handleToggleForestTheme}
+            data-theme-toggle="forest"
+            className="group p-1 rounded-full bg-[var(--bg-card)]/85 hover:bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-[var(--border-active)] transition-all inline-flex items-center gap-0.5 cursor-pointer shrink-0"
+            title={`تغییر حالت نمایش (فعلی: ${getThemeMeta(currentTheme).label})`}
+            aria-label="تغییر حالت روشن یا تیره فراست"
+          >
+            <span
+              aria-hidden="true"
+              className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                !isDarkTheme(currentTheme)
+                  ? 'bg-[var(--accent-primary)] text-[#F7F3EA] shadow-xs'
+                  : 'text-[var(--text-muted)] group-hover:text-[var(--text-main)]'
+              }`}
             >
-              {isDarkTheme(currentTheme) ? (
-                <Moon className="w-4 h-4 text-[var(--accent-text)] shrink-0" strokeWidth={1.9} />
-              ) : (
-                <Sun className="w-4 h-4 text-[var(--accent-text)] shrink-0" strokeWidth={1.9} />
-              )}
-              <span className="hidden sm:inline text-[11px] font-bold whitespace-nowrap">
-                {getThemeMeta(currentTheme).shortLabel}
-              </span>
-              <ChevronDown
-                className={`w-3.5 h-3.5 text-[var(--text-muted)] transition-transform ${
-                  showThemeDropdown ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
-
-            {showThemeDropdown && (
-              <div className="absolute left-0 mt-2 w-72 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl p-2.5 shadow-2xl z-50 space-y-2.5 text-right">
-                <div className="px-2 pb-1.5 border-b border-[var(--border-color)] flex items-center justify-between">
-                  <span className="text-xs font-black text-[var(--text-main)] flex items-center gap-1.5">
-                    <Palette className="w-3.5 h-3.5 text-[var(--accent-text)]" />
-                    <span>انتخاب تم و هویت نمایش</span>
-                  </span>
-                  <span className="text-[10px] text-[var(--text-muted)]">۴ حالت</span>
-                </div>
-
-                {/* Group 1: Modern Violet (Arch Showcase) */}
-                <div className="space-y-1">
-                  <div className="px-2 text-[10px] font-bold text-[var(--text-muted)]">
-                    هویت مدرن بنفش (اسلایدر طاق ایرانی)
-                  </div>
-                  {GORDIYEH_THEMES.filter((t) => t.identity === 'violet').map((themeOption) => {
-                    const isSelected = currentTheme === themeOption.id;
-                    return (
-                      <button
-                        key={themeOption.id}
-                        type="button"
-                        data-theme-option={themeOption.id}
-                        onClick={() => handleSelectTheme(themeOption.id)}
-                        className={`w-full px-2.5 py-2 rounded-xl flex items-center justify-between gap-2 text-right transition-colors cursor-pointer ${
-                          isSelected
-                            ? 'bg-[var(--accent-soft)] border border-[var(--border-active)] text-[var(--text-main)] font-bold'
-                            : 'hover:bg-[var(--bg-card)] text-[var(--text-main)] border border-transparent'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span
-                            className="w-5 h-5 rounded-full border border-[var(--border-active)] shrink-0 flex items-center justify-center"
-                            style={{ backgroundColor: themeOption.bgSwatch }}
-                          >
-                            <span
-                              className="w-2.5 h-2.5 rounded-full"
-                              style={{ backgroundColor: themeOption.accentSwatch }}
-                            />
-                          </span>
-                          <span className="text-[11px] truncate">{themeOption.label}</span>
-                        </div>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-[var(--accent-text)] shrink-0" />}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Group 2: Organic Forest (Wide Banner) */}
-                <div className="space-y-1 pt-1 border-t border-[var(--border-color)]">
-                  <div className="px-2 text-[10px] font-bold text-[var(--text-muted)]">
-                    هویت ارگانیک سبز (بنر عریض تمام‌صفحه)
-                  </div>
-                  {GORDIYEH_THEMES.filter((t) => t.identity === 'forest').map((themeOption) => {
-                    const isSelected = currentTheme === themeOption.id;
-                    return (
-                      <button
-                        key={themeOption.id}
-                        type="button"
-                        data-theme-option={themeOption.id}
-                        onClick={() => handleSelectTheme(themeOption.id)}
-                        className={`w-full px-2.5 py-2 rounded-xl flex items-center justify-between gap-2 text-right transition-colors cursor-pointer ${
-                          isSelected
-                            ? 'bg-[var(--accent-soft)] border border-[var(--border-active)] text-[var(--text-main)] font-bold'
-                            : 'hover:bg-[var(--bg-card)] text-[var(--text-main)] border border-transparent'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span
-                            className="w-5 h-5 rounded-full border border-[var(--border-active)] shrink-0 flex items-center justify-center"
-                            style={{ backgroundColor: themeOption.bgSwatch }}
-                          >
-                            <span
-                              className="w-2.5 h-2.5 rounded-full"
-                              style={{ backgroundColor: themeOption.accentSwatch }}
-                            />
-                          </span>
-                          <span className="text-[11px] truncate">{themeOption.label}</span>
-                        </div>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-[var(--accent-text)] shrink-0" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
+              <Sun className="w-3.5 h-3.5 shrink-0" strokeWidth={2} />
+            </span>
+            <span
+              aria-hidden="true"
+              className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                isDarkTheme(currentTheme)
+                  ? 'bg-[var(--accent-primary)] text-[#F7F3EA] shadow-xs'
+                  : 'text-[var(--text-muted)] group-hover:text-[var(--text-main)]'
+              }`}
+            >
+              <Moon className="w-3.5 h-3.5 shrink-0" strokeWidth={2} />
+            </span>
+          </button>
 
           {/* User Account Dropdown */}
           <div ref={userMenuRef} className="relative">
@@ -394,7 +314,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
                   className="w-full px-3 py-2 rounded-xl text-right text-xs text-[var(--text-main)] hover:bg-[var(--bg-card)] flex items-center gap-2 transition-colors cursor-pointer"
                 >
                   <PackageCheck className="w-4 h-4 text-[var(--accent-primary)]" />
-                  <span>سفارش‌های من</span>
+                  <span>سفارش‌ها و تاریخچه چت‌ها</span>
                 </button>
                 <button
                   type="button"
@@ -435,7 +355,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
                   placeholder="جستجوی محصول: پروژکتور، مینی شیکر، G-Lamp، ماساژور..."
                   value={searchTerm}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl pr-10 pl-9 py-2.5 text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)] transition-all"
+                  className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl pr-10 pl-9 py-2.5 text-xs sm:text-[13px] text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)] transition-all"
                 />
                 {searchTerm && (
                   <button
@@ -486,7 +406,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
                   alt={GORDIYEH_BRAND.nameFa}
                   className="h-8 w-auto object-contain gordiyeh-adaptive-logo"
                 />
-                <span className="text-sm font-black text-[var(--text-main)]">{storeName}</span>
+                <span className="text-sm font-bold text-[var(--text-main)]">{storeName}</span>
               </div>
               <button
                 type="button"
@@ -560,11 +480,15 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
                 <ChevronDown className="w-4 h-4 rotate-90" />
               </button>
 
-              {/* Mobile 4-Theme Picker */}
+              {/* Mobile Forest Light / Dark Switcher */}
               <div className="pt-3 mt-2 border-t border-[var(--border-color)] space-y-2">
                 <div className="text-[11px] font-bold text-[var(--text-muted)] px-1 flex items-center gap-1.5">
-                  <Palette className="w-3.5 h-3.5 text-[var(--accent-text)]" />
-                  <span>انتخاب تم نمایش (۴ حالت)</span>
+                  {isDarkTheme(currentTheme) ? (
+                    <Moon className="w-3.5 h-3.5 text-[var(--accent-text)]" />
+                  ) : (
+                    <Sun className="w-3.5 h-3.5 text-[var(--accent-text)]" />
+                  )}
+                  <span>حالت نمایش فراست</span>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5">
                   {GORDIYEH_THEMES.map((themeOption) => {
@@ -573,6 +497,7 @@ export const StorefrontHeader: React.FC<StorefrontHeaderProps> = ({
                       <button
                         key={themeOption.id}
                         type="button"
+                        data-theme-option={themeOption.id}
                         onClick={() => handleSelectTheme(themeOption.id)}
                         className={`p-2 rounded-xl border text-[11px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                           active

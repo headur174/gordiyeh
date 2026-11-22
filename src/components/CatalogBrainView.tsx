@@ -217,47 +217,47 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-right">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg">
-        <div>
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4 sm:p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] shadow-sm">
+        <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <Layers className="w-6 h-6 text-indigo-400" />
-            <h1 className="text-xl font-black text-white">هسته کاتالوگ و هوش محصول (Canonical Catalog & Product DNA)</h1>
+            <Layers className="w-6 h-6 text-[var(--accent-text)] shrink-0" />
+            <h1 className="text-lg sm:text-xl font-black text-[var(--text-main)]">هسته کاتالوگ و هوش محصول (Canonical Catalog & Product DNA)</h1>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
             هر محصول به عنوان هویت استاندارد (Canonical) با چند آفر از تأمین‌کنندگان مختلف و شناسنامه ژنتیکی مستقل پایش می‌شود.
           </p>
         </div>
 
         {/* Quick Summary Badges */}
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 font-mono">
-            کل کاتالوگ: <strong className="text-white font-bold">{products.length}</strong> کالا
+          <span className="px-3 py-1.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-muted)] font-mono">
+            کل کاتالوگ: <strong className="text-[var(--text-main)] font-bold">{products.length}</strong> کالا
           </span>
-          <span className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 font-mono">
-            تأمین‌کنندگان فعال: <strong className="text-indigo-400 font-bold">{suppliersList.length}</strong> مرکز
+          <span className="px-3 py-1.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-muted)] font-mono">
+            تأمین‌کنندگان فعال: <strong className="text-[var(--accent-text)] font-bold">{suppliersList.length}</strong> مرکز
           </span>
         </div>
       </div>
 
       {/* SMART SEARCH & FILTER BAR (نوار هوشمند جستجو و فیلتر کاتالوگ) */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-md space-y-4">
+      <div className="p-4 sm:p-5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] shadow-sm space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
           {/* 1. Main Search Input (Title, SKU, Category, Supplier) */}
           <div className="md:col-span-5 relative">
-            <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
+            <Search className="w-4 h-4 text-[var(--text-muted)] absolute right-3.5 top-3.5" />
             <input
               type="text"
               placeholder="جستجو هوشمند بر اساس عنوان کالا، SKU، دسته یا تأمین‌کننده..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl pr-10 pl-9 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl pr-10 pl-9 py-2.5 text-xs sm:text-sm text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-active)] transition-colors"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="absolute left-3 top-3 text-slate-400 hover:text-white p-0.5 rounded-md hover:bg-slate-800 transition-colors"
+                className="absolute left-3 top-3 text-[var(--text-muted)] hover:text-[var(--text-main)] p-0.5 rounded-md hover:bg-[var(--bg-card)] transition-colors"
                 title="پاک‌کردن متن جستجو"
               >
                 <X className="w-3.5 h-3.5" />
@@ -266,13 +266,13 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
           </div>
 
           {/* 2. Status Filter Tabs */}
-          <div className="md:col-span-4 flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs overflow-x-auto">
+          <div className="md:col-span-4 flex items-center bg-[var(--bg-main)] p-1 rounded-xl border border-[var(--border-color)] text-xs overflow-x-auto gap-1">
             <button
               onClick={() => setStatusFilter('ALL')}
               className={`flex-1 min-w-[65px] py-1.5 px-2 rounded-lg text-center transition-all whitespace-nowrap ${
                 statusFilter === 'ALL'
-                  ? 'bg-indigo-600 text-white font-bold shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[var(--accent-primary)] text-[#F7F3EA] font-bold shadow-sm'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
               }`}
             >
               همه ({products.length})
@@ -281,8 +281,8 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
               onClick={() => setStatusFilter('PUBLISHED')}
               className={`flex-1 min-w-[70px] py-1.5 px-2 rounded-lg text-center transition-all whitespace-nowrap flex items-center justify-center gap-1 ${
                 statusFilter === 'PUBLISHED'
-                  ? 'bg-emerald-700 text-white font-bold shadow-sm'
-                  : 'text-slate-400 hover:text-emerald-400'
+                  ? 'bg-emerald-700 text-[#F7F3EA] font-bold shadow-sm'
+                  : 'text-[var(--text-muted)] hover:text-emerald-700 dark:hover:text-emerald-300'
               }`}
             >
               <CheckCircle2 className="w-3 h-3" />
@@ -293,7 +293,7 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
               className={`flex-1 min-w-[70px] py-1.5 px-2 rounded-lg text-center transition-all whitespace-nowrap flex items-center justify-center gap-1 ${
                 statusFilter === 'KILL_LIST'
                   ? 'bg-rose-700 text-white font-bold shadow-sm'
-                  : 'text-slate-400 hover:text-rose-400'
+                  : 'text-[var(--text-muted)] hover:text-rose-700 dark:hover:text-rose-300'
               }`}
             >
               <EyeOff className="w-3 h-3" />
@@ -304,7 +304,7 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
               className={`flex-1 min-w-[65px] py-1.5 px-2 rounded-lg text-center transition-all whitespace-nowrap flex items-center justify-center gap-1 ${
                 statusFilter === 'WINNERS'
                   ? 'bg-amber-600 text-white font-bold shadow-sm'
-                  : 'text-slate-400 hover:text-amber-400'
+                  : 'text-[var(--text-muted)] hover:text-amber-700 dark:hover:text-amber-300'
               }`}
             >
               <Sparkles className="w-3 h-3" />
@@ -315,11 +315,11 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
           {/* 3. Supplier Filter Dropdown */}
           <div className="md:col-span-3 flex items-center gap-2">
             <div className="relative flex-1">
-              <Building2 className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+              <Building2 className="w-4 h-4 text-[var(--text-muted)] absolute right-3 top-3 pointer-events-none" />
               <select
                 value={selectedSupplierId}
                 onChange={(e) => setSelectedSupplierId(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pr-9 pl-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer"
+                className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl pr-9 pl-4 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--border-active)] appearance-none cursor-pointer"
               >
                 <option value="ALL">همه تأمین‌کنندگان ({suppliersList.length})</option>
                 {suppliersList.map(s => (
@@ -333,36 +333,36 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
         </div>
 
         {/* Filter Details & Sorting Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800/80 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[var(--border-color)] text-xs">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-slate-400 font-medium">
-              نمایش <strong className="text-white font-bold font-mono">{filteredProducts.length}</strong> از{' '}
+            <span className="text-[var(--text-muted)] font-medium">
+              نمایش <strong className="text-[var(--text-main)] font-bold font-mono">{filteredProducts.length}</strong> از{' '}
               <span className="font-mono">{products.length}</span> کالا
             </span>
 
             {/* Active filters pills */}
             {searchTerm && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-950/60 border border-indigo-800/50 text-indigo-300 text-[11px]">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--accent-soft)] border border-[var(--border-active)] text-[var(--accent-text)] text-[11px]">
                 جستجو: «{searchTerm}»
-                <button onClick={() => setSearchTerm('')} className="hover:text-white">
+                <button onClick={() => setSearchTerm('')} className="hover:opacity-75">
                   <X className="w-3 h-3" />
                 </button>
               </span>
             )}
 
             {statusFilter !== 'ALL' && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 text-[11px]">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-main)] text-[11px]">
                 وضعیت: {statusFilter === 'PUBLISHED' ? 'ویترین فعال' : statusFilter === 'KILL_LIST' ? 'لیست مرگ' : 'وینرها'}
-                <button onClick={() => setStatusFilter('ALL')} className="hover:text-white">
+                <button onClick={() => setStatusFilter('ALL')} className="hover:opacity-75">
                   <X className="w-3 h-3" />
                 </button>
               </span>
             )}
 
             {selectedSupplierId !== 'ALL' && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 text-[11px]">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-main)] text-[11px]">
                 تأمین‌کننده: {suppliersList.find(s => s.id === selectedSupplierId)?.name}
-                <button onClick={() => setSelectedSupplierId('ALL')} className="hover:text-white">
+                <button onClick={() => setSelectedSupplierId('ALL')} className="hover:opacity-75">
                   <X className="w-3 h-3" />
                 </button>
               </span>
@@ -371,7 +371,7 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
             {hasActiveFilters && (
               <button
                 onClick={handleResetFilters}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-950/30 border border-rose-800/50 text-rose-300 hover:bg-rose-900/40 transition-colors text-[11px]"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-500/15 border border-rose-500/35 text-rose-700 dark:text-rose-300 hover:bg-rose-500/25 transition-colors text-[11px] font-bold"
               >
                 <RotateCcw className="w-3 h-3" />
                 پاک‌سازی همه فیلترها
@@ -381,14 +381,14 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
 
           {/* Sort Selector */}
           <div className="flex items-center gap-2">
-            <span className="text-slate-400 flex items-center gap-1">
-              <ArrowUpDown className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="text-[var(--text-muted)] flex items-center gap-1">
+              <ArrowUpDown className="w-3.5 h-3.5 text-[var(--accent-text)]" />
               مرتب‌سازی:
             </span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
+              className="bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-2.5 py-1 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--border-active)] cursor-pointer"
             >
               <option value="WINNER_SCORE">امتیاز وینر (بیشترین)</option>
               <option value="MARGIN">حاشیه سود (بیشترین)</option>
@@ -410,14 +410,14 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
             overscan={4}
             className="pr-1"
             emptyPlaceholder={
-              <div className="p-8 text-center bg-slate-900/70 border border-slate-800 rounded-2xl space-y-3">
-                <Search className="w-8 h-8 text-slate-500 mx-auto" />
-                <p className="text-xs sm:text-sm font-semibold text-slate-300">
+              <div className="p-8 text-center bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl space-y-3">
+                <Search className="w-8 h-8 text-[var(--text-muted)] mx-auto" />
+                <p className="text-xs sm:text-sm font-semibold text-[var(--text-main)]">
                   هیچ کالایی با فیلترهای انتخابی یافت نشد.
                 </p>
                 <button
                   onClick={handleResetFilters}
-                  className="px-4 py-2 rounded-xl bg-indigo-600/30 border border-indigo-500/50 text-indigo-200 text-xs font-bold hover:bg-indigo-600/50 transition-colors"
+                  className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] text-xs font-bold transition-colors"
                 >
                   بازنشانی فیلترها
                 </button>
@@ -434,8 +434,8 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
                   onClick={() => setSelectedProductId(p.id)}
                   className={`p-4 rounded-xl border cursor-pointer transition-all ${
                     isSelected
-                      ? 'bg-slate-850 border-indigo-500/80 shadow-lg shadow-indigo-950/30 ring-1 ring-indigo-500/50'
-                      : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+                      ? 'bg-[var(--accent-soft)]/50 border-[var(--border-active)] shadow-md ring-1 ring-[var(--border-active)]'
+                      : 'bg-[var(--bg-surface)] border-[var(--border-color)] hover:border-[var(--border-active)]'
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -443,39 +443,39 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
                       src={p.image}
                       alt={p.title}
                       loading="lazy"
-                      className="w-14 h-14 rounded-lg object-cover bg-slate-800 flex-shrink-0"
+                      className="w-14 h-14 rounded-lg object-cover bg-[var(--bg-card)] border border-[var(--border-color)] flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--bg-card)] text-[var(--text-main)] border border-[var(--border-color)]">
                           {p.sku}
                         </span>
                         {p.winnerScore > 85 && !isKill && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 flex items-center gap-1 border border-amber-500/30">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-300 flex items-center gap-1 border border-amber-500/35">
                             <Sparkles className="w-2.5 h-2.5" />
                             Winner {p.winnerScore}
                           </span>
                         )}
                         {isKill && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/35">
                             Kill List
                           </span>
                         )}
                       </div>
 
-                      <h3 className="text-xs font-bold text-white line-clamp-2">{p.title}</h3>
+                      <h3 className="text-xs font-bold text-[var(--text-main)] line-clamp-2">{p.title}</h3>
 
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800 text-xs">
-                        <span className="font-bold text-slate-200">{formatCurrency(p.retailPrice, currency)}</span>
-                        <span className="text-emerald-400 font-mono text-[11px] font-semibold">
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[var(--border-color)] text-xs">
+                        <span className="font-bold text-[var(--text-main)]">{formatCurrency(p.retailPrice, currency)}</span>
+                        <span className="text-emerald-700 dark:text-emerald-400 font-mono text-[11px] font-semibold">
                           مارجین: {formatPercent(p.dna.currentMarginPercent)}
                         </span>
                       </div>
 
                       {/* Current supplier indicator */}
-                      <div className="mt-1.5 text-[10px] text-slate-400 flex items-center gap-1">
-                        <Truck className="w-3 h-3 text-slate-500" />
-                        <span>تأمین‌کننده فعال: {activeOffer?.supplierName || 'تعیین‌نشده'}</span>
+                      <div className="mt-1.5 text-[10px] text-[var(--text-muted)] flex items-center gap-1">
+                        <Truck className="w-3 h-3 text-[var(--text-muted)]" />
+                        <span className="truncate">تأمین‌کننده فعال: {activeOffer?.supplierName || 'تعیین‌نشده'}</span>
                       </div>
                     </div>
                   </div>
@@ -488,76 +488,76 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
         {/* Right Column: Deep Product DNA, Multi-Supplier Offers & Explainability */}
         <div className="lg:col-span-7">
           {selectedProduct ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-xl">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl p-4 sm:p-6 space-y-6 shadow-sm">
               {/* Top Banner with "Why?" Button */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-5 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-mono text-indigo-400">{selectedProduct.sku}</span>
-                    <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300">{selectedProduct.category}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded font-bold ${
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-5 border-b border-[var(--border-color)]">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <span className="text-xs font-mono text-[var(--accent-text)] font-bold">{selectedProduct.sku}</span>
+                    <span className="text-xs px-2 py-0.5 rounded bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-main)]">{selectedProduct.category}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded font-bold border ${
                       selectedProduct.status === 'PUBLISHED' 
-                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' 
-                        : 'bg-rose-950 text-rose-300 border border-rose-800'
+                        ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/35' 
+                        : 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/35'
                     }`}>
                       {selectedProduct.status === 'PUBLISHED' ? 'منتشر در ویترین' : 'متوقف در لیست مرگ'}
                     </span>
                   </div>
-                  <h2 className="text-base sm:text-lg font-bold text-white">{selectedProduct.title}</h2>
+                  <h2 className="text-base sm:text-lg font-bold text-[var(--text-main)]">{selectedProduct.title}</h2>
                 </div>
 
                 {/* Explainability "Why?" Button */}
                 <button
                   id={`btn-explain-${selectedProduct.id}`}
                   onClick={() => onExplainProduct(selectedProduct)}
-                  className="px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 hover:text-indigo-200 text-xs font-bold flex items-center gap-2 transition-all"
+                  className="px-3.5 py-2 rounded-xl bg-[var(--accent-soft)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-active)] text-[var(--accent-text)] text-xs font-bold flex items-center gap-2 transition-all shrink-0"
                   title="مشاهده شواهد و منطق تصمیمات الگوریتم برای این کالا"
                 >
-                  <HelpCircle className="w-4 h-4 text-indigo-400" />
+                  <HelpCircle className="w-4 h-4" />
                   چرا؟ (Explain Decision)
                 </button>
               </div>
 
               {/* Price & Contribution Margin Row with Quick Reprice Tool */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                <div className="p-3.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)]">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-slate-400">قیمت فروش فعلی:</span>
+                    <span className="text-xs text-[var(--text-muted)]">قیمت فروش فعلی:</span>
                     <button
                       onClick={handleStartRepricing}
-                      className="text-indigo-400 hover:text-indigo-300 p-0.5 rounded hover:bg-slate-800 transition-colors"
+                      className="text-[var(--accent-text)] hover:opacity-80 p-0.5 rounded hover:bg-[var(--bg-surface)] transition-colors"
                       title="ویرایش قیمت این کالا"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                  <div className="text-sm font-bold text-white">{formatCurrency(selectedProduct.retailPrice, currency)}</div>
+                  <div className="text-sm font-bold text-[var(--text-main)]">{formatCurrency(selectedProduct.retailPrice, currency)}</div>
                 </div>
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                  <span className="text-xs text-slate-400 block mb-1">قیمت خرید (Cost):</span>
-                  <div className="text-sm font-bold text-slate-300">{formatCurrency(selectedProduct.baseCost, currency)}</div>
+                <div className="p-3.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)]">
+                  <span className="text-xs text-[var(--text-muted)] block mb-1">قیمت خرید (Cost):</span>
+                  <div className="text-sm font-bold text-[var(--text-main)]">{formatCurrency(selectedProduct.baseCost, currency)}</div>
                 </div>
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                  <span className="text-xs text-slate-400 block mb-1">میانه قیمت رقبا:</span>
-                  <div className="text-sm font-bold text-cyan-400">{formatCurrency(selectedProduct.marketMedianPrice, currency)}</div>
+                <div className="p-3.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)]">
+                  <span className="text-xs text-[var(--text-muted)] block mb-1">میانه قیمت رقبا:</span>
+                  <div className="text-sm font-bold text-teal-700 dark:text-teal-300">{formatCurrency(selectedProduct.marketMedianPrice, currency)}</div>
                 </div>
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                  <span className="text-xs text-slate-400 block mb-1">حاشیه سود ناخالص:</span>
-                  <div className="text-sm font-bold text-emerald-400">{formatPercent(selectedProduct.dna.currentMarginPercent)}</div>
+                <div className="p-3.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)]">
+                  <span className="text-xs text-[var(--text-muted)] block mb-1">حاشیه سود ناخالص:</span>
+                  <div className="text-sm font-bold text-emerald-700 dark:text-emerald-400">{formatPercent(selectedProduct.dna.currentMarginPercent)}</div>
                 </div>
               </div>
 
               {/* Inline Reprice Modal / Drawer */}
               {isEditingPrice && (
-                <div className="p-4 rounded-xl bg-indigo-950/40 border border-indigo-800/60 space-y-3 animate-fadeIn">
+                <div className="p-4 rounded-xl bg-[var(--accent-soft)]/50 border border-[var(--border-active)] space-y-3 animate-fadeIn">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-bold text-indigo-200 flex items-center gap-1.5">
-                      <Edit3 className="w-4 h-4 text-indigo-400" />
+                    <h4 className="text-xs font-bold text-[var(--accent-text)] flex items-center gap-1.5">
+                      <Edit3 className="w-4 h-4" />
                       تغییر مستقیم قیمت و محاسبه آنی مارجین سود
                     </h4>
                     <button
                       onClick={() => setIsEditingPrice(false)}
-                      className="text-slate-400 hover:text-white"
+                      className="text-[var(--text-muted)] hover:text-[var(--text-main)]"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -565,17 +565,17 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
                     <div className="sm:col-span-2">
-                      <label className="text-[11px] text-slate-300 block mb-1">قیمت جدید ({currency}):</label>
+                      <label className="text-[11px] text-[var(--text-muted)] block mb-1">قیمت جدید ({currency}):</label>
                       <input
                         type="number"
                         value={tempPrice}
                         onChange={(e) => setTempPrice(Number(e.target.value))}
-                        className="w-full bg-slate-950 border border-indigo-700 rounded-lg px-3 py-2 text-xs font-mono font-bold text-white focus:outline-none focus:border-indigo-400"
+                        className="w-full bg-[var(--bg-main)] border border-[var(--border-active)] rounded-lg px-3 py-2 text-xs font-mono font-bold text-[var(--text-main)] focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-slate-300 block mb-1">مارجین تخمینی:</label>
-                      <div className="px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono font-bold text-emerald-400">
+                      <label className="text-[11px] text-[var(--text-muted)] block mb-1">مارجین تخمینی:</label>
+                      <div className="px-3 py-2 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400">
                         {tempPrice > selectedProduct.baseCost 
                           ? `${formatPercent(((tempPrice - selectedProduct.baseCost) / tempPrice) * 100)}`
                           : '⚠️ زیان‌ده'}
@@ -586,13 +586,13 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
                   <div className="flex items-center justify-end gap-2 pt-2">
                     <button
                       onClick={() => setIsEditingPrice(false)}
-                      className="px-3 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white"
+                      className="px-3 py-1.5 rounded-lg text-xs text-[var(--text-muted)] hover:text-[var(--text-main)]"
                     >
                       انصراف
                     </button>
                     <button
                       onClick={handleSavePrice}
-                      className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm"
+                      className="px-4 py-1.5 rounded-lg bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] text-xs font-bold flex items-center gap-1.5 shadow-sm"
                     >
                       <Check className="w-3.5 h-3.5" />
                       ثبت و اعمال قیمت
@@ -603,12 +603,12 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
 
               {/* Multi-Supplier Offers & Live Switching (The core concept!) */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-                    <Truck className="w-4 h-4 text-amber-400" />
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="text-xs sm:text-sm font-bold text-[var(--text-main)] flex items-center gap-2">
+                    <Truck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     آفرهای تأمین‌کنندگان (Multi-Supplier Offers & Fallback)
                   </h3>
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px] text-[var(--text-muted)]">
                     {selectedProduct.supplierOffers.length} آفر متصل به این SKU
                   </span>
                 </div>
@@ -622,33 +622,33 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
                         key={offer.id}
                         className={`p-4 rounded-xl border transition-all ${
                           isSelectedOffer
-                            ? 'bg-indigo-950/30 border-indigo-500/80 shadow-md ring-1 ring-indigo-500/30'
-                            : 'bg-slate-950/60 border-slate-800'
+                            ? 'bg-[var(--accent-soft)]/45 border-[var(--border-active)] shadow-sm ring-1 ring-[var(--border-active)]'
+                            : 'bg-[var(--bg-card)]/60 border-[var(--border-color)]'
                         }`}
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs font-bold text-white">{offer.supplierName}</span>
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <span className="text-xs font-bold text-[var(--text-main)]">{offer.supplierName}</span>
                               {isSelectedOffer && (
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35 flex items-center gap-1">
                                   <CheckCircle2 className="w-3 h-3" />
                                   تأمین‌کننده فعال (Active)
                                 </span>
                               )}
                             </div>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-xs text-slate-400 mt-2">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-xs text-[var(--text-muted)] mt-2">
                               <div>
-                                قیمت آفر: <span className="font-bold text-slate-200">{formatCurrency(offer.offerPrice, currency)}</span>
+                                قیمت آفر: <span className="font-bold text-[var(--text-main)]">{formatCurrency(offer.offerPrice, currency)}</span>
                               </div>
                               <div>
-                                موجودی انبار: <span className={`font-bold ${offer.stock < 20 ? 'text-rose-400' : 'text-emerald-400'}`}>{offer.stock} عدد</span>
+                                موجودی انبار: <span className={`font-bold ${offer.stock < 20 ? 'text-rose-700 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'}`}>{offer.stock} عدد</span>
                               </div>
                               <div>
-                                زمان ارسال: <span className="font-semibold text-slate-300">{offer.dispatchTimeHours} ساعت</span>
+                                زمان ارسال: <span className="font-semibold text-[var(--text-main)]">{offer.dispatchTimeHours} ساعت</span>
                               </div>
                               <div>
-                                نرخ تعهد: <span className="font-semibold text-slate-300">{offer.fulfillmentRate}٪</span>
+                                نرخ تعهد: <span className="font-semibold text-[var(--text-main)]">{offer.fulfillmentRate}٪</span>
                               </div>
                             </div>
                           </div>
@@ -656,7 +656,7 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
                           {!isSelectedOffer && (
                             <button
                               onClick={() => onSwitchSupplierOffer(selectedProduct.id, offer.id)}
-                              className="self-start sm:self-center px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
+                              className="self-start sm:self-center px-3 py-1.5 rounded-lg bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm shrink-0"
                             >
                               <RefreshCw className="w-3.5 h-3.5" />
                               سوئیچ به این آفر
@@ -670,35 +670,35 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
               </div>
 
               {/* Product DNA Snapshot */}
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
-                <h4 className="text-xs font-bold text-slate-300 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-cyan-400" />
+              <div className="p-4 rounded-xl bg-[var(--bg-card)]/60 border border-[var(--border-color)] space-y-3">
+                <h4 className="text-xs font-bold text-[var(--text-main)] flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-teal-700 dark:text-teal-300" />
                   تحلیل هوشمند تقاضا و کشش مناسبتی (Product DNA)
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <span className="text-slate-400 block mb-1">تقاضای فعال بازار:</span>
-                    <span className="font-bold text-cyan-400 text-sm">{selectedProduct.dna.demandScore} / ۱۰۰</span>
+                  <div className="p-2.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)]">
+                    <span className="text-[var(--text-muted)] block mb-1">تقاضای فعال بازار:</span>
+                    <span className="font-bold text-teal-700 dark:text-teal-300 text-sm">{selectedProduct.dna.demandScore} / ۱۰۰</span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <span className="text-slate-400 block mb-1">شدت رقابت:</span>
-                    <span className="font-bold text-slate-200 text-sm">{selectedProduct.dna.competitionDensity}</span>
+                  <div className="p-2.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)]">
+                    <span className="text-[var(--text-muted)] block mb-1">شدت رقابت:</span>
+                    <span className="font-bold text-[var(--text-main)] text-sm">{selectedProduct.dna.competitionDensity}</span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <span className="text-slate-400 block mb-1">قرابت یلدا:</span>
-                    <span className="font-bold text-rose-400 text-sm">{selectedProduct.dna.eventAffinity.yalda}٪</span>
+                  <div className="p-2.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)]">
+                    <span className="text-[var(--text-muted)] block mb-1">قرابت یلدا:</span>
+                    <span className="font-bold text-rose-700 dark:text-rose-400 text-sm">{selectedProduct.dna.eventAffinity.yalda}٪</span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <span className="text-slate-400 block mb-1">قرابت نوروز:</span>
-                    <span className="font-bold text-emerald-400 text-sm">{selectedProduct.dna.eventAffinity.nowruz}٪</span>
+                  <div className="p-2.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)]">
+                    <span className="text-[var(--text-muted)] block mb-1">قرابت نوروز:</span>
+                    <span className="font-bold text-emerald-700 dark:text-emerald-400 text-sm">{selectedProduct.dna.eventAffinity.nowruz}٪</span>
                   </div>
                 </div>
               </div>
 
               {/* Bottom Actions (Reprice within rule / Kill list) */}
-              <div className="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-xs text-slate-400">
-                  <ShieldCheck className="w-4 h-4 text-indigo-400" />
+              <div className="pt-3 border-t border-[var(--border-color)] flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                  <ShieldCheck className="w-4 h-4 text-[var(--accent-text)]" />
                   حداقل مارجین مجاز: {selectedProduct.minMargin}٪
                 </div>
 
@@ -707,8 +707,8 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
                     onClick={() => onToggleKillList(selectedProduct.id)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors flex items-center gap-1.5 ${
                       selectedProduct.status === 'KILL_LIST'
-                        ? 'bg-emerald-950 border-emerald-800 text-emerald-300 hover:bg-emerald-900'
-                        : 'bg-rose-950 border-rose-800 text-rose-300 hover:bg-rose-900'
+                        ? 'bg-emerald-500/15 border-emerald-500/35 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25'
+                        : 'bg-rose-500/15 border-rose-500/35 text-rose-700 dark:text-rose-300 hover:bg-rose-500/25'
                     }`}
                   >
                     <EyeOff className="w-3.5 h-3.5" />
@@ -718,7 +718,7 @@ export const CatalogBrainView: React.FC<CatalogBrainViewProps> = ({
               </div>
             </div>
           ) : (
-            <div className="text-center p-12 bg-slate-900 rounded-2xl border border-slate-800 text-slate-400">
+            <div className="text-center p-12 bg-[var(--bg-surface)] rounded-2xl border border-[var(--border-color)] text-[var(--text-muted)]">
               یک کالا را برای مشاهده هوش محصول و آفرها انتخاب کنید.
             </div>
           )}

@@ -8,14 +8,11 @@ import {
   Check,
   Copy,
   Clock,
-  Eye,
   Smartphone,
-  Calendar,
   Layers,
   CheckCircle2,
   RefreshCw,
-  ExternalLink,
-  MessageCircle
+  MessageCircle,
 } from 'lucide-react';
 import { CanonicalProduct } from '../../types';
 
@@ -28,13 +25,13 @@ interface SocialPublisherModalProps {
 export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
   isOpen,
   onClose,
-  product
+  product,
 }) => {
   if (!isOpen) return null;
 
   const [activeChannel, setActiveChannel] = useState<'INSTAGRAM' | 'TELEGRAM' | 'EITAA' | 'RUBIKA' | 'X'>('INSTAGRAM');
   const [activeFormat, setActiveFormat] = useState<'POST' | 'STORY' | 'CAROUSEL'>('POST');
-  const [customOffer, setCustomOffer] = useState('🎁 ارسال رایگان + مهلت تست ۷ روزه');
+  const [customOffer, setCustomOffer] = useState('ارسال رایگان + مهلت تست ۷ روزه');
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishedStatus, setPublishedStatus] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -43,27 +40,25 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
   const rawPrice = product?.retailPrice || (product as any)?.sellPrice;
   const price = rawPrice ? rawPrice.toLocaleString() + ' تومان' : 'تماس بگیرید';
   const category = product?.category || 'کالای دیجیتال';
-  const image = product?.image || 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=80';
+  const image = product?.image || 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=75&fm=webp';
 
-  // Formatted templates per channel
   const getPostContent = () => {
     if (activeChannel === 'INSTAGRAM') {
       if (activeFormat === 'STORY') {
-        return `⚡ پیشنهاد ویژه فروشگاه!\n\n🛍 ${title}\n💰 قیمت امروز: ${price}\n🚚 ارسال سریع سراسری\n\n👆 لینک را لمس کنید و سفارش دهید!`;
+        return `پیشنهاد ویژه فروشگاه گُردیه\n\n${title}\nقیمت امروز: ${price}\nارسال سریع سراسری\n\nلینک را لمس کنید و سفارش دهید!`;
       }
-      return `🔥 جدیدترین پرچمدار بازار رسید: ${title}\n\nتضمین کمترین قیمت بازار به همراه گارانتی اصالت فیزیکی و فاکتور رسمی.\n\n💵 قیمت امروز: ${price}\n${customOffer}\n\n📌 برای خرید و مشاهده عکس‌های بیشتر:\n۱. به لینک بیو مراجعه کنید\n۲. یا کلمه "خرید" رو در دایرکت بفرستید تا لینک اختصاصی براتون ارسال بشه.\n\n#خرید_آنلاین #${category.replace(/\s+/g, '_')} #تخفیف #ارسال_فوری #کالای_اصل #فروشگاه`;
+      return `جدیدترین محصول منتخب گُردیه: ${title}\n\nتضمین اصالت کالا و فاکتور رسمی.\n\nقیمت امروز: ${price}\n${customOffer}\n\nبرای خرید و مشاهده مشخصات کامل به فروشگاه گُردیه سر بزنید.\n\n#خرید_آنلاین #${category.replace(/\s+/g, '_')} #تخفیف #ارسال_فوری #کالای_اصل #گُردیه`;
     }
 
     if (activeChannel === 'TELEGRAM') {
-      return `🔥 <b>${title}</b>\n\n🔹 قیمت ویژه اعضای کانال: <b>${price}</b>\n🔹 وضعیت انبار: موجود و آماده ارسال\n🔹 گارانتی: ۱۸ ماهه معتبر شرکتی\n🔹 ارسال: رایگان با پست پیشتاز و تیپاکس\n\n🛒 <i>خرید مستقیم با یک کلیک از وب‌سایت:</i>\n👇👇👇\nhttps://store.example.ir/p/${product?.id || '101'}`;
+      return `${title}\n\nقیمت ویژه اعضای کانال: ${price}\nوضعیت انبار: موجود و آماده ارسال\nگارانتی: ۱۸ ماهه معتبر شرکتی\n\nخرید مستقیم از وب‌سایت گُردیه:\nhttps://gordiyeh.ir/p/${product?.id || '101'}`;
     }
 
     if (activeChannel === 'EITAA' || activeChannel === 'RUBIKA') {
-      return `✨ پیشنهاد ویژه در فروشگاه ایرانی:\n\n📦 ${title}\n💎 قیمت با تخفیف ویژه: ${price}\n🚚 ارسال سریع با ناوگان پستی مطمئن\n\nجهت سفارش روی نشانی اینترنتی زیر بزنید:\nhttps://store.example.ir/p/${product?.id || '101'}\n\nکانال رسمی پشتیبانی: @commerce_os`;
+      return `پیشنهاد ویژه در فروشگاه گُردیه:\n\n${title}\nقیمت با تخفیف ویژه: ${price}\nارسال سریع با کد رهگیری پستی\n\nلینک سفارش:\nhttps://gordiyeh.ir/p/${product?.id || '101'}`;
     }
 
-    // X/Twitter
-    return `🚀 موجود شد: ${title}\n\nقیمت با تخفیف ویژه: ${price}\nبه همراه ارسال اکسپرس و مهلت تست ۷ روزه.\n\nلینک خرید آنلاین:\nhttps://store.example.ir/p/${product?.id || '101'}`;
+    return `موجود شد: ${title}\n\nقیمت با تخفیف ویژه: ${price}\nبه همراه ارسال اکسپرس و مهلت تست ۷ روزه.\n\nلینک خرید آنلاین:\nhttps://gordiyeh.ir/p/${product?.id || '101'}`;
   };
 
   const handleCopy = () => {
@@ -82,46 +77,46 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-4xl bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-[var(--text-main)]">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/60">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 via-rose-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/20">
+        <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-card)]">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary)] flex items-center justify-center text-[#F7F3EA] shadow-sm shrink-0">
               <Share2 className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                استودیوی انتشار خودکار در شبکه‌های اجتماعی
-                <span className="px-2 py-0.5 rounded-full text-[11px] bg-pink-500/10 text-pink-400 border border-pink-500/20">
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-bold text-[var(--text-main)] flex items-center gap-2 flex-wrap">
+                <span>استودیوی انتشار خودکار در شبکه‌های اجتماعی</span>
+                <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--accent-soft)] text-[var(--accent-text)] border border-[var(--border-active)]">
                   Multi-Channel Publisher
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">تولید محتوا، سایزبندی عکس، کپشن‌نویسی و انتشار مستقیم</p>
+              <p className="text-xs text-[var(--text-muted)]">تولید محتوا، سایزبندی عکس، کپشن‌نویسی و انتشار مستقیم</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/80 transition-colors"
+            className="p-2 text-[var(--text-muted)] hover:text-[var(--text-main)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 text-right">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 text-right">
           {/* Settings & Channel Selector (7 Cols) */}
           <div className="lg:col-span-7 space-y-5">
             {/* Channel Tabs */}
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-2">انتخاب شبکه اجتماعی مقصد:</label>
+              <label className="block text-xs font-bold text-[var(--text-main)] mb-2">انتخاب شبکه اجتماعی مقصد:</label>
               <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                 <button
                   onClick={() => setActiveChannel('INSTAGRAM')}
-                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                     activeChannel === 'INSTAGRAM'
-                      ? 'border-pink-500 bg-pink-950/40 text-pink-300 font-bold'
-                      : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700'
+                      ? 'border-[var(--border-active)] bg-[var(--accent-soft)] text-[var(--accent-text)] font-bold'
+                      : 'border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-muted)] hover:border-[var(--border-active)]'
                   }`}
                 >
                   <Instagram className="w-4 h-4" />
@@ -130,10 +125,10 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
 
                 <button
                   onClick={() => setActiveChannel('TELEGRAM')}
-                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                     activeChannel === 'TELEGRAM'
-                      ? 'border-sky-500 bg-sky-950/40 text-sky-300 font-bold'
-                      : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700'
+                      ? 'border-sky-500 bg-sky-500/15 text-sky-700 dark:text-sky-300 font-bold'
+                      : 'border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-muted)] hover:border-[var(--border-active)]'
                   }`}
                 >
                   <Send className="w-4 h-4" />
@@ -142,10 +137,10 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
 
                 <button
                   onClick={() => setActiveChannel('EITAA')}
-                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                     activeChannel === 'EITAA'
-                      ? 'border-amber-500 bg-amber-950/40 text-amber-300 font-bold'
-                      : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700'
+                      ? 'border-amber-500 bg-amber-500/15 text-amber-800 dark:text-amber-300 font-bold'
+                      : 'border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-muted)] hover:border-[var(--border-active)]'
                   }`}
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -154,10 +149,10 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
 
                 <button
                   onClick={() => setActiveChannel('RUBIKA')}
-                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                     activeChannel === 'RUBIKA'
-                      ? 'border-indigo-500 bg-indigo-950/40 text-indigo-300 font-bold'
-                      : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700'
+                      ? 'border-emerald-500 bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-bold'
+                      : 'border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-muted)] hover:border-[var(--border-active)]'
                   }`}
                 >
                   <Layers className="w-4 h-4" />
@@ -166,14 +161,14 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
 
                 <button
                   onClick={() => setActiveChannel('X')}
-                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                     activeChannel === 'X'
-                      ? 'border-slate-400 bg-slate-800 text-white font-bold'
-                      : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700'
+                      ? 'border-[var(--border-active)] bg-[var(--bg-card)] text-[var(--text-main)] font-bold'
+                      : 'border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-muted)] hover:border-[var(--border-active)]'
                   }`}
                 >
                   <span className="text-xs font-mono font-bold">X</span>
-                  <span className="text-[11px]">توییتر</span>
+                  <span className="text-[11px]">ایکس</span>
                 </button>
               </div>
             </div>
@@ -181,24 +176,24 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
             {/* Format Selector for Instagram */}
             {activeChannel === 'INSTAGRAM' && (
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-2">فرمت انتشار:</label>
-                <div className="flex gap-2">
+                <label className="block text-xs font-bold text-[var(--text-main)] mb-2">فرمت انتشار:</label>
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setActiveFormat('POST')}
-                    className={`px-4 py-2 rounded-xl text-xs font-medium border transition-all ${
+                    className={`px-4 py-2 rounded-xl text-xs font-medium border transition-all cursor-pointer ${
                       activeFormat === 'POST'
-                        ? 'border-pink-500 bg-pink-500/20 text-pink-300'
-                        : 'border-slate-800 bg-slate-950/60 text-slate-400'
+                        ? 'border-[var(--border-active)] bg-[var(--accent-soft)] text-[var(--accent-text)] font-bold'
+                        : 'border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-muted)]'
                     }`}
                   >
                     پست مربع (1:1 Feed Post)
                   </button>
                   <button
                     onClick={() => setActiveFormat('STORY')}
-                    className={`px-4 py-2 rounded-xl text-xs font-medium border transition-all ${
+                    className={`px-4 py-2 rounded-xl text-xs font-medium border transition-all cursor-pointer ${
                       activeFormat === 'STORY'
-                        ? 'border-pink-500 bg-pink-500/20 text-pink-300'
-                        : 'border-slate-800 bg-slate-950/60 text-slate-400'
+                        ? 'border-[var(--border-active)] bg-[var(--accent-soft)] text-[var(--accent-text)] font-bold'
+                        : 'border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-muted)]'
                     }`}
                   >
                     استوری عمودی (9:16 Story)
@@ -209,27 +204,27 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
 
             {/* Custom Offer Injection */}
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">پیشنهاد ترغیب‌کننده روی پست (Incentive Offer):</label>
+              <label className="block text-xs font-bold text-[var(--text-main)] mb-1">پیشنهاد ترغیب‌کننده روی پست (Incentive Offer):</label>
               <input
                 type="text"
                 value={customOffer}
-                onChange={e => setCustomOffer(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500"
+                onChange={(e) => setCustomOffer(e.target.value)}
+                className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--border-active)]"
               />
             </div>
 
             {/* Generated Caption Area */}
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-pink-400" />
+            <div className="bg-[var(--bg-main)] p-4 rounded-xl border border-[var(--border-color)] space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-[var(--accent-text)]" />
                   متن و هشتگ‌های تولیدشده برای {activeChannel}:
                 </span>
                 <button
                   onClick={handleCopy}
-                  className="text-xs text-slate-400 hover:text-white flex items-center gap-1 px-2 py-1 rounded bg-slate-900 border border-slate-800"
+                  className="text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center gap-1 px-2 py-1 rounded bg-[var(--bg-surface)] border border-[var(--border-color)] cursor-pointer"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   {copied ? 'کپی شد' : 'کپی متن'}
                 </button>
               </div>
@@ -237,13 +232,13 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
                 readOnly
                 rows={7}
                 value={getPostContent()}
-                className="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 leading-relaxed font-sans focus:outline-none resize-none"
+                className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl p-3 text-xs text-[var(--text-main)] leading-relaxed font-sans focus:outline-none resize-none"
               />
             </div>
 
             {publishedStatus && (
-              <div className="p-3 bg-emerald-950/40 border border-emerald-800/60 rounded-xl text-xs text-emerald-300 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="p-3 bg-emerald-500/15 border border-emerald-500/40 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <span>{publishedStatus}</span>
               </div>
             )}
@@ -251,45 +246,45 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
 
           {/* Live Mobile Frame Mockup (5 Cols) */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center">
-            <div className="text-xs font-bold text-slate-400 mb-3 flex items-center gap-1.5">
-              <Smartphone className="w-4 h-4 text-indigo-400" />
+            <div className="text-xs font-bold text-[var(--text-muted)] mb-3 flex items-center gap-1.5">
+              <Smartphone className="w-4 h-4 text-[var(--accent-text)]" />
               پیش‌نمایش زنده در گوشی مشتری ({activeChannel})
             </div>
 
             {/* Mobile Device Frame */}
-            <div className="w-[280px] bg-slate-950 rounded-[32px] p-3 border-4 border-slate-800 shadow-2xl relative overflow-hidden">
+            <div className="w-full max-w-[280px] bg-[var(--bg-card)] rounded-[32px] p-3 border-4 border-[var(--border-active)] shadow-xl relative overflow-hidden">
               {/* Camera notch */}
-              <div className="w-24 h-4 bg-slate-800 rounded-full mx-auto mb-2" />
+              <div className="w-24 h-4 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-full mx-auto mb-2" />
 
               {/* In-App Mockup */}
-              <div className="bg-slate-900 rounded-[20px] overflow-hidden border border-slate-800 text-right">
+              <div className="bg-[var(--bg-surface)] rounded-[20px] overflow-hidden border border-[var(--border-color)] text-right">
                 {/* App Header */}
-                <div className="px-3 py-2 border-b border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
-                  <span className="font-bold text-slate-200">{activeChannel === 'INSTAGRAM' ? 'Instagram' : activeChannel}</span>
+                <div className="px-3 py-2 border-b border-[var(--border-color)] flex items-center justify-between text-[10px] text-[var(--text-muted)]">
+                  <span className="font-bold text-[var(--text-main)]">{activeChannel === 'INSTAGRAM' ? 'Instagram' : activeChannel}</span>
                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 </div>
 
                 {/* Media preview */}
-                <div className="relative overflow-hidden bg-slate-950">
+                <div className="relative overflow-hidden bg-[var(--bg-main)]">
                   <img
                     src={image}
                     alt={title}
                     className={`w-full object-cover ${activeFormat === 'STORY' ? 'h-48' : 'h-36'}`}
                   />
-                  <div className="absolute top-2 right-2 bg-pink-600/90 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                  <div className="absolute top-2 right-2 bg-[var(--accent-primary)]/95 backdrop-blur-sm text-[#F7F3EA] text-[10px] px-2 py-0.5 rounded-full font-bold">
                     {price}
                   </div>
                   {activeFormat === 'STORY' && (
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/90 text-slate-900 px-3 py-1 rounded-full text-[10px] font-bold shadow-lg flex items-center gap-1">
-                      <span>🔗 مشاهده و خرید آنلاین</span>
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[var(--bg-surface)]/95 text-[var(--text-main)] border border-[var(--border-color)] px-3 py-1 rounded-full text-[10px] font-bold shadow-lg flex items-center gap-1 whitespace-nowrap">
+                      <span>مشاهده و خرید آنلاین</span>
                     </div>
                   )}
                 </div>
 
                 {/* Caption Snippet */}
-                <div className="p-2.5 text-[10px] text-slate-300 space-y-1">
-                  <p className="font-bold text-slate-100 line-clamp-1">{title}</p>
-                  <p className="text-slate-400 text-[9px] line-clamp-3 leading-relaxed">
+                <div className="p-2.5 text-[10px] text-[var(--text-muted)] space-y-1">
+                  <p className="font-bold text-[var(--text-main)] line-clamp-1">{title}</p>
+                  <p className="text-[var(--text-muted)] text-[9px] line-clamp-3 leading-relaxed">
                     {getPostContent()}
                   </p>
                 </div>
@@ -299,16 +294,16 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-800 bg-slate-950/80">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Clock className="w-4 h-4 text-pink-400" />
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-[var(--border-color)] bg-[var(--bg-card)]">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <Clock className="w-4 h-4 text-[var(--accent-text)] shrink-0" />
             <span>اتصال مستقیم به کانال‌ها از طریق وب‌هوک و بات‌های اختصاصی</span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium text-slate-300 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
+              className="px-4 py-2 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
             >
               بستن
             </button>
@@ -316,7 +311,7 @@ export const SocialPublisherModal: React.FC<SocialPublisherModalProps> = ({
             <button
               onClick={handlePublishNow}
               disabled={isPublishing}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-pink-600/30 transition-all disabled:opacity-50"
+              className="px-4 sm:px-5 py-2.5 rounded-xl bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] text-xs font-bold flex items-center gap-2 shadow-md transition-all disabled:opacity-50 cursor-pointer"
             >
               {isPublishing ? (
                 <>

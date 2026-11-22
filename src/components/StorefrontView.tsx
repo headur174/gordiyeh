@@ -5,18 +5,20 @@ import { CategoryMegaMenu } from './storefront/CategoryMegaMenu';
 import { ProductFilterSidebar, FilterState } from './storefront/ProductFilterSidebar';
 import { ProductSortBar, SortOption } from './storefront/ProductSortBar';
 import { ProductCard } from './storefront/ProductCard';
-import { ProductDetailPage } from './storefront/ProductDetailPage';
-import { ProductCompareModal } from './storefront/ProductCompareModal';
-import { CartAndCheckoutModal, CartItem } from './storefront/CartAndCheckoutModal';
 import { LiveSupportWidget } from './storefront/LiveSupportWidget';
-import { BlogView } from './storefront/BlogView';
-import { StaticPagesModal } from './storefront/StaticPagesModal';
-import { CustomerMemoryHubTile } from '../pieces/customer-memory/ui/CustomerMemoryHubTile';
 import { PieceErrorBoundary } from '../core/shell/PieceErrorBoundary';
 import { HOMEPAGE_MEDIA } from '../assets/homepageMedia';
+import { GordiyehLoader } from './GordiyehLoader';
+import type { CartItem } from './storefront/CartAndCheckoutModal';
 
-import { UserDashboardPage } from './storefront/pages/UserDashboardPage';
-import { HelpCenterPage } from './storefront/pages/HelpCenterPage';
+const ProductDetailPage = React.lazy(() => import('./storefront/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
+const ProductCompareModal = React.lazy(() => import('./storefront/ProductCompareModal').then(m => ({ default: m.ProductCompareModal })));
+const CartAndCheckoutModal = React.lazy(() => import('./storefront/CartAndCheckoutModal').then(m => ({ default: m.CartAndCheckoutModal })));
+const BlogView = React.lazy(() => import('./storefront/BlogView').then(m => ({ default: m.BlogView })));
+const StaticPagesModal = React.lazy(() => import('./storefront/StaticPagesModal').then(m => ({ default: m.StaticPagesModal })));
+const CustomerMemoryHubTile = React.lazy(() => import('../pieces/customer-memory/ui/CustomerMemoryHubTile').then(m => ({ default: m.CustomerMemoryHubTile })));
+const UserDashboardPage = React.lazy(() => import('./storefront/pages/UserDashboardPage').then(m => ({ default: m.UserDashboardPage })));
+const HelpCenterPage = React.lazy(() => import('./storefront/pages/HelpCenterPage').then(m => ({ default: m.HelpCenterPage })));
 
 import {
   SiteConfig,
@@ -63,6 +65,7 @@ import {
   CheckCircle2,
   RotateCcw,
   MessageSquareText,
+  Award,
 } from 'lucide-react';
 import { formatCurrency } from '../utils';
 
@@ -258,6 +261,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
 
   // Mobile Filter Drawer State
   const [isMobileFilterDrawerOpen, setIsMobileFilterDrawerOpen] = useState(false);
+  const [dashboardInitialTab, setDashboardInitialTab] = useState<'orders' | 'chats' | 'profile' | 'privacy'>('orders');
 
   const slugify = (text: string) => {
     return text
@@ -913,7 +917,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
   return (
     <div className="min-h-screen bg-[var(--bg-main)] gordiyeh-dark-bg text-[var(--text-main)] flex flex-col font-sans transition-colors" dir="rtl">
       {/* 0. TOP ANNOUNCEMENT BANNER */}
-      <div className="gordiyeh-announcement-bar px-4 py-2 text-center text-[11px] sm:text-xs font-medium flex items-center justify-center gap-2">
+      <div className="gordiyeh-announcement-bar px-4 py-2 text-center text-xs font-medium leading-[1.6] flex items-center justify-center gap-2">
         <ShieldCheck className="w-3.5 h-3.5 shrink-0 opacity-90" aria-hidden="true" />
         <span>{siteConfig?.announcementText || 'شرایط تست و تعویض هر محصول توی صفحه‌ی خودش نوشته شده؛ قبل از خرید می‌بینیدش.'}</span>
       </div>
@@ -955,47 +959,56 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
       {/* 2. MAIN CONTENT AREA */}
       <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex-1">
         {selectedProduct ? (
-          <ProductDetailPage
-            product={selectedProduct}
-            currency={currency}
-            isPage={true}
-            onClose={handleCloseProduct}
-            onAddToCart={(product, qty, color) => {
-              handleAddToCart(product, qty, color);
-            }}
-            isInCompare={compareList.some(cp => cp.id === selectedProduct.id)}
-            onToggleCompare={handleToggleCompare}
-            relatedProducts={products.filter(p => p.id !== selectedProduct.id && p.category === selectedProduct.category)}
-            onSelectProduct={handleOpenProduct}
-          />
+          <React.Suspense fallback={<GordiyehLoader variant="inline" label="در حال بارگذاری صفحه محصول..." />}>
+            <ProductDetailPage
+              product={selectedProduct}
+              currency={currency}
+              isPage={true}
+              onClose={handleCloseProduct}
+              onAddToCart={(product, qty, color) => {
+                handleAddToCart(product, qty, color);
+              }}
+              isInCompare={compareList.some(cp => cp.id === selectedProduct.id)}
+              onToggleCompare={handleToggleCompare}
+              relatedProducts={products.filter(p => p.id !== selectedProduct.id && p.category === selectedProduct.category)}
+              onSelectProduct={handleOpenProduct}
+            />
+          </React.Suspense>
         ) : (
           <>
             {/* VIEW A: USER DASHBOARD (Layout Spec T6) */}
             {activeStorePage === 'USER_DASHBOARD' && (
-              <UserDashboardPage
-                products={products}
-                currency={currency}
-                onSelectProduct={handleOpenProduct}
-                onAddToCart={(p) => handleAddToCart(p, 1)}
-                onBackToHome={() => navigatePage('HOME')}
-              />
+              <React.Suspense fallback={<GordiyehLoader variant="inline" label="در حال بارگذاری پنل کاربری..." />}>
+                <UserDashboardPage
+                  products={products}
+                  currency={currency}
+                  onSelectProduct={handleOpenProduct}
+                  onAddToCart={(p) => handleAddToCart(p, 1)}
+                  onBackToHome={() => navigatePage('HOME')}
+                  initialTab={dashboardInitialTab}
+                />
+              </React.Suspense>
             )}
 
             {/* VIEW B: HELP CENTER (Layout Spec T8) */}
             {activeStorePage === 'HELP_CENTER' && (
-              <HelpCenterPage
-                onBackToHome={() => navigatePage('HOME')}
-              />
+              <React.Suspense fallback={<GordiyehLoader variant="inline" label="در حال بارگذاری مرکز راهنما..." />}>
+                <HelpCenterPage
+                  onBackToHome={() => navigatePage('HOME')}
+                />
+              </React.Suspense>
             )}
 
             {/* VIEW C: BLOG (Layout Spec T7) */}
             {activeStorePage === 'BLOG' && (
-              <BlogView
-                posts={blogPosts}
-                products={products}
-                onBackToHome={() => navigatePage('HOME')}
-                onSelectProduct={handleOpenProduct}
-              />
+              <React.Suspense fallback={<GordiyehLoader variant="inline" label="در حال بارگذاری مجله گُردیه..." />}>
+                <BlogView
+                  posts={blogPosts}
+                  products={products}
+                  onBackToHome={() => navigatePage('HOME')}
+                  onSelectProduct={handleOpenProduct}
+                />
+              </React.Suspense>
             )}
 
         {/* VIEW D: CATEGORY LISTING / CATALOG (Layout Spec T2) */}
@@ -1017,7 +1030,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                     </>
                   )}
                 </nav>
-                <h1 className="text-xl sm:text-2xl font-black text-[var(--text-main)]">
+                <h1 className="text-[18px] sm:text-xl font-bold text-[var(--text-main)] leading-[1.5]">
                   {filters.selectedCategory === 'ALL' ? 'همه‌ی محصول‌های گُردیه' : filters.selectedCategory}
                 </h1>
               </div>
@@ -1101,7 +1114,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                         <button
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
-                          className={`w-9 h-9 rounded-xl text-xs font-bold font-mono transition-all ${
+                          className={`w-9 h-9 rounded-xl text-xs font-bold tabular-nums transition-all ${
                             currentPage === pageNum
                               ? 'bg-[var(--accent-primary)] text-white shadow'
                               : 'bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-main)]'
@@ -1123,11 +1136,11 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
 
                 {/* Category Descriptive Guide & 3 Selection Criteria (v3.0 Guide Section 3) */}
                 {currentCategoryDetail && (
-                  <div className="p-6 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] space-y-4 text-xs text-[var(--text-muted)] leading-relaxed">
-                    <h2 className="font-bold text-[var(--text-main)] text-base">
+                  <div className="p-6 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] space-y-4 text-xs sm:text-[13px] text-[var(--text-secondary)] leading-[1.8]">
+                    <h2 className="font-bold text-[var(--text-main)] text-base leading-[1.5]">
                       راهنمای خرید در دسته‌ی {currentCategoryDetail.name}
                     </h2>
-                    <p className="text-[var(--text-main)]/90 leading-relaxed">{currentCategoryDetail.introText}</p>
+                    <p className="text-[var(--text-secondary)] leading-[1.85]">{currentCategoryDetail.introText}</p>
                     {currentCategoryDetail.selectionCriteria && currentCategoryDetail.selectionCriteria.length > 0 && (
                       <div className="pt-3 border-t border-[var(--border-color)] space-y-2">
                         <h3 className="font-bold text-[var(--text-main)] text-xs">سه معیار انتخاب</h3>
@@ -1159,28 +1172,32 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
             <div className="space-y-5">
               {/* Full-Width Split Hero Showcase (Glowing Violet Arch Portal in Dark Mode, Full-Bleed Botanical Split in Light Mode) */}
               <section
-                className="gordiyeh-hero-section relative rounded-[28px] overflow-hidden bg-[var(--bg-card)] border border-[var(--border-color)] shadow-sm min-h-[380px] lg:min-h-[430px] flex items-center justify-between"
+                className="gordiyeh-hero-section relative rounded-[28px] overflow-hidden bg-[var(--bg-card)] border border-[var(--border-color)] shadow-sm min-h-[380px] lg:min-h-[430px] flex items-end justify-between"
                 onMouseEnter={() => setIsHeroPaused(true)}
                 onMouseLeave={() => setIsHeroPaused(false)}
               >
                 <img
                   src={heroSlides[heroSlide].image}
                   alt={heroSlides[heroSlide].alt}
+                  width={1200}
+                  height={675}
+                  fetchPriority="high"
+                  decoding="async"
                   referrerPolicy="no-referrer"
                   className="gordiyeh-hero-photo-bg absolute inset-0 w-full h-full object-cover object-left transition-all duration-500"
                 />
                 <div className="hero-scrim-rtl absolute inset-0 pointer-events-none" />
 
-                <div className="relative z-10 w-full lg:w-[54%] p-7 sm:p-10 lg:p-12 space-y-4 text-right">
-                  <span className="inline-block px-3.5 py-1.5 rounded-full bg-[var(--accent-soft)] border border-[var(--border-active)]/30 text-[var(--accent-text)] text-xs font-semibold">
+                <div className="relative z-10 w-full lg:w-[54%] p-6 sm:p-10 lg:p-12 pb-16 sm:pb-10 lg:pb-11 space-y-3.5 text-right self-end banner-hover-legible">
+                  <span className="inline-block px-3.5 py-1.5 rounded-full bg-[var(--accent-soft)] border border-[var(--border-active)]/30 text-[var(--accent-text)] text-xs font-medium leading-[1.4]">
                     {heroSlides[heroSlide].badge}
                   </span>
 
-                  <h1 className="text-2xl sm:text-4xl lg:text-[42px] font-black text-[var(--text-main)] leading-[1.3] text-balance">
+                  <h1 className="gordiyeh-type-display text-[22px] sm:text-[28px] lg:text-[32px] font-bold text-[var(--text-main)] leading-[1.42] text-balance">
                     {heroSlides[heroSlide].title}
                   </h1>
 
-                  <p className="text-xs sm:text-sm lg:text-[15px] text-[var(--text-muted)] leading-relaxed max-w-lg">
+                  <p className="text-[13px] sm:text-sm text-[var(--text-secondary)] leading-[1.85] max-w-lg">
                     {heroSlides[heroSlide].subtitle}
                   </p>
 
@@ -1213,47 +1230,6 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                     >
                       راهنمای انتخاب
                     </button>
-                  </div>
-                </div>
-
-                {/* Violet Identity Only (Dark & Light): Iranian Arch Portal Showcase */}
-                <div className="gordiyeh-dark-arch-stage relative z-10 hidden lg:flex items-center justify-center w-[44%] pl-10 py-6">
-                  {/* Swirling ambient violet aura */}
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-0 pointer-events-none flex items-center justify-center"
-                  >
-                    <div className="gordiyeh-arch-glow-primary w-[340px] h-[340px] rounded-full blur-[70px]" />
-                    <div className="gordiyeh-arch-glow-secondary w-[240px] h-[180px] rounded-full blur-[55px] -translate-x-10 translate-y-12" />
-                  </div>
-
-                  <div className="relative flex flex-col items-center">
-                    {/* Outer glowing Iranian Arch portal outline */}
-                    <div className="gordiyeh-arch-rim relative p-[3px] rounded-t-[165px] rounded-b-xl">
-                      <div className="gordiyeh-arch-frame w-[266px] xl:w-[298px] h-[306px] xl:h-[332px] rounded-t-[162px] rounded-b-[10px] overflow-hidden p-2 relative">
-                        <div className="gordiyeh-arch-canvas w-full h-full rounded-t-[152px] rounded-b-md overflow-hidden relative">
-                          <img
-                            src={heroSlides[heroSlide].image}
-                            alt={heroSlides[heroSlide].alt}
-                            referrerPolicy="no-referrer"
-                            className="w-full h-full object-cover transition-all duration-500 contrast-105"
-                          />
-                          {/* Adaptive stage vignette + rim light */}
-                          <div
-                            aria-hidden="true"
-                            className="gordiyeh-arch-vignette absolute inset-0 pointer-events-none"
-                          />
-                          <div
-                            aria-hidden="true"
-                            className="gordiyeh-arch-tint absolute inset-0 pointer-events-none"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Volumetric 2-tier Iranian arch stepped plinth */}
-                    <div className="gordiyeh-arch-plinth-1 w-[296px] xl:w-[330px] h-3 rounded-t-sm border-x border-t" />
-                    <div className="gordiyeh-arch-plinth-2 w-[322px] xl:w-[358px] h-3.5 rounded-b-lg border" />
                   </div>
                 </div>
 
@@ -1299,7 +1275,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                   <div
                     key={idx}
                     onClick={card.action}
-                    className="relative rounded-2xl overflow-hidden min-h-[185px] bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-[var(--border-active)] shadow-sm hover:-translate-y-0.5 transition-all flex items-end justify-between gap-3 p-5 text-right group cursor-pointer"
+                    className="relative rounded-2xl overflow-hidden min-h-[195px] sm:min-h-[205px] bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-[var(--border-active)] shadow-sm hover:-translate-y-0.5 transition-all flex items-end justify-between gap-3 p-5 text-right group cursor-pointer"
                   >
                     <img
                       src={card.image}
@@ -1310,11 +1286,11 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                     />
                     <div className="spotlight-scrim-rtl absolute inset-0 pointer-events-none" />
 
-                    <div className="relative z-10 max-w-[58%] space-y-2 flex flex-col items-start self-start my-auto banner-hover-legible">
-                      <span className="inline-block px-2.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent-text)] text-[11px] font-semibold">
+                    <div className="relative z-10 max-w-[58%] space-y-2 flex flex-col items-start self-end banner-hover-legible">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent-text)] text-[11px] font-medium">
                         {card.tag}
                       </span>
-                      <h2 className="text-base sm:text-lg font-black text-[var(--text-main)] leading-snug">
+                      <h2 className="text-[15px] sm:text-base font-bold text-[var(--text-main)] leading-[1.55]">
                         {card.title}
                       </h2>
                     </div>
@@ -1333,10 +1309,10 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
               <section className="space-y-5">
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                   <div className="space-y-0.5">
-                    <h2 className="text-lg sm:text-2xl font-black text-[var(--text-main)]">
+                    <h2 className="text-[18px] sm:text-xl font-bold text-[var(--text-main)] leading-[1.5]">
                       کالاهای دارای تخفیف
                     </h2>
-                    <p className="text-xs text-[var(--text-muted)]">تخفیف‌های فعال روی کاتالوگ گُردیه</p>
+                    <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">تخفیف‌های فعال روی کاتالوگ گُردیه</p>
                   </div>
 
                   <div className="flex items-center gap-2 mr-auto">
@@ -1398,7 +1374,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
             <section className="space-y-6">
               <div className="flex items-center gap-4">
                 <div className="h-px flex-1 bg-[var(--border-color)]" />
-                <h2 className="text-lg sm:text-2xl font-black text-[var(--text-main)] shrink-0 text-center">
+                <h2 className="text-[18px] sm:text-xl font-bold text-[var(--text-main)] leading-[1.5] shrink-0 text-center">
                   دسته‌ها
                 </h2>
                 <div className="h-px flex-1 bg-[var(--border-color)]" />
@@ -1412,7 +1388,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                       key={idx}
                       type="button"
                       onClick={() => handleSelectCategory(cat.name)}
-                      className="relative rounded-2xl overflow-hidden min-h-[185px] bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-[var(--border-active)] shadow-sm hover:-translate-y-0.5 transition-all flex items-end justify-between gap-4 p-6 text-right group cursor-pointer"
+                      className="relative rounded-2xl overflow-hidden min-h-[195px] sm:min-h-[210px] bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-[var(--border-active)] shadow-sm hover:-translate-y-0.5 transition-all flex items-end justify-between gap-4 p-5 sm:p-6 text-right group cursor-pointer"
                     >
                       <img
                         src={cat.image}
@@ -1423,15 +1399,15 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                       />
                       <div className="spotlight-scrim-rtl absolute inset-0 pointer-events-none" />
 
-                      <div className="relative z-10 max-w-[54%] space-y-2 flex flex-col items-start self-start my-auto banner-hover-legible">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent-text)] text-[11px] font-semibold">
+                      <div className="relative z-10 max-w-[54%] space-y-2 flex flex-col items-start self-end banner-hover-legible">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent-text)] text-[11px] font-medium">
                           <IconComp className="w-3.5 h-3.5 shrink-0" strokeWidth={1.9} aria-hidden="true" />
                           <span>{cat.focusLabel}</span>
                         </span>
-                        <h3 className="text-lg sm:text-xl font-black text-[var(--text-main)] leading-snug">
+                        <h3 className="text-base sm:text-[18px] font-bold text-[var(--text-main)] leading-[1.5]">
                           {cat.name}
                         </h3>
-                        <p className="text-xs font-medium text-[var(--text-main)]/85 line-clamp-2 leading-relaxed">
+                        <p className="text-xs font-normal text-[var(--text-secondary)] line-clamp-2 leading-[1.8]">
                           {cat.shortDesc}
                         </p>
                       </div>
@@ -1451,10 +1427,10 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
               <section className="space-y-5">
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                   <div className="space-y-0.5">
-                    <h2 className="text-lg sm:text-2xl font-black text-[var(--text-main)]">
+                    <h2 className="text-[18px] sm:text-xl font-bold text-[var(--text-main)] leading-[1.5]">
                       تازه‌ترین‌ها
                     </h2>
-                    <p className="text-xs text-[var(--text-muted)]">
+                    <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">
                       {sliderVisibility.deduplicateMode === 'manual'
                         ? 'جدیدترین و منتخب محصول‌های اضافه‌شده به فروشگاه'
                         : 'جدیدترین محصول‌های اضافه‌شده به فروشگاه بدون تکرار'}
@@ -1520,7 +1496,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
             <section className="space-y-6">
               <div className="flex items-center gap-4">
                 <div className="h-px flex-1 bg-[var(--border-color)]" />
-                <h2 className="text-lg sm:text-2xl font-black text-[var(--text-main)] shrink-0 text-center">
+                <h2 className="text-[18px] sm:text-xl font-bold text-[var(--text-main)] leading-[1.5] shrink-0 text-center">
                   امروز دنبال چه کاری هستید؟
                 </h2>
                 <div className="h-px flex-1 bg-[var(--border-color)]" />
@@ -1534,7 +1510,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                       key={idx}
                       type="button"
                       onClick={tile.action}
-                      className="relative rounded-2xl overflow-hidden min-h-[155px] bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-[var(--border-active)] shadow-sm hover:-translate-y-0.5 transition-all flex items-end justify-between gap-3 p-5 text-right group cursor-pointer"
+                      className="relative rounded-2xl overflow-hidden min-h-[168px] sm:min-h-[180px] bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-[var(--border-active)] shadow-sm hover:-translate-y-0.5 transition-all flex items-end justify-between gap-3 p-5 text-right group cursor-pointer"
                     >
                       <img
                         src={tile.image}
@@ -1545,12 +1521,12 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                       />
                       <div className="spotlight-scrim-rtl absolute inset-0 pointer-events-none" />
 
-                      <div className="relative z-10 max-w-[56%] space-y-2 flex flex-col items-start self-start my-auto banner-hover-legible">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent-text)] text-[11px] font-semibold">
+                      <div className="relative z-10 max-w-[56%] space-y-2 flex flex-col items-start self-end banner-hover-legible">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent-text)] text-[11px] font-medium">
                           <IconComp className="w-3.5 h-3.5 shrink-0" strokeWidth={1.9} aria-hidden="true" />
                           <span>{tile.tag}</span>
                         </span>
-                        <h3 className="text-base sm:text-lg font-black text-[var(--text-main)] leading-snug">
+                        <h3 className="text-[15px] sm:text-base font-bold text-[var(--text-main)] leading-[1.55]">
                           {tile.title}
                         </h3>
                       </div>
@@ -1570,10 +1546,10 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
               <section className="space-y-5">
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                   <div className="space-y-0.5">
-                    <h2 className="text-lg sm:text-2xl font-black text-[var(--text-main)]">
+                    <h2 className="text-[18px] sm:text-xl font-bold text-[var(--text-main)] leading-[1.5]">
                       پرفروش‌ترین‌ها
                     </h2>
-                    <p className="text-xs text-[var(--text-muted)]">محبوب‌ترین گجت‌های انتخاب‌شده توسط خریداران گُردیه</p>
+                    <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">محبوب‌ترین گجت‌های انتخاب‌شده توسط خریداران گُردیه</p>
                   </div>
 
                   <div className="flex items-center gap-2 mr-auto">
@@ -1635,7 +1611,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
             <section className="space-y-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4 flex-1">
-                  <h2 className="text-lg sm:text-xl font-black text-[var(--text-main)] shrink-0">
+                  <h2 className="text-[18px] sm:text-xl font-bold text-[var(--text-main)] leading-[1.5] shrink-0">
                     قبل از خرید بخونید
                   </h2>
                   <div className="h-px flex-1 bg-[var(--border-color)]" />
@@ -1693,10 +1669,10 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                         </div>
 
                         <div className="p-5 pb-3 space-y-2">
-                          <h3 className="text-sm font-bold text-[var(--text-main)] group-hover:text-[var(--accent-text)] transition-colors line-clamp-2 leading-snug">
+                          <h3 className="text-sm font-bold text-[var(--text-main)] group-hover:text-[var(--accent-text)] transition-colors line-clamp-2 leading-[1.7]">
                             {post.title}
                           </h3>
-                          <p className="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-[var(--text-secondary)] line-clamp-2 leading-[1.8]">
                             {post.excerpt}
                           </p>
                         </div>
@@ -1758,18 +1734,18 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                         <div className="w-10 h-10 rounded-xl bg-[var(--accent-soft)] border border-[var(--border-active)]/35 flex items-center justify-center text-[var(--accent-text)] shrink-0">
                           <IconComp className="w-5 h-5" strokeWidth={1.9} aria-hidden="true" />
                         </div>
-                        <span className="text-[10px] font-bold text-[var(--text-muted)]">
+                        <span className="text-[11px] font-medium text-[var(--text-muted)]">
                           {pillar.tag}
                         </span>
                       </div>
-                      <span className="text-xs font-black text-[var(--accent-text)]/60 tabular-nums">
+                      <span className="text-xs font-bold text-[var(--accent-text)]/65 tabular-nums">
                         {pillar.num}
                       </span>
                     </div>
 
                     <div className="space-y-1.5 text-right">
-                      <h3 className="text-sm font-black text-[var(--text-main)]">{pillar.title}</h3>
-                      <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+                      <h3 className="text-sm font-bold text-[var(--text-main)] leading-[1.6]">{pillar.title}</h3>
+                      <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">
                         {pillar.desc}
                       </p>
                     </div>
@@ -1783,14 +1759,14 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
                 {/* Right Side Column (4 cols): Section Header & Quick Link */}
                 <div className="lg:col-span-4 space-y-4 lg:sticky lg:top-24 text-right">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent-soft)] border border-[var(--border-active)]/30 text-[var(--accent-text)] text-xs font-bold">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent-soft)] border border-[var(--border-active)]/30 text-[var(--accent-text)] text-xs font-medium">
                     <HelpCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                     <span>پیش از ثبت سفارش</span>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-black text-[var(--text-main)] leading-snug">
+                  <h2 className="text-[18px] sm:text-xl font-bold text-[var(--text-main)] leading-[1.5]">
                     سؤال‌های رایج
                   </h2>
-                  <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+                  <p className="text-xs sm:text-[13px] text-[var(--text-secondary)] leading-[1.85]">
                     پاسخ شفاف و سریع درباره نحوه ارسال، شرایط تست و تعویض، پرداخت امن و کاربرد واقعی گجت‌های گُردیه.
                   </p>
                   <div className="pt-1 flex flex-wrap items-center gap-3">
@@ -1833,7 +1809,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             <span
-                              className={`w-7 h-7 rounded-xl text-xs font-black tabular-nums flex items-center justify-center shrink-0 transition-colors ${
+                              className={`w-7 h-7 rounded-xl text-xs font-bold tabular-nums flex items-center justify-center shrink-0 transition-colors ${
                                 isOpen
                                   ? 'bg-[var(--accent-primary)] text-white'
                                   : 'bg-[var(--accent-soft)] text-[var(--accent-text)] border border-[var(--border-color)]'
@@ -1842,7 +1818,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                               {persianIndex}
                             </span>
                             <span
-                              className={`text-xs sm:text-sm font-bold ${
+                              className={`text-[13px] sm:text-sm font-bold leading-[1.6] ${
                                 isOpen ? 'text-[var(--accent-text)]' : 'text-[var(--text-main)]'
                               }`}
                             >
@@ -1863,16 +1839,16 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                             id={`home-faq-panel-${faq.id}`}
                             role="region"
                             aria-labelledby={`home-faq-btn-${faq.id}`}
-                            className="px-4 sm:px-5 pb-4 pt-3 pr-14 bg-[var(--bg-surface)] space-y-3 text-xs"
+                            className="px-4 sm:px-5 pb-4 pt-3 pr-14 bg-[var(--bg-surface)] space-y-3 text-xs sm:text-[13px]"
                           >
-                            <p className="text-[var(--text-main)]/85 leading-relaxed">
+                            <p className="text-[var(--text-secondary)] leading-[1.85]">
                               {faq.answer}
                             </p>
                             <div>
                               <button
                                 type="button"
                                 onClick={faq.onAction}
-                                className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--accent-text)] hover:underline cursor-pointer"
+                                className="inline-flex items-center gap-1 text-xs font-bold text-[var(--accent-text)] hover:underline cursor-pointer"
                               >
                                 <span>{faq.actionLabel}</span>
                                 <ChevronLeft className="w-3.5 h-3.5" aria-hidden="true" />
@@ -1893,10 +1869,10 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                     <Headphones className="w-5 h-5" aria-hidden="true" />
                   </div>
                   <div className="space-y-0.5 text-right">
-                    <h3 className="text-sm font-black text-[var(--text-main)]">
+                    <h3 className="text-sm font-bold text-[var(--text-main)] leading-[1.6]">
                       پاسخ سؤالتان را پیدا نکردید یا بین دو گجت مردد هستید؟
                     </h3>
-                    <p className="text-xs text-[var(--text-muted)]">
+                    <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">
                       پیش از خرید با پشتیبانی واقعی گُردیه تماس بگیرید تا کاربرد و محدودیت هر مدل را صادقانه بررسی کنیم.
                     </p>
                   </div>
@@ -1945,10 +1921,10 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                 </span>
               </div>
               <div className="min-w-0">
-                <h4 className="text-sm sm:text-base font-extrabold text-[var(--text-main)] truncate">
+                <h4 className="text-sm sm:text-base font-bold text-[var(--text-main)] leading-[1.5] truncate">
                   با جدیدترین <span className="text-[var(--accent-text)]">تخفیف‌ها</span>، اول باخبر شوید!
                 </h4>
-                <p className="text-[11px] text-[var(--text-muted)] truncate">
+                <p className="text-xs text-[var(--text-secondary)] leading-[1.8] truncate">
                   اطلاع از پیشنهادهای ویژه و کالاهای جدید بدون ایمیل اضافی.
                 </p>
               </div>
@@ -2001,7 +1977,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                   className="h-16 sm:h-[74px] w-auto object-contain gordiyeh-footer-logo shrink-0"
                 />
                 <div>
-                  <span className="tracking-wide text-2xl font-black text-[var(--text-main)] block leading-none">
+                  <span className="tracking-wide text-xl font-bold text-[var(--text-main)] block leading-[1.3]">
                     گُردیه
                   </span>
                   <span className="text-[11px] tracking-[0.26em] text-[var(--text-muted)] font-mono block mt-1.5">
@@ -2011,10 +1987,10 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
               </div>
 
               <div className="space-y-2 pt-1 border-t border-[var(--border-color)]/60">
-                <div className="text-xs font-bold text-[var(--text-main)]">
+                <div className="text-[13px] font-bold text-[var(--text-main)] leading-[1.7]">
                   فروشگاه گجت‌های کاربردی برای خونه، سفر و باشگاه
                 </div>
-                <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
+                <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">
                   ما اینجا هستیم تا با معرفی محصولات کاربردی و توضیح صادقانه، زندگی روزمره‌تون رو ساده‌تر کنیم.
                 </p>
               </div>
@@ -2170,6 +2146,20 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                     <span>درباره گُردیه</span>
                   </a>
                 </li>
+                <li>
+                  <a
+                    href="/page/licenses"
+                    rel="nofollow"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      openStaticPage('licenses');
+                    }}
+                    className="inline-flex items-center gap-1.5 hover:text-[var(--accent-text)] transition-colors"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5 text-[var(--accent-text)]" />
+                    <span>مجوزها و نمادهای اعتماد</span>
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -2255,9 +2245,32 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
             </div>
           </div>
 
-          {/* Bottom Bar: Portrait E-Namad-Style Trust & Payment Seals (without label text) & Copyright */}
+          {/* Bottom Bar: Portrait E-Namad-Style Trust & Payment Seals & Copyright */}
           <div className="pt-6 pb-4 md:pb-2 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[var(--text-muted)] sm:pl-28">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+              {/* Dedicated Footer Licenses Section Link -> /page/licenses (noindex, nofollow) */}
+              <a
+                href="/page/licenses"
+                rel="nofollow"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openStaticPage('licenses');
+                }}
+                title="مشاهده برگه مجوزها و نمادهای اعتماد (اینماد و زرین‌پال)"
+                aria-label="مجوزها و نمادهای اعتماد گُردیه"
+                className="h-[92px] min-w-[116px] px-3 py-2 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-active)] hover:border-[var(--accent-primary)] hover:-translate-y-0.5 hover:shadow-md transition-all shadow-sm flex flex-col items-center justify-center gap-1 text-center group"
+              >
+                <div className="w-8 h-8 rounded-xl bg-[var(--accent-soft)] text-[var(--accent-text)] flex items-center justify-center">
+                  <Award className="w-4 h-4" />
+                </div>
+                <span className="text-[11px] font-bold text-[var(--text-main)] group-hover:text-[var(--accent-text)] leading-tight">
+                  مجوزها و نمادها
+                </span>
+                <span className="text-[9.5px] text-[var(--text-muted)] leading-none">
+                  اینماد • زرین‌پال
+                </span>
+              </a>
+
               <a
                 href="https://shaparak.ir"
                 target="_blank"
@@ -2324,53 +2337,68 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
       {/* 4. MODALS & OVERLAYS */}
 
       {/* Cart & 3-Step Checkout Drawer */}
-      <CartAndCheckoutModal
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cart={cart}
-        currency={currency}
-        onUpdateQuantity={handleUpdateCartQuantity}
-        onRemoveItem={handleRemoveCartItem}
-        onClearCart={handleClearCart}
-        onOrderCompleted={(order) => {
-          onOrderCreated(order);
-        }}
-      />
+      {isCartOpen && (
+        <React.Suspense fallback={null}>
+          <CartAndCheckoutModal
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+            cart={cart}
+            currency={currency}
+            onUpdateQuantity={handleUpdateCartQuantity}
+            onRemoveItem={handleRemoveCartItem}
+            onClearCart={handleClearCart}
+            onOrderCompleted={(order) => {
+              onOrderCreated(order);
+            }}
+          />
+        </React.Suspense>
+      )}
 
       {/* Compare Modal */}
-      <ProductCompareModal
-        isOpen={isCompareOpen}
-        onClose={() => setIsCompareOpen(false)}
-        products={products}
-        compareList={compareList}
-        onRemoveFromCompare={handleRemoveFromCompare}
-        onAddToCompare={(p) => {
-          if (compareList.length < 4) {
-            setCompareList(prev => [...prev, p]);
-          }
-        }}
-        onSelectProductForDetails={handleOpenProduct}
-        currency={currency}
-      />
+      {isCompareOpen && (
+        <React.Suspense fallback={null}>
+          <ProductCompareModal
+            isOpen={isCompareOpen}
+            onClose={() => setIsCompareOpen(false)}
+            products={products}
+            compareList={compareList}
+            onRemoveFromCompare={handleRemoveFromCompare}
+            onAddToCompare={(p) => {
+              if (compareList.length < 4) {
+                setCompareList(prev => [...prev, p]);
+              }
+            }}
+            onSelectProductForDetails={handleOpenProduct}
+            currency={currency}
+          />
+        </React.Suspense>
+      )}
 
       {/* Static Pages Modal */}
-      <StaticPagesModal
-        isOpen={!!activeStaticPageSlug}
-        pageSlug={activeStaticPageSlug || 'about-us'}
-        pages={staticPages}
-        onSelectPage={(slug) => openStaticPage(slug)}
-        onClose={closeStaticPage}
-      />
+      {activeStaticPageSlug && (
+        <React.Suspense fallback={null}>
+          <StaticPagesModal
+            isOpen={!!activeStaticPageSlug}
+            pageSlug={activeStaticPageSlug || 'about-us'}
+            pages={staticPages}
+            onSelectPage={(slug) => openStaticPage(slug)}
+            onClose={closeStaticPage}
+            trustLicenses={siteConfig.trustLicenses}
+          />
+        </React.Suspense>
+      )}
 
       {/* Customer Memory & Privacy Hub */}
       {isCustomerMemoryOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in">
           <div className="relative max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <PieceErrorBoundary pieceId="piece_customer_memory" pieceName="مرکز کنترل حریم خصوصی و حافظه مشتری">
-              <CustomerMemoryHubTile
-                customerId="cust_guest_me"
-                onClose={() => setIsCustomerMemoryOpen(false)}
-              />
+              <React.Suspense fallback={<GordiyehLoader variant="inline" label="در حال بارگذاری مرکز حریم خصوصی..." />}>
+                <CustomerMemoryHubTile
+                  customerId="cust_guest_me"
+                  onClose={() => setIsCustomerMemoryOpen(false)}
+                />
+              </React.Suspense>
             </PieceErrorBoundary>
           </div>
         </div>
@@ -2389,7 +2417,7 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
                 <Filter className="w-4 h-4 text-[var(--accent-text)]" />
                 <h3 className="font-bold text-[var(--text-main)] text-sm">فیلترهای محصول</h3>
                 {activeFiltersCount > 0 && (
-                  <span className="px-2 py-0.5 rounded-full bg-[var(--accent-primary)] text-white text-xs font-bold font-mono">
+                  <span className="px-2 py-0.5 rounded-full bg-[var(--accent-primary)] text-white text-xs font-bold tabular-nums">
                     {activeFiltersCount}
                   </span>
                 )}
@@ -2438,12 +2466,17 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
       {/* Live Support Widget */}
       <LiveSupportWidget
         products={products}
+        currency={currency}
         onSelectProduct={handleOpenProduct}
         onAddToCart={(p) => {
           handleAddToCart(p);
           setIsCartOpen(true);
         }}
         onOpenCart={() => setIsCartOpen(true)}
+        onOpenCustomerChats={() => {
+          setDashboardInitialTab('chats');
+          navigatePage('USER_DASHBOARD');
+        }}
       />
     </div>
   );

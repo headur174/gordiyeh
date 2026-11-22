@@ -52,23 +52,128 @@
       });
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Commerce OS | فروشگاه آنلاین و سیستم عامل بازرگانی</title>
-    <meta name="description" content="سیستم عامل جامع تجارت الکترونیک شامل ویترین آنلاین فروشگاه برای خریداران، سبد خرید، درگاه پرداخت شاپرک و پنل ناظر هوشمند مجهز به موتور قوانین، اتوپایلوت، پایش رقبا و صف تأیید" />
-    <meta property="og:title" content="Commerce OS | فروشگاه آنلاین و سیستم عامل بازرگانی" />
-    <meta property="og:description" content="سیستم عامل جامع تجارت الکترونیک شامل ویترین آنلاین فروشگاه برای خریداران، سبد خرید، درگاه پرداخت شاپرک و پنل ناظر هوشمند مجهز به موتور قوانین، اتوپایلوت، پایش رقبا و صف تأیید" />
+    <title>گُردیه | فروشگاه گجت‌های کاربردی برای خونه، سفر و باشگاه</title>
+    <meta name="description" content="برای هر محصول می‌گیم چه مشکلی رو حل می‌کنه، چه کاری از دستش برنمی‌آد و شرایط تست و تعویضش چیه. گجت‌های کاربردی با توضیح صادقانه." />
+    <meta property="og:title" content="گُردیه | فروشگاه گجت‌های کاربردی برای خونه، سفر و باشگاه" />
+    <meta property="og:description" content="برای هر محصول می‌گیم چه مشکلی رو حل می‌کنه، چه کاری از دستش برنمی‌آد و شرایط تست و تعویضش چیه. گجت‌های کاربردی با توضیح صادقانه." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <!-- Non-blocking sovereign font loading with instantaneous local fallback -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    </noscript>
-    <meta name="theme-color" content="#1E4635" />
+    <!-- Instant local font + WebP logo preload (Zero external render-blocking roundtrips) -->
+    <link rel="preload" as="image" type="image/webp" href="/assets/gordiyeh-logo-emblem.webp?v=7" />
+    <meta name="theme-color" content="#F3EDE0" />
+    <style>
+      #gordiyeh-boot-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        background-color: #F3EDE0;
+        color: #182B22;
+        font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+        transition: opacity 280ms ease, visibility 280ms ease;
+      }
+      html[data-theme="forest-dark"] #gordiyeh-boot-loader {
+        background-color: #09120E;
+        color: #F2EFE7;
+      }
+      #gordiyeh-boot-loader.is-ready {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .gordiyeh-boot-arch {
+        width: 74px;
+        height: 78px;
+        padding: 3px;
+        border-radius: 54px 54px 5px 5px;
+        background: linear-gradient(180deg, #2D6A4F 0%, #1E4635 100%);
+        box-shadow: 0 12px 28px rgba(24, 43, 34, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .gordiyeh-boot-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 50px 50px 3px 3px;
+        background: radial-gradient(ellipse at 50% 38%, #FBF7EE 0%, #EADFC6 62%, #C9D7BE 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+      }
+      html[data-theme="forest-dark"] .gordiyeh-boot-inner {
+        background: radial-gradient(ellipse at 50% 38%, rgba(209, 250, 229, 0.90) 0%, rgba(110, 231, 183, 0.48) 56%, #133829 100%);
+      }
+      .gordiyeh-boot-track {
+        width: 168px;
+        height: 5px;
+        border-radius: 999px;
+        background: rgba(30, 70, 53, 0.16);
+        overflow: hidden;
+      }
+      .gordiyeh-boot-fill {
+        width: 48%;
+        height: 100%;
+        border-radius: 999px;
+        background: #1E4635;
+        animation: gordiyeh-boot-slide 1.15s ease-in-out infinite;
+      }
+      html[data-theme="forest-dark"] .gordiyeh-boot-fill {
+        background: #34D399;
+      }
+      @keyframes gordiyeh-boot-slide {
+        0% { transform: translateX(130%); }
+        50% { transform: translateX(-15%); }
+        100% { transform: translateX(-140%); }
+      }
+    </style>
+    <script>
+      (function() {
+        try {
+          var key = 'gordiyeh_theme';
+          var saved = localStorage.getItem(key);
+          var theme = null;
+          if (saved === 'violet-dark') {
+            theme = 'forest-dark';
+            localStorage.setItem(key, theme);
+          } else if (saved === 'violet-light') {
+            theme = 'forest-light';
+            localStorage.setItem(key, theme);
+          } else if (saved === 'forest-dark' || saved === 'forest-light') {
+            theme = saved;
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'forest-dark';
+          } else {
+            theme = 'forest-light';
+          }
+          document.documentElement.setAttribute('data-theme', theme);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'forest-dark' ? '#09120E' : '#F3EDE0');
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="bg-[#F7F3EA] text-[#182B22] font-sans antialiased selection:bg-[#1E4635] selection:text-[#F7F3EA]" style="font-family: Vazirmatn, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <body class="bg-[var(--bg-main)] text-[var(--text-main)] font-sans antialiased selection:bg-[var(--accent-primary)] selection:text-[#F7F3EA]" style="font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <div id="gordiyeh-boot-loader" role="status" aria-live="polite">
+      <div class="gordiyeh-boot-arch">
+        <div class="gordiyeh-boot-inner">
+          <img src="/assets/gordiyeh-logo-emblem.webp?v=7" alt="گُردیه" width="52" height="52" style="width:100%;height:100%;object-fit:contain;" />
+        </div>
+      </div>
+      <div class="gordiyeh-boot-track"><div class="gordiyeh-boot-fill"></div></div>
+      <div style="font-size:12px;font-weight:700;opacity:0.9;">در حال آماده‌سازی گُردیه...</div>
+    </div>
+    <script>
+      setTimeout(function() {
+        var el = document.getElementById('gordiyeh-boot-loader');
+        if (el) el.classList.add('is-ready');
+      }, 2200);
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

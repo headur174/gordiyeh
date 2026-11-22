@@ -98,7 +98,7 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
     <>
       {/* Network Alert Notification for Packet Loss / Intranet recommendation */}
       {networkMode === 'GLOBAL' && packetLoss > 0 && (
-        <div className="bg-amber-950/80 border-b border-amber-500/40 px-4 py-2 text-xs text-amber-200 flex items-center justify-between gap-3">
+        <div className="bg-amber-950/90 border-b border-amber-500/40 px-4 py-2 text-xs text-amber-100 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
             <span>
@@ -107,7 +107,7 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
           </div>
           <button
             onClick={() => onNetworkModeChange('INTRANET')}
-            className="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition-all shrink-0 shadow-sm"
+            className="px-3 py-1 rounded-lg bg-amber-500 text-[#182B22] font-bold hover:bg-amber-400 transition-all shrink-0 shadow-sm cursor-pointer"
           >
             سوییچ فوری به «شبکه ملی مستقل» 🇮🇷
           </button>
@@ -116,7 +116,7 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
 
       {/* Sovereign Intranet Active Notice */}
       {networkMode === 'INTRANET' && (
-        <div className="bg-gradient-to-r from-amber-950/70 via-indigo-950/60 to-amber-950/70 border-b border-amber-500/30 px-4 py-1.5 text-xs text-amber-200 flex items-center justify-between gap-3">
+        <div className="bg-gradient-to-r from-[#111E18] via-amber-950/75 to-[#111E18] border-b border-amber-500/35 px-4 py-1.5 text-xs text-amber-100 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
             <span>
@@ -126,13 +126,13 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onOpenManualTasks}
-              className="text-indigo-300 hover:text-white underline text-[11px]"
+              className="text-emerald-300 hover:text-white underline text-[11px] cursor-pointer"
             >
               صف کارهای دستی ({pendingManualTasksCount} مورد معلق)
             </button>
             <button
               onClick={() => onNetworkModeChange('GLOBAL')}
-              className="px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-[11px]"
+              className="px-2.5 py-0.5 rounded-lg bg-[#182A22] text-[#F2EFE7] hover:opacity-90 border border-emerald-500/30 text-[11px] cursor-pointer"
             >
               بازگشت به حالت جهانی
             </button>
@@ -142,7 +142,7 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
 
       {/* Emergency Offline Banner */}
       {networkMode === 'AIRGAP_OFFLINE' && (
-        <div className="bg-rose-950/90 border-b border-rose-500/40 px-4 py-2 text-xs text-rose-200 flex items-center justify-between gap-3">
+        <div className="bg-rose-950/95 border-b border-rose-500/40 px-4 py-2 text-xs text-rose-100 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <WifiOff className="w-4 h-4 text-rose-400 shrink-0 animate-ping" />
             <span>
@@ -152,13 +152,13 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onOpenManualTasks}
-              className="px-3 py-1 rounded-lg bg-rose-600 text-white font-bold hover:bg-rose-500 transition-all shrink-0 shadow-md"
+              className="px-3 py-1 rounded-lg bg-rose-600 text-white font-bold hover:bg-rose-500 transition-all shrink-0 shadow-md cursor-pointer"
             >
               مدیریت صف کارهای دستی ({pendingManualTasksCount})
             </button>
             <button
               onClick={() => onNetworkModeChange('INTRANET')}
-              className="px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 hover:text-white border border-slate-800 text-[11px]"
+              className="px-2.5 py-1 rounded-lg bg-[#111E18] text-[#F2EFE7] hover:opacity-90 border border-rose-500/30 text-[11px] cursor-pointer"
             >
               وصل به شبکه ملی
             </button>
@@ -169,21 +169,21 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
       {/* Network Switcher Modal */}
       {showDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto p-5 sm:p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
               <div className="flex items-center gap-2">
-                <Activity className="w-5 h-5 text-indigo-400" />
-                <h3 className="text-base font-black text-white">مرکز مدیریت تاب‌آوری شبکه و اینترنت ایران</h3>
+                <Activity className="w-5 h-5 text-[var(--accent-text)]" />
+                <h3 className="text-base font-black text-[var(--text-main)]">مرکز مدیریت تاب‌آوری شبکه و اینترنت ایران</h3>
               </div>
               <button
                 onClick={() => setShowDetails(false)}
-                className="text-slate-400 hover:text-white text-lg font-mono"
+                className="text-[var(--text-muted)] hover:text-[var(--text-main)] text-lg font-mono cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed">
               با توجه به نوسانات روتینگ، پکت‌لاس بین‌الملل و سیاست‌های شبکه ملی، می‌توانید رفتار سیستم را در یک کلیک به حالت بهینه تغییر دهید تا هیچ سفارشی متوقف نشود:
             </p>
 
@@ -197,23 +197,23 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
                 }}
                 className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                   networkMode === 'GLOBAL'
-                    ? 'bg-indigo-950/60 border-indigo-500 shadow-md ring-1 ring-indigo-500/50'
-                    : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                    ? 'bg-[var(--accent-soft)] border-[var(--border-active)] shadow-md'
+                    : 'bg-[var(--bg-card)] border-[var(--border-color)] hover:border-[var(--border-active)]'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0">
                       <Globe className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white flex items-center gap-2">
+                      <div className="text-sm font-bold text-[var(--text-main)] flex flex-wrap items-center gap-2">
                         <span>۱. حالت بین‌المللی (Global / Hybrid)</span>
                         {networkMode === 'GLOBAL' && (
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-500 text-white font-mono">فعال</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--accent-primary)] text-[#F7F3EA] font-mono">فعال</span>
                         )}
                       </div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="text-xs text-[var(--text-muted)] mt-0.5">
                         هوش مصنوعی ابری، رصد زنده نرخ دلار آزاد و کراولر رقبا فعال هستند.
                       </div>
                     </div>
@@ -229,23 +229,23 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
                 }}
                 className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                   networkMode === 'INTRANET'
-                    ? 'bg-amber-950/40 border-amber-500 shadow-md ring-1 ring-amber-500/50'
-                    : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                    ? 'bg-amber-500/15 border-amber-500 shadow-md'
+                    : 'bg-[var(--bg-card)] border-[var(--border-color)] hover:border-[var(--border-active)]'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0">
                       <ShieldCheck className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white flex items-center gap-2">
+                      <div className="text-sm font-bold text-[var(--text-main)] flex flex-wrap items-center gap-2">
                         <span>۲. حالت اینترانت / شبکه ملی مستقل (Sovereign)</span>
                         {networkMode === 'INTRANET' && (
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-bold font-mono">فعال</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500 text-[#182B22] font-bold font-mono">فعال</span>
                         )}
                       </div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="text-xs text-[var(--text-muted)] mt-0.5">
                         قطع کامل درخواست‌های خارجی، فونت‌ها و منابع ۱۰۰٪ محلی، سرعت بارگذاری لحظه‌ای.
                       </div>
                     </div>
@@ -261,23 +261,23 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
                 }}
                 className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                   networkMode === 'AIRGAP_OFFLINE'
-                    ? 'bg-rose-950/40 border-rose-500 shadow-md ring-1 ring-rose-500/50'
-                    : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                    ? 'bg-rose-500/15 border-rose-500 shadow-md'
+                    : 'bg-[var(--bg-card)] border-[var(--border-color)] hover:border-[var(--border-active)]'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-700 dark:text-rose-400 flex items-center justify-center shrink-0">
                       <WifiOff className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white flex items-center gap-2">
+                      <div className="text-sm font-bold text-[var(--text-main)] flex flex-wrap items-center gap-2">
                         <span>۳. حالت آفلاین اضطراری (Airgap Offline)</span>
                         {networkMode === 'AIRGAP_OFFLINE' && (
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-rose-500 text-white font-mono">فعال</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-rose-600 text-white font-mono">فعال</span>
                         )}
                       </div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="text-xs text-[var(--text-muted)] mt-0.5">
                         کش محلی، ثبت سفارشات در صف آفلاین و هدایت امور به «صف کارهای دستی».
                       </div>
                     </div>
@@ -287,27 +287,27 @@ export const NetworkResilienceBar: React.FC<NetworkResilienceBarProps> = ({
             </div>
 
             {/* Diagnostic Stats */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 grid grid-cols-3 gap-2 text-center text-xs">
+            <div className="bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl p-3 grid grid-cols-3 gap-2 text-center text-xs">
               <div>
-                <span className="text-slate-500 block">پینگ سرور:</span>
-                <span className="font-mono font-bold text-white">{networkMode === 'AIRGAP_OFFLINE' ? 'آفلاین' : `${latency} ms`}</span>
+                <span className="text-[var(--text-muted)] block">پینگ سرور:</span>
+                <span className="font-mono font-bold text-[var(--text-main)]">{networkMode === 'AIRGAP_OFFLINE' ? 'آفلاین' : `${latency} ms`}</span>
               </div>
               <div>
-                <span className="text-slate-500 block">پکت‌لاس:</span>
-                <span className={`font-mono font-bold ${packetLoss > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                <span className="text-[var(--text-muted)] block">پکت‌لاس:</span>
+                <span className={`font-mono font-bold ${packetLoss > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400'}`}>
                   {packetLoss}%
                 </span>
               </div>
               <div>
-                <span className="text-slate-500 block">صف کارهای دستی:</span>
-                <span className="font-mono font-bold text-indigo-400">{pendingManualTasksCount} مورد</span>
+                <span className="text-[var(--text-muted)] block">صف کارهای دستی:</span>
+                <span className="font-mono font-bold text-[var(--accent-text)]">{pendingManualTasksCount} مورد</span>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border-color)]">
               <button
                 onClick={() => setShowDetails(false)}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white"
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[var(--bg-card)] border border-[var(--border-color)] hover:bg-[var(--bg-card-hover)] text-[var(--text-main)] cursor-pointer"
               >
                 بستن پنجره
               </button>

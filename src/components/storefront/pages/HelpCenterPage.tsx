@@ -165,17 +165,19 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
       </nav>
 
       {/* Clean Botanical Hero Search Box */}
-      <div className="rounded-[28px] overflow-hidden bg-[var(--bg-card)] border border-[var(--border-color)] p-8 sm:p-12 text-center space-y-4 shadow-sm">
-        <span className="inline-block px-3.5 py-1 rounded-full bg-[var(--accent-soft)] text-[var(--accent-primary)] text-[11px] font-semibold">
-          پشتیبانی و پیگیری سفارش
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-black text-[var(--text-main)]">راهنما، شرایط تست و پیگیری سفارش</h1>
-        <p className="text-xs sm:text-sm text-[var(--text-muted)] max-w-xl mx-auto leading-relaxed">
-          شماره سفارشتون رو وارد کنید یا پاسخ سؤال‌های رایج درباره ارسال، پرداخت شاپرک و شرایط تست و تعویض رو بخونید.
-        </p>
+      <div className="rounded-[28px] overflow-hidden bg-[var(--bg-card)] border border-[var(--border-color)] min-h-[240px] sm:min-h-[260px] p-6 sm:p-10 flex flex-col justify-end text-right space-y-4 shadow-sm">
+        <div className="max-w-2xl space-y-3">
+          <span className="inline-block px-3.5 py-1 rounded-full bg-[var(--accent-soft)] text-[var(--accent-primary)] text-[11px] font-semibold">
+            پشتیبانی و پیگیری سفارش
+          </span>
+          <h1 className="text-lg sm:text-xl font-bold text-[var(--text-main)] leading-[1.5]">راهنما، شرایط تست و پیگیری سفارش</h1>
+          <p className="text-[13px] sm:text-sm text-[var(--text-secondary)] max-w-xl leading-[1.85]">
+            شماره سفارشتون رو وارد کنید یا پاسخ سؤال‌های رایج درباره ارسال، پرداخت شاپرک و شرایط تست و تعویض رو بخونید.
+          </p>
+        </div>
 
         {/* Order Tracking Bar */}
-        <form onSubmit={handleTrackSubmit} className="max-w-xl mx-auto pt-3 flex flex-col sm:flex-row gap-2.5">
+        <form onSubmit={handleTrackSubmit} className="max-w-xl w-full pt-2 flex flex-col sm:flex-row gap-2.5">
           <div className="relative flex-1">
             <PackageCheck className="w-4 h-4 text-[var(--text-muted)] absolute right-4 top-3.5" />
             <input
@@ -183,7 +185,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
               placeholder="شماره سفارش یا کد پیگیری (مثلاً ORD-90214)..."
               value={trackingCode}
               onChange={(e) => setTrackingCode(e.target.value)}
-              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-full pr-10 pl-4 py-3 text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] font-mono focus:outline-none focus:border-[var(--accent-primary)]"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-full pr-10 pl-4 py-3 text-xs sm:text-[13px] text-[var(--text-main)] placeholder-[var(--text-muted)] tabular-nums focus:outline-none focus:border-[var(--accent-primary)]"
             />
           </div>
           <button
@@ -201,7 +203,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
           <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[var(--border-color)]">
             <div>
               <span className="text-[11px] text-[var(--text-muted)] block">کد پیگیری:</span>
-              <span className="text-base font-black text-[var(--text-main)] font-mono">{trackingResult.code}</span>
+              <span className="text-base font-bold text-[var(--text-main)] font-mono">{trackingResult.code}</span>
             </div>
             <div className="text-left">
               <span className="text-[11px] text-[var(--text-muted)] block">وضعیت:</span>
@@ -214,7 +216,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
           {trackingResult.isNotFound ? (
             <div className="p-4 rounded-xl bg-[var(--bg-main)] border border-amber-500/30 text-xs text-[var(--text-main)] space-y-1">
               <p className="font-semibold text-amber-500">{trackingResult.message}</p>
-              <p className="text-[11px] text-[var(--text-muted)]">پشتیبانی شنبه تا چهارشنبه ۹ تا ۱۹ و پنج‌شنبه ۹ تا ۱۴ پاسخ‌گوست.</p>
+              <p className="text-[11px] text-[var(--text-secondary)]">پشتیبانی شنبه تا چهارشنبه ۹ تا ۱۹ و پنج‌شنبه ۹ تا ۱۴ پاسخ‌گوست.</p>
             </div>
           ) : (
             <>
@@ -239,7 +241,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
                     >
                       <div className="flex items-center gap-2 mb-2">
                         <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold tabular-nums ${
                             st.done ? 'bg-emerald-500 text-white' : 'bg-[var(--bg-card)] text-[var(--text-muted)]'
                           }`}
                         >
@@ -247,7 +249,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
                         </div>
                         <span className="text-xs font-bold text-[var(--text-main)]">{st.title}</span>
                       </div>
-                      <div className="text-[10px] text-[var(--text-muted)] font-mono">{st.time}</div>
+                      <div className="text-[11px] text-[var(--text-muted)] tabular-nums">{st.time}</div>
                     </div>
                   ))}
                 </div>
@@ -355,12 +357,12 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
               {BEHZAD_ECOM_PRINCIPLES.map(p => (
                 <div key={p.number} className="p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] space-y-1.5 shadow-sm">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-[var(--accent-soft)] text-[var(--accent-primary)] text-[11px] font-bold flex items-center justify-center font-mono">
+                    <span className="w-5 h-5 rounded-full bg-[var(--accent-soft)] text-[var(--accent-primary)] text-[11px] font-bold flex items-center justify-center tabular-nums">
                       {p.number}
                     </span>
                     <h4 className="text-xs font-bold text-[var(--text-main)]">{p.title}</h4>
                   </div>
-                  <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">{p.description}</p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">{p.description}</p>
                 </div>
               ))}
             </div>
@@ -374,7 +376,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
               placeholder="جستجو در سؤال‌ها (قیمت، تخفیف، اعتماد، تعویض)..."
               value={playbookSearch}
               onChange={(e) => setPlaybookSearch(e.target.value)}
-              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-full pr-10 pl-4 py-2.5 text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)]"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-full pr-10 pl-4 py-2.5 text-xs sm:text-[13px] text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)]"
             />
           </div>
 
@@ -387,7 +389,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-[var(--accent-soft)] text-[var(--accent-primary)] text-xs font-bold flex items-center justify-center font-mono">
+                    <span className="w-6 h-6 rounded-full bg-[var(--accent-soft)] text-[var(--accent-primary)] text-xs font-bold flex items-center justify-center tabular-nums">
                       {idx + 1}
                     </span>
                     <h4 className="text-xs sm:text-sm font-bold text-[var(--text-main)]">{item.question}</h4>
@@ -458,7 +460,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
                 </button>
 
                 {expandedFaq === idx && (
-                  <div className="p-4 pt-0 text-xs text-[var(--text-muted)] leading-relaxed border-t border-[var(--border-color)]/60 whitespace-pre-line">
+                  <div className="p-4 pt-3 text-xs sm:text-[13px] text-[var(--text-secondary)] leading-[1.85] border-t border-[var(--border-color)]/60 whitespace-pre-line">
                     {faq.a}
                   </div>
                 )}
@@ -476,7 +478,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
             <PhoneCall className="w-5 h-5 text-[var(--accent-primary)]" />
             <h3 className="text-sm font-bold text-[var(--text-main)]">تماس با پشتیبانی گُردیه</h3>
           </div>
-          <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+          <p className="text-xs sm:text-[13px] text-[var(--text-secondary)] leading-[1.8]">
             شنبه تا چهارشنبه ۹ تا ۱۹ و پنج‌شنبه ۹ تا ۱۴ پاسخ‌گوی شما هستیم. پیام‌های بعد از ساعت کاری صبح روز کاری بعد پیگیری می‌شن.
           </p>
 

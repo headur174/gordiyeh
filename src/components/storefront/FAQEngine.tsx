@@ -181,9 +181,9 @@ export const FAQEngine: React.FC<FAQEngineProps> = (props) => {
                     id={panelId}
                     role="region"
                     aria-labelledby={buttonId}
-                    className="pb-4 pt-1 px-1 space-y-2 text-xs text-[var(--text-muted)] leading-relaxed"
+                    className="pb-4 pt-1 px-1 space-y-2 text-xs sm:text-[13px] text-[var(--text-secondary)] leading-[1.8]"
                   >
-                    <p className="text-[var(--text-main)] leading-relaxed">{item.answer}</p>
+                    <p className="text-[var(--text-secondary)] leading-[1.85]">{item.answer}</p>
                     <div className="text-[11px] text-[var(--text-muted)] flex flex-wrap items-center gap-1.5">
                       <span>منبع پاسخ در کارت کالا:</span>
                       <span aria-hidden="true">·</span>
@@ -317,7 +317,7 @@ export const FAQEngine: React.FC<FAQEngineProps> = (props) => {
               }`}
             >
               <span>{CATEGORY_LABELS[slug]}</span>
-              <span className="mr-1.5 opacity-80 font-mono tabular-nums">({count})</span>
+              <span className="mr-1.5 opacity-80 tabular-nums">({count})</span>
             </button>
           );
         })}

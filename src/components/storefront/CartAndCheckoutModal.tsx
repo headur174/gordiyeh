@@ -1,19 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  X, 
-  Trash2, 
-  ShoppingCart, 
-  ArrowLeft, 
-  ArrowRight, 
-  CheckCircle2, 
-  Truck, 
-  CreditCard, 
-  ShieldCheck, 
-  Receipt,
-  FileCheck
+import {
+  X,
+  Trash2,
+  ShoppingCart,
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Truck,
+  CreditCard,
+  ShieldCheck,
+  MapPin,
 } from 'lucide-react';
 import { CanonicalProduct, Currency, Order } from '../../types';
 import { formatCurrency } from '../../utils';
+import {
+  CustomerAddress,
+  DEFAULT_STORE_FEATURE_SETTINGS,
+  IRANIAN_PROVINCES,
+  StoreFeatureSettings,
+  containsProfanityOrAbuse,
+  isValidEmail,
+  isValidIranianNationalId,
+  isValidIranianPhoneStrict,
+  isValidIranianPostalCode,
+  normalizeDigits,
+  normalizeIranianPhoneStrict,
+} from '../../utils/iranianValidators';
+import {
+  fetchStoreFeatureSettings,
+  getCachedCustomerAccount,
+  getSavedSupportPhone,
+  identifyCustomerAccount,
+  setSavedSupportPhone,
+  toPersianDigits,
+  updateCustomerProfile,
+} from '../../utils/supportChatStore';
 
 export interface CartItem {
   product: CanonicalProduct;
@@ -50,58 +71,148 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
   onOrderCompleted,
 }) => {
   const [step, setStep] = useState<CheckoutStep>('cart');
-  const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountAmount] = useState(0);
+  const [featureSettings, setFeatureSettings] = useState<StoreFeatureSettings>(
+    DEFAULT_STORE_FEATURE_SETTINGS
+  );
+  const [savedAddresses, setSavedAddresses] = useState<CustomerAddress[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
-  // Customer & Address Info (Clean State, User Enters Details)
+  // Customer & Address Info
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [nationalId, setNationalId] = useState('');
   const [province, setProvince] = useState(selectedProvince);
   const [city, setCity] = useState(selectedCity);
   const [address, setAddress] = useState('');
+  const [plaque, setPlaque] = useState('');
+  const [unit, setUnit] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [needInvoice, setNeedInvoice] = useState(false);
 
   // Payment choice: Standard Online Gateway only
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
+  const [gatewayRedirectUrl, setGatewayRedirectUrl] = useState<string | null>(null);
+
+  const applySavedAddress = (addr: CustomerAddress) => {
+    setSelectedAddressId(addr.id);
+    if (addr.recipientName) setCustomerName(addr.recipientName);
+    if (addr.recipientPhone) setCustomerPhone(addr.recipientPhone);
+    if (addr.province) setProvince(addr.province);
+    if (addr.city) setCity(addr.city);
+    if (addr.addressLine) setAddress(addr.addressLine);
+    setPlaque(addr.plaque || '');
+    setUnit(addr.unit || '');
+    setPostalCode(addr.postalCode || '');
+    setAddressError(null);
+  };
 
   useEffect(() => {
     if (!isOpen) {
       setStep('cart');
       setCreatedOrder(null);
       setAddressError(null);
+      setGatewayRedirectUrl(null);
+      return;
+    }
+
+    void fetchStoreFeatureSettings().then(setFeatureSettings);
+
+    const savedPhone = getSavedSupportPhone();
+    if (savedPhone) {
+      const cached = getCachedCustomerAccount(savedPhone);
+      if (cached) {
+        if (!customerPhone) setCustomerPhone(cached.phone);
+        if (!customerName && (cached.fullName || cached.preferredName)) {
+          setCustomerName(cached.fullName || cached.preferredName || '');
+        }
+        if (!email && cached.email) setEmail(cached.email);
+        if (!nationalId && cached.nationalId) setNationalId(cached.nationalId);
+        if (Array.isArray(cached.addresses) && cached.addresses.length > 0) {
+          setSavedAddresses(cached.addresses);
+          const def = cached.addresses.find((a) => a.isDefault) || cached.addresses[0];
+          if (def && !address) applySavedAddress(def);
+        }
+      }
+      void identifyCustomerAccount(savedPhone).then(({ account }) => {
+        if (!account) return;
+        if (!customerPhone) setCustomerPhone(account.phone);
+        if (!customerName && (account.fullName || account.preferredName)) {
+          setCustomerName(account.fullName || account.preferredName || '');
+        }
+        if (!email && account.email) setEmail(account.email);
+        if (!nationalId && account.nationalId) setNationalId(account.nationalId);
+        if (Array.isArray(account.addresses) && account.addresses.length > 0) {
+          setSavedAddresses(account.addresses);
+          const def = account.addresses.find((a) => a.isDefault) || account.addresses[0];
+          if (def && !address) applySavedAddress(def);
+        }
+      });
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   // Calculations
-  const rawSubtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
-  
+  const rawSubtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+
   // Standard shipping fee driven by settings (free above threshold)
   const shippingFee = rawSubtotal > 2000000 ? 0 : 45000;
 
-  const totalDiscount = discountAmount + cart.reduce((sum, item) => {
-    const orig = item.product.originalPrice || item.unitPrice;
-    return sum + (Math.max(0, orig - item.unitPrice) * item.quantity);
-  }, 0);
+  const totalDiscount =
+    discountAmount +
+    cart.reduce((sum, item) => {
+      const orig = item.product.originalPrice || item.unitPrice;
+      return sum + Math.max(0, orig - item.unitPrice) * item.quantity;
+    }, 0);
 
   const finalPayable = Math.max(0, rawSubtotal - discountAmount + shippingFee);
 
   const handleProceedToPayment = () => {
-    if (!customerName.trim()) {
+    if (!customerName.trim() || customerName.trim().length < 2) {
       setAddressError('لطفاً نام و نام خانوادگی تحویل‌گیرنده را بنویسید.');
       return;
     }
-    const cleanPhone = customerPhone.replace(/\D/g, '');
-    if (!cleanPhone || cleanPhone.length < 10) {
-      setAddressError('لطفاً شماره موبایل معتبر (مثال: ۰۹۱۲۳۴۵۶۷۸۹) را وارد کنید.');
+    if (containsProfanityOrAbuse(customerName)) {
+      setAddressError('نام تحویل‌گیرنده حاوی عبارات نامناسب یا غیرمجاز است.');
       return;
     }
-    if (!address.trim()) {
+    const cleanPhone = normalizeIranianPhoneStrict(customerPhone);
+    if (!isValidIranianPhoneStrict(cleanPhone)) {
+      setAddressError('لطفاً شماره موبایل معتبر ۱۱ رقمی (مانند ۰۹۱۲۳۴۵۶۷۸۹) وارد کنید.');
+      return;
+    }
+    const cleanEmail = email.trim();
+    if (featureSettings.enableEmail && cleanEmail.length > 0 && !isValidEmail(cleanEmail)) {
+      setAddressError('فرمت ایمیل واردشده معتبر نیست (مثال: name@example.com).');
+      return;
+    }
+    const cleanNationalId = normalizeDigits(nationalId).replace(/[\s\-]/g, '');
+    if (featureSettings.enableNationalId) {
+      if (featureSettings.requireNationalId && !cleanNationalId) {
+        setAddressError('وارد کردن کد ملی ۱۰ رقمی معتبر الزامی است.');
+        return;
+      }
+      if (cleanNationalId.length > 0 && !isValidIranianNationalId(cleanNationalId)) {
+        setAddressError('کد ملی باید ۱۰ رقم و منطبق بر الگوریتم صحت‌سنجی رسمی باشد.');
+        return;
+      }
+    }
+    if (!address.trim() || address.trim().length < 5) {
       setAddressError('لطفاً نشانی کامل تحویل سفارش را بنویسید.');
       return;
     }
+    const cleanPostal = normalizeDigits(postalCode).replace(/[\s\-]/g, '');
+    if (
+      (featureSettings.requirePostalCode || cleanPostal.length > 0) &&
+      !isValidIranianPostalCode(cleanPostal)
+    ) {
+      setAddressError('کد پستی باید ۱۰ رقم معتبر بدون خط تیره (غیرتکراری و بدون صفر یا ۲ در ابتدا) باشد.');
+      return;
+    }
+
     setAddressError(null);
     setStep('payment');
   };
@@ -109,16 +220,20 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
   const handleCompleteOrder = () => {
     const orderId = `ORD-${Date.now().toString().slice(-6)}`;
     const trackingNo = `TRK-${Math.floor(10000000 + Math.random() * 90000000)}`;
+    const cleanPhone = normalizeIranianPhoneStrict(customerPhone) || customerPhone || '09120000000';
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanNationalId = normalizeDigits(nationalId).replace(/[\s\-]/g, '');
+    const cleanPostal = normalizeDigits(postalCode).replace(/[\s\-]/g, '');
 
     const newOrder: Order = {
       id: orderId,
       orderNumber: orderId,
       customerName: customerName || 'مشتری گُردیه',
-      customerPhone: customerPhone || '۰۹۱۲۰۰۰۰۰۰۰',
+      customerPhone: cleanPhone,
       city,
       province,
       address: address || 'نشانی ثبت‌شده',
-      items: cart.map(i => ({
+      items: cart.map((i) => ({
         id: i.product.id,
         title: i.product.title,
         sku: i.product.sku,
@@ -132,7 +247,7 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
       discountAmount,
       supplierCost: Math.round(finalPayable * 0.75),
       marketingAllocation: Math.round(finalPayable * 0.05),
-      contributionProfit: Math.round(finalPayable * 0.20),
+      contributionProfit: Math.round(finalPayable * 0.2),
       marginPercent: 20,
       status: 'PAID',
       riskScore: 10,
@@ -141,7 +256,7 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
       deliveryTimeSlot: 'morning',
       paymentMethod: 'gateway',
       trackingNumber: trackingNo,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     setCreatedOrder(newOrder);
@@ -149,38 +264,98 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
     onOrderCompleted(newOrder);
     onClearCart();
 
+    if (isValidIranianPhoneStrict(cleanPhone)) {
+      setSavedSupportPhone(cleanPhone);
+      const nextAddr: CustomerAddress = {
+        id: selectedAddressId || `addr_${Date.now()}`,
+        label: savedAddresses.find((a) => a.id === selectedAddressId)?.label || 'آخرین نشانی ارسال',
+        recipientName: customerName.trim(),
+        recipientPhone: cleanPhone,
+        province,
+        city,
+        addressLine: address.trim(),
+        postalCode: cleanPostal,
+        plaque: plaque.trim() || undefined,
+        unit: unit.trim() || undefined,
+        isDefault: true,
+      };
+      const mergedAddresses = [
+        nextAddr,
+        ...savedAddresses
+          .filter((a) => a.id !== nextAddr.id && a.postalCode !== cleanPostal)
+          .map((a) => ({ ...a, isDefault: false })),
+      ];
+      void updateCustomerProfile(cleanPhone, {
+        fullName: customerName.trim(),
+        ...(cleanEmail ? { email: cleanEmail } : {}),
+        ...(cleanNationalId ? { nationalId: cleanNationalId } : {}),
+        ...(isValidIranianPostalCode(cleanPostal) ? { addresses: mergedAddresses } : {}),
+      });
+    }
+
     // Persist real order in browser localStorage
     try {
       const existingOrders = JSON.parse(localStorage.getItem('commerce_os_orders') || '[]');
       localStorage.setItem('commerce_os_orders', JSON.stringify([newOrder, ...existingOrders]));
-      localStorage.setItem('commerce_os_last_customer', JSON.stringify({
-        name: customerName,
-        phone: customerPhone,
-        province,
-        city,
-        address,
-        postalCode
-      }));
+      localStorage.setItem(
+        'commerce_os_last_customer',
+        JSON.stringify({
+          name: customerName,
+          phone: cleanPhone,
+          email: cleanEmail || undefined,
+          nationalId: cleanNationalId || undefined,
+          province,
+          city,
+          address,
+          plaque,
+          unit,
+          postalCode: cleanPostal,
+        })
+      );
     } catch (e) {
       console.warn('Error saving order to localStorage:', e);
     }
 
-    // Persist real order in server database
-    fetch('/api/orders', {
+    // Persist real order in server database & initiate configured gateway session if active
+    fetch('/api/v1/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         items: newOrder.items,
         customer: {
           fullName: customerName,
-          phone: customerPhone,
+          phone: cleanPhone,
+          email: cleanEmail || undefined,
+          nationalId: cleanNationalId || undefined,
           province,
           city,
-          address
+          address,
+          plaque: plaque || undefined,
+          unit: unit || undefined,
+          postalCode: cleanPostal || undefined,
         },
-        discountAmount
+        discountAmount,
+      }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then(async (orderResp) => {
+        const persistedId = orderResp?.order?.id || orderResp?.order?.orderNumber;
+        if (!persistedId) return;
+        const payRes = await fetch('/api/v1/payment/initiate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: persistedId,
+            phone: cleanPhone,
+            email: cleanEmail || undefined,
+          }),
+        }).catch(() => null);
+        const payData = payRes && payRes.ok ? await payRes.json().catch(() => null) : null;
+        if (payData?.session?.liveGateway && payData?.session?.gatewayUrl) {
+          setGatewayRedirectUrl(payData.session.gatewayUrl);
+        }
       })
-    }).catch(e => console.error('Error saving order to backend:', e));
+      .catch((e) => console.error('Error saving order to backend:', e));
   };
 
   return (
@@ -274,7 +449,7 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
                                 <span>• رنگ: {item.selectedColor}</span>
                               )}
                             </div>
-                            <div className="text-[var(--accent-primary)] font-mono font-bold pt-0.5">
+                            <div className="text-[var(--accent-primary)] tabular-nums font-bold pt-0.5 text-[13px]">
                               {formatCurrency(item.unitPrice, currency)}
                             </div>
                           </div>
@@ -289,7 +464,7 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
                             >
                               -
                             </button>
-                            <span className="w-6 text-center font-mono font-bold text-xs text-[var(--text-main)]">
+                            <span className="w-6 text-center tabular-nums font-bold text-xs text-[var(--text-main)]">
                               {item.quantity}
                             </span>
                             <button
@@ -341,7 +516,7 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
 
                     <div className="pt-3 border-t border-[var(--border-color)] flex justify-between items-baseline">
                       <span className="text-xs font-bold text-[var(--text-main)]">مبلغ قابل پرداخت:</span>
-                      <span className="text-base font-black text-[var(--accent-primary)] tabular-nums">
+                      <span className="text-base font-bold text-[var(--accent-primary)] tabular-nums">
                         {formatCurrency(finalPayable, currency)}
                       </span>
                     </div>
@@ -363,6 +538,40 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
         {/* STEP 2: ADDRESS & DELIVERY DETAILS */}
         {step === 'address' && (
           <div className="space-y-4">
+            {/* Quick-select saved addresses if user has any */}
+            {savedAddresses.length > 0 && (
+              <div className="space-y-2 p-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)]">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-main)]">
+                  <MapPin className="w-4 h-4 text-[var(--accent-primary)]" />
+                  <span>انتخاب سریع از آدرس‌های ذخیره‌شده حساب شما:</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {savedAddresses.map((addr) => (
+                    <button
+                      key={addr.id}
+                      type="button"
+                      onClick={() => applySavedAddress(addr)}
+                      className={`text-right p-2.5 rounded-xl border text-[11px] transition-colors cursor-pointer ${
+                        selectedAddressId === addr.id
+                          ? 'bg-[var(--badge-bg)] border-[var(--accent-primary)]'
+                          : 'bg-[var(--bg-main)] border-[var(--border-color)] hover:border-[var(--accent-primary)]'
+                      }`}
+                    >
+                      <div className="font-bold text-[var(--text-main)] flex items-center justify-between gap-2">
+                        <span>{addr.label}</span>
+                        <span className="font-mono text-[10px] text-[var(--accent-primary)] tabular-nums">
+                          {toPersianDigits(addr.postalCode)}
+                        </span>
+                      </div>
+                      <div className="text-[var(--text-muted)] truncate mt-0.5">
+                        {addr.province}، {addr.city} — {addr.addressLine}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-[var(--text-main)]">نام و نام خانوادگی تحویل‌گیرنده:</label>
@@ -376,26 +585,99 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[var(--text-main)]">شماره موبایل (برای ارسال کد پیگیری):</label>
+                <label className="text-xs font-bold text-[var(--text-main)]">
+                  شماره موبایل (نام کاربری و ارسال کد پیگیری):
+                </label>
                 <input
                   type="tel"
-                  placeholder="مثلاً: ۰۹۱۲۳۴۵۶۷۸۹"
+                  dir="ltr"
+                  placeholder="09123456789"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:border-[var(--accent-primary)] focus:outline-none font-mono placeholder-[var(--text-muted)]"
+                  className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:border-[var(--accent-primary)] focus:outline-none tabular-nums placeholder-[var(--text-muted)]"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {(featureSettings.enableEmail || featureSettings.enableNationalId) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {featureSettings.enableEmail && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <label className="text-xs font-bold text-[var(--text-main)]">ایمیل (جهت ارسال رسید):</label>
+                      {email.trim().length > 0 && (
+                        <span
+                          className={`text-[10px] font-bold ${
+                            isValidEmail(email) ? 'text-emerald-600' : 'text-rose-500'
+                          }`}
+                        >
+                          {isValidEmail(email) ? 'معتبر' : 'فرمت نامعتبر'}
+                        </span>
+                      )}
+                    </div>
+                    <input
+                      type="email"
+                      dir="ltr"
+                      placeholder="name@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={`w-full bg-[var(--bg-main)] border rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none placeholder-[var(--text-muted)] ${
+                        email.trim().length > 0 && !isValidEmail(email)
+                          ? 'border-rose-500'
+                          : 'border-[var(--border-color)] focus:border-[var(--accent-primary)]'
+                      }`}
+                    />
+                  </div>
+                )}
+
+                {featureSettings.enableNationalId && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <label className="text-xs font-bold text-[var(--text-main)]">
+                        کد ملی {featureSettings.requireNationalId ? '(الزامی)' : '(اختیاری)'}:
+                      </label>
+                      {nationalId.trim().length > 0 && (
+                        <span
+                          className={`text-[10px] font-bold ${
+                            isValidIranianNationalId(nationalId) ? 'text-emerald-600' : 'text-rose-500'
+                          }`}
+                        >
+                          {isValidIranianNationalId(nationalId) ? 'کد ملی معتبر' : 'کد ملی نامعتبر'}
+                        </span>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      dir="ltr"
+                      maxLength={10}
+                      placeholder="0012345678"
+                      value={nationalId}
+                      onChange={(e) => setNationalId(e.target.value)}
+                      className={`w-full bg-[var(--bg-main)] border rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none tabular-nums placeholder-[var(--text-muted)] ${
+                        nationalId.trim().length > 0 && !isValidIranianNationalId(nationalId)
+                          ? 'border-rose-500'
+                          : 'border-[var(--border-color)] focus:border-[var(--accent-primary)]'
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-[var(--text-main)]">استان:</label>
-                <input
-                  type="text"
+                <select
                   value={province}
                   onChange={(e) => setProvince(e.target.value)}
                   className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:border-[var(--accent-primary)] focus:outline-none"
-                />
+                >
+                  {IRANIAN_PROVINCES.map((prov) => (
+                    <option key={prov} value={prov}>
+                      {prov}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="space-y-1.5">
@@ -407,13 +689,35 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
                   className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:border-[var(--accent-primary)] focus:outline-none"
                 />
               </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[var(--text-main)]">پلاک:</label>
+                <input
+                  type="text"
+                  placeholder="مثلاً ۱۲"
+                  value={plaque}
+                  onChange={(e) => setPlaque(e.target.value)}
+                  className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:border-[var(--accent-primary)] focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[var(--text-main)]">واحد:</label>
+                <input
+                  type="text"
+                  placeholder="مثلاً ۴"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:border-[var(--accent-primary)] focus:outline-none"
+                />
+              </div>
             </div>
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-[var(--text-main)]">نشانی دقیق تحویل بسته:</label>
               <textarea
                 rows={2}
-                placeholder="خیابان، کوچه، پلاک، زنگ و واحد..."
+                placeholder="خیابان، کوچه، جزئیات تکمیلی مسیر..."
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl p-3 text-xs text-[var(--text-main)] focus:border-[var(--accent-primary)] focus:outline-none leading-relaxed placeholder-[var(--text-muted)]"
@@ -422,13 +726,32 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[var(--text-main)]">کد پستی ۱۰ رقمی:</label>
+                <div className="flex items-center justify-between gap-2">
+                  <label className="text-xs font-bold text-[var(--text-main)]">
+                    کد پستی ۱۰ رقمی {featureSettings.requirePostalCode ? '(الزامی)' : ''}:
+                  </label>
+                  {postalCode.trim().length > 0 && (
+                    <span
+                      className={`text-[10px] font-bold ${
+                        isValidIranianPostalCode(postalCode) ? 'text-emerald-600' : 'text-rose-500'
+                      }`}
+                    >
+                      {isValidIranianPostalCode(postalCode) ? 'معتبر' : '۱۰ رقم نامعتبر'}
+                    </span>
+                  )}
+                </div>
                 <input
                   type="text"
-                  placeholder="۱۰ رقم بدون خط تیره"
+                  dir="ltr"
+                  maxLength={10}
+                  placeholder="1983963113"
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
-                  className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:border-[var(--accent-primary)] focus:outline-none font-mono placeholder-[var(--text-muted)]"
+                  className={`w-full bg-[var(--bg-main)] border rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none tabular-nums placeholder-[var(--text-muted)] ${
+                    postalCode.trim().length > 0 && !isValidIranianPostalCode(postalCode)
+                      ? 'border-rose-500'
+                      : 'border-[var(--border-color)] focus:border-[var(--accent-primary)]'
+                  }`}
                 />
               </div>
 
@@ -453,11 +776,11 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
                   <Truck className="w-5 h-5 text-[var(--accent-primary)]" />
                   <span className="text-xs font-bold text-[var(--text-main)]">ارسال با پیک (تهران) یا پست پیشتاز (سایر شهرها)</span>
                 </div>
-                <span className="text-xs font-mono font-bold text-[var(--accent-primary)]">
+                <span className="text-xs tabular-nums font-bold text-[var(--accent-primary)]">
                   {shippingFee === 0 ? 'رایگان' : formatCurrency(shippingFee, currency)}
                 </span>
               </div>
-              <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
+              <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">
                 بسته‌بندی ضربه‌گیر و ارسال کد رهگیری بلافاصله بعد از تحویل به پیک یا پست.
               </p>
             </div>
@@ -496,8 +819,22 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
               <div className="flex items-center gap-3">
                 <CreditCard className="w-5 h-5 text-[var(--accent-primary)]" />
                 <div>
-                  <div className="text-xs font-bold text-[var(--text-main)]">پرداخت اینترنتی شاپرک با همه‌ی کارت‌های شتاب</div>
-                  <div className="text-[11px] text-[var(--text-muted)]">بلافاصله بعد از پرداخت، رسید و شماره سفارش براتون ثبت می‌شه</div>
+                  <div className="text-xs font-bold text-[var(--text-main)]">
+                    {featureSettings.paymentConfigured && featureSettings.paymentProvider !== 'sandbox'
+                      ? `درگاه پرداخت شاپرک (${
+                          featureSettings.paymentProvider === 'zarinpal'
+                            ? 'زرین‌پال'
+                            : featureSettings.paymentProvider === 'zibal'
+                            ? 'زیبال'
+                            : 'آیدی‌پی'
+                        })`
+                      : 'درگاه شاپرک (حالت آزمایشی / ثبت سفارش فوری)'}
+                  </div>
+                  <div className="text-[11px] text-[var(--text-muted)]">
+                    {featureSettings.paymentConfigured && featureSettings.paymentProvider !== 'sandbox'
+                      ? 'بلافاصله پس از ثبت نهایی، تراکنش با شناسه مرجع امن به درگاه بانکی متصل می‌شود'
+                      : 'بلافاصله بعد از ثبت، رسید و شماره سفارش با تایید تراکنش شبیه‌سازی‌شده برایتون ثبت می‌شه'}
+                  </div>
                 </div>
               </div>
               <CheckCircle2 className="w-5 h-5 text-[var(--accent-primary)]" />
@@ -505,8 +842,8 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
 
             {/* Total payable banner */}
             <div className="bg-[var(--bg-main)] border border-[var(--border-color)] rounded-2xl p-4 flex items-center justify-between text-xs">
-              <span className="text-[var(--text-muted)] font-semibold">مبلغ قابل پرداخت:</span>
-              <span className="text-base font-black text-[var(--accent-primary)] font-mono">
+              <span className="text-[var(--text-secondary)] font-medium">مبلغ قابل پرداخت:</span>
+              <span className="text-base font-bold text-[var(--accent-primary)] tabular-nums">
                 {formatCurrency(finalPayable, currency)}
               </span>
             </div>
@@ -522,7 +859,7 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
 
               <button
                 onClick={handleCompleteOrder}
-                className="px-7 py-3 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-xs font-black text-[#F7F3EA] shadow-sm flex items-center gap-2 transition-colors cursor-pointer"
+                className="px-7 py-3 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-xs font-bold text-[#F7F3EA] shadow-sm flex items-center gap-2 transition-colors cursor-pointer tabular-nums"
               >
                 <ShieldCheck className="w-4 h-4" />
                 <span>پرداخت و ثبت نهایی ({formatCurrency(finalPayable, currency)})</span>
@@ -539,26 +876,36 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-lg font-black text-[var(--text-main)]">سفارشتون با موفقیت ثبت شد</h3>
-              <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-                کد پیگیری و اطلاعات سفارش برای شماره {createdOrder.customerPhone} ثبت شد.
+              <h3 className="text-lg font-bold text-[var(--text-main)]">سفارشتون با موفقیت ثبت شد</h3>
+              <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">
+                کد پیگیری و اطلاعات سفارش برای شماره <span className="tabular-nums font-bold">{createdOrder.customerPhone}</span> ثبت شد.
               </p>
             </div>
 
-            <div className="bg-[var(--bg-main)] border border-[var(--border-color)] rounded-2xl p-4 text-xs space-y-2.5 text-right font-mono">
-              <div className="flex justify-between text-[var(--text-muted)]">
+            <div className="bg-[var(--bg-main)] border border-[var(--border-color)] rounded-2xl p-4 text-xs space-y-2.5 text-right tabular-nums">
+              <div className="flex justify-between text-[var(--text-secondary)]">
                 <span>شماره سفارش:</span>
-                <span className="text-[var(--text-main)] font-bold">{createdOrder.orderNumber}</span>
+                <span className="text-[var(--text-main)] font-bold font-mono">{createdOrder.orderNumber}</span>
               </div>
-              <div className="flex justify-between text-[var(--text-muted)]">
+              <div className="flex justify-between text-[var(--text-secondary)]">
                 <span>کد پیگیری ارسال:</span>
-                <span className="text-[var(--text-main)] font-bold">{createdOrder.trackingNumber}</span>
+                <span className="text-[var(--text-main)] font-bold font-mono">{createdOrder.trackingNumber}</span>
               </div>
-              <div className="flex justify-between text-[var(--text-muted)]">
+              <div className="flex justify-between text-[var(--text-secondary)]">
                 <span>مبلغ پرداخت‌شده:</span>
                 <span className="text-[var(--accent-primary)] font-bold">{formatCurrency(createdOrder.totalAmount, currency)}</span>
               </div>
             </div>
+
+            {gatewayRedirectUrl && (
+              <a
+                href={gatewayRedirectUrl}
+                className="w-full py-3 rounded-xl bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-sm"
+              >
+                <CreditCard className="w-4 h-4" />
+                <span>انتقال به صفحه پرداخت بانکی</span>
+              </a>
+            )}
 
             <button
               onClick={onClose}

@@ -198,6 +198,47 @@ function initSchema() {
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
+
+    /* Customer Accounts (Phone-Keyed Username & Profile, Zero-Plaintext Encrypted at Rest) */
+    CREATE TABLE IF NOT EXISTS customer_accounts (
+      phone_blind_index TEXT PRIMARY KEY,
+      phone_encrypted TEXT NOT NULL,
+      preferred_name_encrypted TEXT NOT NULL DEFAULT '',
+      full_name_encrypted TEXT NOT NULL DEFAULT '',
+      email_encrypted TEXT NOT NULL DEFAULT '',
+      national_id_encrypted TEXT NOT NULL DEFAULT '',
+      addresses_encrypted TEXT NOT NULL DEFAULT '',
+      account_type TEXT NOT NULL DEFAULT 'GUEST_1Y',
+      is_verified INTEGER NOT NULL DEFAULT 0,
+      verified_at TEXT,
+      expires_at TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+
+    /* SMS OTP Verification Challenges (Hashed OTP Only, Zero-Plaintext) */
+    CREATE TABLE IF NOT EXISTS otp_verifications (
+      phone_blind_index TEXT PRIMARY KEY,
+      otp_hash TEXT NOT NULL,
+      expires_at TEXT NOT NULL,
+      attempts INTEGER NOT NULL DEFAULT 0,
+      last_sent_at TEXT NOT NULL
+    );
+
+    /* Persistent Support Chat Sessions (Zero-Plaintext Encrypted at Rest) */
+    CREATE TABLE IF NOT EXISTS support_sessions (
+      id TEXT PRIMARY KEY,
+      phone_blind_index TEXT NOT NULL,
+      phone_encrypted TEXT NOT NULL,
+      customer_name TEXT,
+      title TEXT NOT NULL,
+      active_flow TEXT,
+      status TEXT NOT NULL DEFAULT 'ACTIVE',
+      data_encrypted TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_support_sessions_phone ON support_sessions(phone_blind_index, updated_at);
   `);
 
   // Migration guard: ensure lease_token column exists in existing outbox_events tables
@@ -206,17 +247,39 @@ function initSchema() {
   } catch {
     // Column already exists
   }
+
+  // Migration guards for pre-existing customer_accounts tables
+  const customerAlterStatements = [
+    "ALTER TABLE customer_accounts ADD COLUMN email_encrypted TEXT NOT NULL DEFAULT '';",
+    "ALTER TABLE customer_accounts ADD COLUMN national_id_encrypted TEXT NOT NULL DEFAULT '';",
+    "ALTER TABLE customer_accounts ADD COLUMN addresses_encrypted TEXT NOT NULL DEFAULT '';",
+    "ALTER TABLE customer_accounts ADD COLUMN account_type TEXT NOT NULL DEFAULT 'GUEST_1Y';",
+    "ALTER TABLE customer_accounts ADD COLUMN is_verified INTEGER NOT NULL DEFAULT 0;",
+    "ALTER TABLE customer_accounts ADD COLUMN verified_at TEXT;",
+    "ALTER TABLE customer_accounts ADD COLUMN expires_at TEXT;"
+  ];
+  for (const sql of customerAlterStatements) {
+    try {
+      db.exec(sql);
+    } catch {
+      // Column already exists
+    }
+  }
 }
 
 initSchema();
 
 // Seed Database on startup if empty
 function seedDatabaseIfNeeded() {
-  // Repair legacy broken external image URLs in pre-existing product rows
+  // Repair legacy image URLs and migrate raster JPG/PNG product paths to optimized WebP in pre-existing rows
   try {
     const legacyImageFixes: Array<[string, string]> = [
-      ['https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&auto=format&fit=crop&q=80', '/assets/products/massage-gun.jpg'],
-      ['https://images.unsplash.com/photo-1512290900672-1f55b991b585?w=600&auto=format&fit=crop&q=80', '/assets/products/microderm.jpg'],
+      ['https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&auto=format&fit=crop&q=80', '/assets/products/massage-gun.webp'],
+      ['https://images.unsplash.com/photo-1512290900672-1f55b991b585?w=600&auto=format&fit=crop&q=80', '/assets/products/microderm.webp'],
+      ['/assets/products/massage-gun.jpg', '/assets/products/massage-gun.webp'],
+      ['/assets/products/microderm.jpg', '/assets/products/microderm.webp'],
+      ['&auto=format&fit=crop&q=80', '&auto=format&fit=crop&q=75&fm=webp'],
+      ['?auto=format&fit=crop&w=800&q=80', '?auto=format&fit=crop&w=800&q=75&fm=webp'],
     ];
     const updateProdData = db.prepare("UPDATE products SET data = ? WHERE id = ?");
     const rows = db.prepare("SELECT id, data FROM products").all() as { id: string; data: string }[];
@@ -973,6 +1036,398 @@ export const CommerceDB = {
       ON CONFLICT(id) DO UPDATE SET config = excluded.config, updatedAt = excluded.updatedAt
     `).run(provider, provider, encryptedConfig, updatedAt);
     return { provider, config, updatedAt };
+  },
+
+  // Support Chat Sessions (Zero-Plaintext Encrypted per Phone)
+  getSupportSessionsByPhone(phone: string): any[] {
+    const blind = CryptoVault.blindIndex(phone.trim());
+    const rows = db.prepare(`
+      SELECT data_encrypted, updated_at FROM support_sessions
+      WHERE phone_blind_index = ?
+      ORDER BY updated_at DESC
+      LIMIT 50
+    `).all(blind) as Array<{ data_encrypted: string; updated_at: string }>;
+
+    return rows
+      .map(row => {
+        try {
+          return CryptoVault.decryptJson(row.data_encrypted, null);
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
+  },
+
+  getSupportSessionById(id: string): any | null {
+    const row = db.prepare(`
+      SELECT data_encrypted FROM support_sessions WHERE id = ? LIMIT 1
+    `).get(id) as { data_encrypted: string } | undefined;
+    if (!row) return null;
+    return CryptoVault.decryptJson(row.data_encrypted, null);
+  },
+
+  saveSupportSession(session: any): any {
+    const nowIso = new Date().toISOString();
+    const normalizedPhone = String(session.phone || "").trim();
+    const blind = CryptoVault.blindIndex(normalizedPhone);
+    const phoneEncrypted = CryptoVault.encryptString(normalizedPhone);
+    const createdAt = session.createdAt || nowIso;
+    const updatedAt = session.updatedAt || nowIso;
+    const payload = {
+      ...session,
+      phone: normalizedPhone,
+      createdAt,
+      updatedAt
+    };
+    const encryptedData = CryptoVault.encryptJson(payload);
+
+    db.prepare(`
+      INSERT INTO support_sessions (
+        id, phone_blind_index, phone_encrypted, customer_name, title, active_flow, status, data_encrypted, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        phone_blind_index = excluded.phone_blind_index,
+        phone_encrypted = excluded.phone_encrypted,
+        customer_name = excluded.customer_name,
+        title = excluded.title,
+        active_flow = excluded.active_flow,
+        status = excluded.status,
+        data_encrypted = excluded.data_encrypted,
+        updated_at = excluded.updated_at
+    `).run(
+      payload.id,
+      blind,
+      phoneEncrypted,
+      payload.customerName || "",
+      payload.title || "گفتگوی پشتیبانی",
+      payload.flowState?.flow || null,
+      payload.status || "ACTIVE",
+      encryptedData,
+      createdAt,
+      updatedAt
+    );
+
+    return payload;
+  },
+
+  deleteSupportSessionsByPhone(phone: string): number {
+    const blind = CryptoVault.blindIndex(phone.trim());
+    const result = db.prepare(`
+      DELETE FROM support_sessions WHERE phone_blind_index = ?
+    `).run(blind);
+    return Number(result?.changes || 0);
+  },
+
+  // Admin Configurable Storefront / Profile Field Toggles
+  getStoreFeatureSettings(): {
+    enableNationalId: boolean;
+    requireNationalId: boolean;
+    enableEmail: boolean;
+    enablePostalCode: boolean;
+    requirePostalCode: boolean;
+  } {
+    const defaults = {
+      enableNationalId: true,
+      requireNationalId: false,
+      enableEmail: true,
+      enablePostalCode: true,
+      requirePostalCode: true,
+    };
+    const row = db.prepare("SELECT value FROM kv_store WHERE key = 'store_feature_settings'").get() as { value: string } | undefined;
+    if (!row) return defaults;
+    try {
+      const parsed = JSON.parse(row.value);
+      return {
+        enableNationalId: typeof parsed.enableNationalId === "boolean" ? parsed.enableNationalId : defaults.enableNationalId,
+        requireNationalId: typeof parsed.requireNationalId === "boolean" ? parsed.requireNationalId : defaults.requireNationalId,
+        enableEmail: typeof parsed.enableEmail === "boolean" ? parsed.enableEmail : defaults.enableEmail,
+        enablePostalCode: typeof parsed.enablePostalCode === "boolean" ? parsed.enablePostalCode : defaults.enablePostalCode,
+        requirePostalCode: typeof parsed.requirePostalCode === "boolean" ? parsed.requirePostalCode : defaults.requirePostalCode,
+      };
+    } catch {
+      return defaults;
+    }
+  },
+
+  saveStoreFeatureSettings(patch: Partial<{
+    enableNationalId: boolean;
+    requireNationalId: boolean;
+    enableEmail: boolean;
+    enablePostalCode: boolean;
+    requirePostalCode: boolean;
+  }>) {
+    const next = {
+      ...this.getStoreFeatureSettings(),
+      ...(typeof patch.enableNationalId === "boolean" ? { enableNationalId: patch.enableNationalId } : {}),
+      ...(typeof patch.requireNationalId === "boolean" ? { requireNationalId: patch.requireNationalId } : {}),
+      ...(typeof patch.enableEmail === "boolean" ? { enableEmail: patch.enableEmail } : {}),
+      ...(typeof patch.enablePostalCode === "boolean" ? { enablePostalCode: patch.enablePostalCode } : {}),
+      ...(typeof patch.requirePostalCode === "boolean" ? { requirePostalCode: patch.requirePostalCode } : {}),
+    };
+    db.prepare(`
+      INSERT INTO kv_store (key, value)
+      VALUES ('store_feature_settings', ?)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value
+    `).run(JSON.stringify(next));
+    return next;
+  },
+
+  // Customer Accounts (Phone-Keyed Username & Encrypted Profile, Zero-Plaintext at Rest)
+  getCustomerAccountByPhone(phone: string): {
+    username: string;
+    phone: string;
+    preferredName: string;
+    fullName: string;
+    email: string;
+    nationalId: string;
+    addresses: any[];
+    accountType: "GUEST_1Y" | "VERIFIED";
+    isVerified: boolean;
+    verifiedAt?: string;
+    expiresAt?: string;
+    createdAt: string;
+    updatedAt: string;
+  } | null {
+    const normalizedPhone = phone.trim();
+    const blind = CryptoVault.blindIndex(normalizedPhone);
+    const row = db.prepare(`
+      SELECT phone_encrypted, preferred_name_encrypted, full_name_encrypted,
+             email_encrypted, national_id_encrypted, addresses_encrypted,
+             account_type, is_verified, verified_at, expires_at,
+             created_at, updated_at
+      FROM customer_accounts
+      WHERE phone_blind_index = ?
+      LIMIT 1
+    `).get(blind) as any;
+
+    if (!row) return null;
+
+    // Enforce 1-year retention expiry on unverified guest accounts
+    if (!row.is_verified && row.expires_at && new Date(row.expires_at).getTime() < Date.now()) {
+      db.prepare("DELETE FROM customer_accounts WHERE phone_blind_index = ?").run(blind);
+      return null;
+    }
+
+    const decryptedAddresses = row.addresses_encrypted
+      ? CryptoVault.decryptJson(row.addresses_encrypted, [])
+      : [];
+
+    const accountPhone = CryptoVault.decryptString(row.phone_encrypted) || normalizedPhone;
+
+    return {
+      username: accountPhone,
+      phone: accountPhone,
+      preferredName: row.preferred_name_encrypted ? CryptoVault.decryptString(row.preferred_name_encrypted) : "",
+      fullName: row.full_name_encrypted ? CryptoVault.decryptString(row.full_name_encrypted) : "",
+      email: row.email_encrypted ? CryptoVault.decryptString(row.email_encrypted) : "",
+      nationalId: row.national_id_encrypted ? CryptoVault.decryptString(row.national_id_encrypted) : "",
+      addresses: Array.isArray(decryptedAddresses) ? decryptedAddresses : [],
+      accountType: row.is_verified ? "VERIFIED" : "GUEST_1Y",
+      isVerified: Boolean(row.is_verified),
+      verifiedAt: row.verified_at || undefined,
+      expiresAt: row.is_verified ? undefined : (row.expires_at || undefined),
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    };
+  },
+
+  identifyOrCreateCustomerAccount(phone: string) {
+    const normalizedPhone = phone.trim();
+    const existing = this.getCustomerAccountByPhone(normalizedPhone);
+    if (existing) {
+      return { isNew: false, account: existing };
+    }
+
+    // Check if phone has any previous order to hydrate fullName while keeping preferredName explicit
+    let orderName = "";
+    try {
+      const priorOrder = this.lookupOrder(normalizedPhone);
+      if (priorOrder?.customerName) {
+        orderName = String(priorOrder.customerName).trim().slice(0, 80);
+      }
+    } catch {}
+
+    const now = new Date();
+    const nowIso = now.toISOString();
+    const oneYearLaterIso = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+    const blind = CryptoVault.blindIndex(normalizedPhone);
+    const phoneEnc = CryptoVault.encryptString(normalizedPhone);
+    const fullNameEnc = orderName ? CryptoVault.encryptString(orderName) : "";
+
+    db.prepare(`
+      INSERT INTO customer_accounts (
+        phone_blind_index, phone_encrypted, preferred_name_encrypted, full_name_encrypted,
+        email_encrypted, national_id_encrypted, addresses_encrypted,
+        account_type, is_verified, verified_at, expires_at, created_at, updated_at
+      ) VALUES (?, ?, '', ?, '', '', '', 'GUEST_1Y', 0, NULL, ?, ?, ?)
+      ON CONFLICT(phone_blind_index) DO NOTHING
+    `).run(blind, phoneEnc, fullNameEnc, oneYearLaterIso, nowIso, nowIso);
+
+    return {
+      isNew: true,
+      account: {
+        username: normalizedPhone,
+        phone: normalizedPhone,
+        preferredName: "",
+        fullName: orderName,
+        email: "",
+        nationalId: "",
+        addresses: [] as any[],
+        accountType: "GUEST_1Y" as const,
+        isVerified: false,
+        expiresAt: oneYearLaterIso,
+        createdAt: nowIso,
+        updatedAt: nowIso,
+      },
+    };
+  },
+
+  updateCustomerAccountProfile(
+    phone: string,
+    updates: {
+      preferredName?: string;
+      fullName?: string;
+      email?: string;
+      nationalId?: string;
+      addresses?: any[];
+      keepOneYearGuest?: boolean;
+    }
+  ) {
+    const normalizedPhone = phone.trim();
+    const current = this.identifyOrCreateCustomerAccount(normalizedPhone).account;
+
+    const nextPreferred = typeof updates.preferredName === "string"
+      ? updates.preferredName.trim().slice(0, 60)
+      : current.preferredName;
+    const nextFull = typeof updates.fullName === "string"
+      ? updates.fullName.trim().slice(0, 80)
+      : (current.fullName || nextPreferred);
+    const nextEmail = typeof updates.email === "string"
+      ? updates.email.trim().toLowerCase().slice(0, 120)
+      : current.email;
+    const nextNationalId = typeof updates.nationalId === "string"
+      ? updates.nationalId.trim().slice(0, 15)
+      : current.nationalId;
+    const nextAddresses = Array.isArray(updates.addresses)
+      ? updates.addresses.slice(0, 15)
+      : current.addresses;
+
+    const now = new Date();
+    const nowIso = now.toISOString();
+    const nextExpiresAt = current.isVerified
+      ? null
+      : (updates.keepOneYearGuest || !current.expiresAt
+        ? new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString()
+        : current.expiresAt);
+
+    const blind = CryptoVault.blindIndex(normalizedPhone);
+    db.prepare(`
+      UPDATE customer_accounts
+      SET preferred_name_encrypted = ?,
+          full_name_encrypted = ?,
+          email_encrypted = ?,
+          national_id_encrypted = ?,
+          addresses_encrypted = ?,
+          expires_at = ?,
+          updated_at = ?
+      WHERE phone_blind_index = ?
+    `).run(
+      nextPreferred ? CryptoVault.encryptString(nextPreferred) : "",
+      nextFull ? CryptoVault.encryptString(nextFull) : "",
+      nextEmail ? CryptoVault.encryptString(nextEmail) : "",
+      nextNationalId ? CryptoVault.encryptString(nextNationalId) : "",
+      nextAddresses.length > 0 ? CryptoVault.encryptJson(nextAddresses) : "",
+      nextExpiresAt,
+      nowIso,
+      blind
+    );
+
+    return this.getCustomerAccountByPhone(normalizedPhone)!;
+  },
+
+  updateCustomerAccountName(phone: string, preferredName: string, fullName?: string) {
+    return this.updateCustomerAccountProfile(phone, { preferredName, fullName });
+  },
+
+  // OTP Challenge Management (Hashed OTP + Rate Cooldown + Attempt Cap)
+  getOtpCooldownSeconds(phone: string): number {
+    const blind = CryptoVault.blindIndex(phone.trim());
+    const row = db.prepare(`
+      SELECT last_sent_at FROM otp_verifications WHERE phone_blind_index = ? LIMIT 1
+    `).get(blind) as { last_sent_at: string } | undefined;
+    if (!row?.last_sent_at) return 0;
+    const elapsedSec = Math.floor((Date.now() - new Date(row.last_sent_at).getTime()) / 1000);
+    return elapsedSec < 60 ? 60 - elapsedSec : 0;
+  },
+
+  createOtpChallenge(phone: string, code: string) {
+    const normalizedPhone = phone.trim();
+    const blind = CryptoVault.blindIndex(normalizedPhone);
+    const otpHash = CryptoVault.blindIndex(`otp:${normalizedPhone}:${code}`);
+    const now = new Date();
+    const nowIso = now.toISOString();
+    const expiresAt = new Date(now.getTime() + 180 * 1000).toISOString(); // 3 minutes validity
+
+    db.prepare(`
+      INSERT INTO otp_verifications (phone_blind_index, otp_hash, expires_at, attempts, last_sent_at)
+      VALUES (?, ?, ?, 0, ?)
+      ON CONFLICT(phone_blind_index) DO UPDATE SET
+        otp_hash = excluded.otp_hash,
+        expires_at = excluded.expires_at,
+        attempts = 0,
+        last_sent_at = excluded.last_sent_at
+    `).run(blind, otpHash, expiresAt, nowIso);
+
+    return { expiresAt };
+  },
+
+  verifyOtpChallenge(phone: string, code: string): {
+    ok: boolean;
+    error?: string;
+    account?: ReturnType<typeof CommerceDB.getCustomerAccountByPhone>;
+  } {
+    const normalizedPhone = phone.trim();
+    const blind = CryptoVault.blindIndex(normalizedPhone);
+    const row = db.prepare(`
+      SELECT otp_hash, expires_at, attempts FROM otp_verifications WHERE phone_blind_index = ? LIMIT 1
+    `).get(blind) as { otp_hash: string; expires_at: string; attempts: number } | undefined;
+
+    if (!row) {
+      return { ok: false, error: "کد تاییدی برای این شماره ارسال نشده یا منقضی شده است." };
+    }
+    if (new Date(row.expires_at).getTime() < Date.now()) {
+      db.prepare("DELETE FROM otp_verifications WHERE phone_blind_index = ?").run(blind);
+      return { ok: false, error: "اعتبار کد تایید به پایان رسیده است. لطفاً دوباره کد بگیرید." };
+    }
+    if (row.attempts >= 5) {
+      return { ok: false, error: "تعداد تلاش‌های اشتباه بیش از حد مجاز بوده است. لطفاً کمی بعد کد جدید بگیرید." };
+    }
+
+    const candidateHash = CryptoVault.blindIndex(`otp:${normalizedPhone}:${code.trim()}`);
+    if (candidateHash !== row.otp_hash) {
+      db.prepare("UPDATE otp_verifications SET attempts = attempts + 1 WHERE phone_blind_index = ?").run(blind);
+      return { ok: false, error: "کد تایید واردشده صحیح نیست." };
+    }
+
+    // Valid OTP: delete challenge & upgrade customer_accounts to VERIFIED permanent account
+    db.prepare("DELETE FROM otp_verifications WHERE phone_blind_index = ?").run(blind);
+    this.identifyOrCreateCustomerAccount(normalizedPhone);
+    const nowIso = new Date().toISOString();
+    db.prepare(`
+      UPDATE customer_accounts
+      SET account_type = 'VERIFIED',
+          is_verified = 1,
+          verified_at = ?,
+          expires_at = NULL,
+          updated_at = ?
+      WHERE phone_blind_index = ?
+    `).run(nowIso, nowIso, blind);
+
+    return {
+      ok: true,
+      account: this.getCustomerAccountByPhone(normalizedPhone),
+    };
   }
 };
 

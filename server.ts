@@ -2,6 +2,7 @@ import express from "express";
 import http from "node:http";
 import path from "path";
 import fs from "fs";
+import zlib from "node:zlib";
 import dotenv from "dotenv";
 import { createServer as createViteServer } from "vite";
 import { v1Router } from "./server/routes/v1Router";
@@ -24,11 +25,42 @@ async function startServer() {
 
   app.use(express.json({ limit: "10mb" }));
 
-  // Security Headers Middleware
-  app.use((_req, res, next) => {
+  // Lightweight HTTP Gzip Compression for JSON & Text Responses (Zero extra dependency, preserves SSE streams)
+  app.use((req, res, next) => {
+    if (req.path.includes("/notifications/stream")) {
+      return next();
+    }
+    const acceptEncoding = String(req.headers["accept-encoding"] || "");
+    if (!acceptEncoding.includes("gzip")) {
+      return next();
+    }
+    const origJson = res.json.bind(res);
+    res.json = (body: any) => {
+      try {
+        const jsonStr = JSON.stringify(body);
+        if (jsonStr.length < 1024) {
+          return origJson(body);
+        }
+        const compressed = zlib.gzipSync(Buffer.from(jsonStr, "utf-8"));
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        res.setHeader("Content-Encoding", "gzip");
+        res.setHeader("Vary", "Accept-Encoding");
+        return res.send(compressed);
+      } catch {
+        return origJson(body);
+      }
+    };
+    next();
+  });
+
+  // Security & Long-Lived Asset Cache Headers Middleware
+  app.use((req, res, next) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("X-Frame-Options", "SAMEORIGIN");
     res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    if (/\.(webp|woff2|svg)$/i.test(req.path)) {
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    }
     next();
   });
 
@@ -79,7 +111,7 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath, { index: false }));
+    app.use(express.static(distPath, { index: false, maxAge: "365d", immutable: true }));
   }
 
   // Protected Admin & Tasks Server-Side Route Guard

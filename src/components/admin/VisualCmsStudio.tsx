@@ -362,7 +362,7 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
           id: blockId,
           schemaVersion: 1,
           type: 'image',
-          url: products[0]?.image || '/assets/gordiyeh-logo-emblem.png',
+          url: products[0]?.image || '/assets/gordiyeh-logo-emblem.webp',
           alt: 'تصویر گجت گُردیه',
           width: 800,
           height: 500,
@@ -1160,7 +1160,7 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
                           className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-colors cursor-pointer shrink-0 ${
                             enabled
                               ? 'bg-emerald-600 text-white'
-                              : 'bg-slate-700 text-slate-300'
+                              : 'bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-muted)]'
                           }`}
                         >
                           {enabled ? 'آشکار' : 'مخفی'}
@@ -1280,6 +1280,104 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
                   </div>
                 </div>
               )}
+
+              {/* 4. Trust & Regulatory Licenses Configuration (/page/licenses) */}
+              <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-[var(--text-main)]">
+                    تنظیم لینک‌ها و کدهای مجوزها و نمادهای اعتماد (/page/licenses)
+                  </h3>
+                  <p className="text-xs text-[var(--text-muted)] mt-1">
+                    نشانی استعلام رسمی اینماد، زرین‌پال و ساماندهی را وارد کنید تا در برگه مجوزها (بدون ایندکس / نوفالو) نمایش داده شوند.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-bold text-[var(--text-main)]">
+                      لینک استعلام اینماد (eNamad URL)
+                    </label>
+                    <input
+                      type="url"
+                      dir="ltr"
+                      placeholder="https://trustseal.enamad.ir/?id=...&Code=..."
+                      value={siteConfig.trustLicenses?.enamadUrl || ''}
+                      onChange={(e) => {
+                        const updated: SiteConfig = {
+                          ...siteConfig,
+                          trustLicenses: { ...(siteConfig.trustLicenses || {}), enamadUrl: e.target.value },
+                        };
+                        setSiteConfig(updated);
+                        saveSiteConfig(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--accent-primary)]"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-bold text-[var(--text-main)]">
+                      کد / شناسه اینماد (اختیاری)
+                    </label>
+                    <input
+                      type="text"
+                      dir="ltr"
+                      placeholder="مثلاً 123456"
+                      value={siteConfig.trustLicenses?.enamadCode || ''}
+                      onChange={(e) => {
+                        const updated: SiteConfig = {
+                          ...siteConfig,
+                          trustLicenses: { ...(siteConfig.trustLicenses || {}), enamadCode: e.target.value },
+                        };
+                        setSiteConfig(updated);
+                        saveSiteConfig(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--accent-primary)]"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-bold text-[var(--text-main)]">
+                      لینک گواهی اعتماد زرین‌پال (ZarinPal Trust URL)
+                    </label>
+                    <input
+                      type="url"
+                      dir="ltr"
+                      placeholder="https://www.zarinpal.com/trustPage/..."
+                      value={siteConfig.trustLicenses?.zarinpalUrl || ''}
+                      onChange={(e) => {
+                        const updated: SiteConfig = {
+                          ...siteConfig,
+                          trustLicenses: { ...(siteConfig.trustLicenses || {}), zarinpalUrl: e.target.value },
+                        };
+                        setSiteConfig(updated);
+                        saveSiteConfig(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--accent-primary)]"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-bold text-[var(--text-main)]">
+                      لینک ساماندهی / اتحادیه کشوری کسب‌وکارهای مجازی
+                    </label>
+                    <input
+                      type="url"
+                      dir="ltr"
+                      placeholder="https://logo.samandehi.ir/Verify.aspx?..."
+                      value={siteConfig.trustLicenses?.samandehiUrl || ''}
+                      onChange={(e) => {
+                        const updated: SiteConfig = {
+                          ...siteConfig,
+                          trustLicenses: { ...(siteConfig.trustLicenses || {}), samandehiUrl: e.target.value },
+                        };
+                        setSiteConfig(updated);
+                        saveSiteConfig(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--accent-primary)]"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           );
         })() : studioMode === 'guidelines' ? (
@@ -1468,10 +1566,10 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
             onClick={() => setEditorSubTab('guidelines')}
             className={`px-3.5 py-2 min-h-[40px] rounded-xl border text-xs font-bold flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
               validator.errors.length === 0 && validator.warnings.length === 0
-                ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300'
+                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-300'
                 : validator.errors.length > 0
-                ? 'bg-red-950/20 border-red-500/40 text-red-300'
-                : 'bg-amber-950/20 border-amber-500/40 text-amber-300'
+                ? 'bg-rose-500/15 border-rose-500/40 text-rose-700 dark:text-rose-300'
+                : 'bg-amber-500/15 border-amber-500/40 text-amber-800 dark:text-amber-300'
             }`}
           >
             <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
@@ -1509,16 +1607,16 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
         <div
           className={`p-4 rounded-2xl border space-y-3 text-xs ${
             preSaveGate.mode === 'blocked'
-              ? 'bg-red-950/25 border-red-500/50 text-red-100'
-              : 'bg-amber-950/25 border-amber-500/45 text-amber-100'
+              ? 'bg-rose-500/15 border-rose-500/45 text-rose-900 dark:text-rose-100'
+              : 'bg-amber-500/15 border-amber-500/45 text-amber-900 dark:text-amber-100'
           }`}
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="font-bold flex items-center gap-2">
               {preSaveGate.mode === 'blocked' ? (
-                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
               ) : (
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
               )}
               <span>{preSaveGate.summary}</span>
             </div>
@@ -1535,7 +1633,7 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
                   type="button"
                   onClick={() => handleSaveDocument(true)}
                   disabled={saveLoading}
-                  className="px-4 py-2 min-h-[40px] rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  className="px-4 py-2 min-h-[40px] rounded-xl bg-amber-500 text-[#182B22] font-bold hover:bg-amber-400 transition-colors cursor-pointer whitespace-nowrap shrink-0"
                 >
                   تایید و ذخیره‌ی سند
                 </button>
@@ -1554,9 +1652,9 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
             {[...preSaveGate.errors, ...preSaveGate.warnings].slice(0, 6).map((iss) => (
               <div
                 key={iss.id}
-                className="p-2.5 rounded-xl bg-[var(--bg-main)]/80 border border-[var(--border-color)] space-y-0.5"
+                className="p-2.5 rounded-xl bg-[var(--bg-main)]/85 border border-[var(--border-color)] space-y-0.5"
               >
-                <div className={`font-bold ${iss.severity === 'error' ? 'text-red-300' : 'text-amber-300'}`}>
+                <div className={`font-bold ${iss.severity === 'error' ? 'text-rose-700 dark:text-rose-300' : 'text-amber-700 dark:text-amber-300'}`}>
                   {iss.title}
                 </div>
                 <div className="text-[11px] text-[var(--text-muted)]">{iss.message}</div>
@@ -1568,14 +1666,14 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
 
       {/* Conflict / Feedback Banner */}
       {conflictError && (
-        <div className="p-4 rounded-xl bg-red-950/30 border border-red-500/50 text-red-200 text-xs flex items-center justify-between gap-3">
+        <div className="p-4 rounded-xl bg-rose-500/15 border border-rose-500/45 text-rose-800 dark:text-rose-200 text-xs flex flex-wrap items-center justify-between gap-3">
           <span>{conflictError}</span>
           <button
             onClick={() => {
               setConflictError(null);
               fetchDocuments();
             }}
-            className="px-3 py-1 rounded-lg bg-red-800 text-white font-bold cursor-pointer"
+            className="px-3 py-1 rounded-lg bg-rose-600 text-white font-bold cursor-pointer"
           >
             بارگذاری مجدد از سرور
           </button>
@@ -1586,9 +1684,9 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
         <div
           className={`p-3 rounded-xl text-xs flex items-center gap-2 border ${
             feedbackBanner.type === 'success'
-              ? 'bg-emerald-950/30 border-emerald-500/50 text-emerald-300'
+              ? 'bg-emerald-500/15 border-emerald-500/45 text-emerald-800 dark:text-emerald-300'
               : feedbackBanner.type === 'error'
-              ? 'bg-red-950/30 border-red-500/50 text-red-200'
+              ? 'bg-rose-500/15 border-rose-500/45 text-rose-800 dark:text-rose-200'
               : 'bg-[var(--bg-card)] border-[var(--border-color)] text-[var(--text-main)]'
           }`}
         >
@@ -1730,7 +1828,7 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
                 onClick={() => handleAddBlock('product_card')}
                 className="px-3 py-1.5 rounded-xl text-xs bg-[var(--bg-main)] border border-[var(--border-color)] hover:border-[var(--border-active)] text-[var(--text-main)] flex items-center gap-1.5 cursor-pointer"
               >
-                <ShoppingBag className="w-3.5 h-3.5 text-purple-400" />
+                <ShoppingBag className="w-3.5 h-3.5 text-[var(--accent-text)]" />
                 <span>+ کارت خرید کالا</span>
               </button>
 

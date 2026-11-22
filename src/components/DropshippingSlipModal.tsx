@@ -102,18 +102,18 @@ ${slipData.items.map((i: any) => `• ${i.title} (${i.quantity} عدد) [کد: $
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-2xl shadow-2xl p-5 sm:p-6 text-slate-100 max-h-[92vh] overflow-y-auto space-y-5">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl w-full max-w-2xl shadow-2xl p-4 sm:p-6 text-[var(--text-main)] max-h-[92vh] overflow-y-auto space-y-5">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
+        <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3 gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-[var(--accent-soft)] border border-[var(--border-active)] flex items-center justify-center text-[var(--accent-text)] shrink-0">
               <FileText className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-black text-white">
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-black text-[var(--text-main)] truncate">
                 حواله ارسال مستقیم تأمین‌کننده (Iran Dropshipping Dispatch)
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[var(--text-muted)]">
                 فرمت استاندارد وایت‌لیبل جهت ارسال مستقیم کالا توسط تأمین‌کننده به مشتری نهایی
               </p>
             </div>
@@ -121,20 +121,20 @@ ${slipData.items.map((i: any) => `• ${i.title} (${i.quantity} عدد) [کد: $
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-card)] transition-colors shrink-0 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Order Selector */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-950 border border-slate-800 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="text-slate-400">انتخاب سفارش:</span>
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] text-xs">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <span className="text-[var(--text-muted)]">انتخاب سفارش:</span>
             <select
               value={selectedOrderId}
               onChange={(e) => setSelectedOrderId(e.target.value)}
-              className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white font-mono"
+              className="bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs text-[var(--text-main)] font-mono flex-1 sm:flex-initial"
             >
               <option value="ORD-90214">ORD-90214 (علیرضا محمدی - تهران)</option>
               <option value="ORD-88190">ORD-88190 (سارا احمدی - اصفهان)</option>
@@ -142,19 +142,19 @@ ${slipData.items.map((i: any) => `• ${i.title} (${i.quantity} عدد) [کد: $
             </select>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => window.print()}
-              className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] hover:bg-[var(--bg-card-hover)] text-[var(--text-main)] font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>چاپ فیش ارسال</span>
             </button>
             <button
               onClick={handleCopyText}
-              className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold flex items-center gap-1.5 transition-colors shadow-lg shadow-indigo-950/50"
+              className="px-3.5 py-1.5 rounded-xl bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] font-bold flex items-center gap-1.5 transition-colors shadow-md cursor-pointer"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-200" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'کپی شد!' : 'کپی برای تأمین‌کننده (ایتا / تلگرام)'}</span>
             </button>
           </div>
@@ -162,19 +162,19 @@ ${slipData.items.map((i: any) => `• ${i.title} (${i.quantity} عدد) [کد: $
 
         {/* Printable White-Label Slip Container */}
         {slipData && (
-          <div className="p-5 rounded-2xl bg-white text-slate-900 border-2 border-slate-300 space-y-4 font-sans text-xs shadow-inner">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white text-[#182B22] border-2 border-[#182B22]/25 space-y-4 font-sans text-xs shadow-inner">
             {/* Slip Header */}
-            <div className="flex items-start justify-between border-b-2 border-slate-800 pb-3">
+            <div className="flex flex-wrap items-start justify-between gap-2 border-b-2 border-[#182B22] pb-3">
               <div>
-                <span className="text-[10px] font-bold text-slate-500 block uppercase">Fulfillment Voucher</span>
-                <h3 className="text-base font-black text-slate-950">حواله رسمی ارسال مستقیم به خریدار</h3>
-                <span className="text-[11px] text-slate-600 font-medium">فرستنده: {slipData.storeBrand}</span>
+                <span className="text-[10px] font-bold text-[#4C5A52] block uppercase">Fulfillment Voucher</span>
+                <h3 className="text-base font-black text-[#182B22]">حواله رسمی ارسال مستقیم به خریدار</h3>
+                <span className="text-[11px] text-[#4C5A52] font-medium">فرستنده: {slipData.storeBrand}</span>
               </div>
 
               <div className="text-left font-mono">
-                <div className="text-xs font-bold text-indigo-700">{slipData.slipNumber}</div>
-                <div className="text-[10px] text-slate-500">تاریخ صدور: {slipData.generatedAt}</div>
-                <div className="text-[10px] text-slate-500">شماره سفارش: {slipData.orderNumber}</div>
+                <div className="text-xs font-bold text-[#1E4635]">{slipData.slipNumber}</div>
+                <div className="text-[10px] text-[#4C5A52]">تاریخ صدور: {slipData.generatedAt}</div>
+                <div className="text-[10px] text-[#4C5A52]">شماره سفارش: {slipData.orderNumber}</div>
               </div>
             </div>
 
@@ -185,26 +185,26 @@ ${slipData.items.map((i: any) => `• ${i.title} (${i.quantity} عدد) [کد: $
             </div>
 
             {/* Recipient Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-xl bg-neutral-50 border border-neutral-200">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold text-slate-500 block">مشخصات تحویل‌گیرنده:</span>
-                <div className="font-black text-sm text-slate-950">{slipData.customer.fullName}</div>
-                <div className="text-slate-700">تلفن تماس: <span className="font-mono font-bold">{slipData.customer.phone}</span></div>
+                <span className="text-[10px] font-bold text-[#4C5A52] block">مشخصات تحویل‌گیرنده:</span>
+                <div className="font-black text-sm text-[#182B22]">{slipData.customer.fullName}</div>
+                <div className="text-[#182B22]">تلفن تماس: <span className="font-mono font-bold">{slipData.customer.phone}</span></div>
               </div>
 
               <div className="space-y-1 text-[11px]">
-                <span className="text-[10px] font-bold text-slate-500 block">نشانی دقیق پستی:</span>
-                <div className="text-slate-800 font-medium">{slipData.customer.province} - {slipData.customer.city}</div>
-                <div className="text-slate-800 leading-relaxed">{slipData.customer.address}</div>
-                <div className="text-slate-600">کد پستی ۱۰ رقمی: <span className="font-mono font-bold text-slate-900">{slipData.customer.postalCode}</span></div>
+                <span className="text-[10px] font-bold text-[#4C5A52] block">نشانی دقیق پستی:</span>
+                <div className="text-[#182B22] font-medium">{slipData.customer.province} - {slipData.customer.city}</div>
+                <div className="text-[#182B22] leading-relaxed">{slipData.customer.address}</div>
+                <div className="text-[#4C5A52]">کد پستی ۱۰ رقمی: <span className="font-mono font-bold text-[#182B22]">{slipData.customer.postalCode}</span></div>
               </div>
             </div>
 
             {/* Package Items Table */}
-            <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-500 block">اقلام سفارش جهت بسته‌بندی:</span>
-              <table className="w-full text-right border border-slate-200 rounded-lg overflow-hidden">
-                <thead className="bg-slate-100 text-slate-700 text-[11px]">
+            <div className="space-y-1.5 overflow-x-auto">
+              <span className="text-[10px] font-bold text-[#4C5A52] block">اقلام سفارش جهت بسته‌بندی:</span>
+              <table className="w-full min-w-[420px] text-right border border-neutral-200 rounded-lg overflow-hidden">
+                <thead className="bg-neutral-100 text-[#182B22] text-[11px]">
                   <tr>
                     <th className="p-2 border-b">ردیف</th>
                     <th className="p-2 border-b">عنوان کالا</th>
@@ -212,13 +212,13 @@ ${slipData.items.map((i: any) => `• ${i.title} (${i.quantity} عدد) [کد: $
                     <th className="p-2 border-b text-center">تعداد</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 text-slate-800">
+                <tbody className="divide-y divide-neutral-200 text-[#182B22]">
                   {slipData.items.map((item: any, idx: number) => (
                     <tr key={idx}>
                       <td className="p-2 font-mono">{idx + 1}</td>
                       <td className="p-2 font-bold">{item.title}</td>
-                      <td className="p-2 font-mono text-slate-600">{item.sku}</td>
-                      <td className="p-2 text-center font-bold text-indigo-700">{item.quantity} عدد</td>
+                      <td className="p-2 font-mono text-[#4C5A52]">{item.sku}</td>
+                      <td className="p-2 text-center font-bold text-[#1E4635]">{item.quantity} عدد</td>
                     </tr>
                   ))}
                 </tbody>
@@ -226,39 +226,39 @@ ${slipData.items.map((i: any) => `• ${i.title} (${i.quantity} عدد) [کد: $
             </div>
 
             {/* Shipping instructions */}
-            <div className="border-t border-slate-200 pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px] text-slate-600">
+            <div className="border-t border-neutral-200 pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px] text-[#4C5A52]">
               <div>
-                روش ارسال: <span className="font-bold text-slate-900">{slipData.shippingProvider}</span>
+                روش ارسال: <span className="font-bold text-[#182B22]">{slipData.shippingProvider}</span>
               </div>
               <div>
-                کد رهگیری: <span className="font-mono font-bold text-slate-900">{trackingInput}</span>
+                کد رهگیری: <span className="font-mono font-bold text-[#182B22]">{trackingInput}</span>
               </div>
             </div>
           </div>
         )}
 
         {/* Tracking Code Updater for Supplier Response */}
-        <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
-          <label className="text-slate-300 font-bold block">
+        <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] space-y-2 text-xs">
+          <label className="text-[var(--text-main)] font-bold block">
             ثبت کد رهگیری دریافتی از تأمین‌کننده (پست پیشتاز / تیپاکس):
           </label>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <input
               type="text"
               value={trackingInput}
               onChange={(e) => setTrackingInput(e.target.value)}
               placeholder="مثال: TPX-982341882IR یا بارنامه ۲۴ رقمی پست"
-              className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono"
+              className="flex-1 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-mono"
             />
             <button
               onClick={handleSaveTracking}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors"
+              className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] font-bold transition-colors cursor-pointer shrink-0"
             >
               ثبت و ارسال پیامک به خریدار
             </button>
           </div>
           {trackingUpdated && (
-            <p className="text-emerald-400 text-[11px] font-bold">
+            <p className="text-emerald-700 dark:text-emerald-400 text-[11px] font-bold">
               کد رهگیری توی دیتابیس ثبت شد و برای خریدار ارسال شد.
             </p>
           )}

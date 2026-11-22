@@ -51,7 +51,7 @@ export const CategoryMegaMenu: React.FC<CategoryMegaMenuProps> = ({
       <div className="max-w-7xl mx-auto flex h-80">
         {/* Right column: Main Category list */}
         <div className="w-64 border-l border-[var(--border-color)] p-3 space-y-1 overflow-y-auto bg-[var(--bg-main)]">
-          <div className="text-[11px] font-bold text-[var(--text-muted)] px-3 py-1.5 font-mono">
+          <div className="text-[11px] font-bold text-[var(--text-muted)] px-3 py-1.5">
             <span>دسته‌بندی‌های گُردیه</span>
           </div>
           {categories.map((cat) => {
@@ -100,8 +100,8 @@ export const CategoryMegaMenu: React.FC<CategoryMegaMenuProps> = ({
           <div className="space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-black text-[var(--text-main)]">{currentCategory.name}</span>
-                <span className="text-xs text-[var(--text-muted)]">| {currentCategory.description}</span>
+                <span className="text-sm font-bold text-[var(--text-main)]">{currentCategory.name}</span>
+                <span className="text-xs text-[var(--text-secondary)]">| {currentCategory.description}</span>
               </div>
               <button
                 onClick={() => {

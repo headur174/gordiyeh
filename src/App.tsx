@@ -27,22 +27,25 @@ import {
 } from './mockData';
 import { Navigation } from './components/Navigation';
 import { StorefrontView } from './components/StorefrontView';
-import { DailyBriefing } from './components/DailyBriefing';
-import { ApprovalQueueView } from './components/ApprovalQueueView';
-import { RuleEngineView } from './components/RuleEngineView';
-import { CatalogBrainView } from './components/CatalogBrainView';
-import { SuppliersView } from './components/SuppliersView';
-import { CampaignSimulatorView } from './components/CampaignSimulatorView';
-import { DecisionLogView } from './components/DecisionLogView';
-import { AskCommerceView } from './components/AskCommerceView';
-import { SecurityAndCocaView } from './components/SecurityAndCocaView';
-import { ExplainabilityModal } from './components/ExplainabilityModal';
-import { VisualThemeModal, ThemeConfig } from './components/VisualThemeModal';
-import { ManualTasksView } from './components/ManualTasksView';
-import { SiteVisualEditor } from './components/storefront/SiteVisualEditor';
+import { GordiyehLoader } from './components/GordiyehLoader';
+import type { ThemeConfig } from './components/VisualThemeModal';
 import { SiteConfig, loadSiteConfig, saveSiteConfig } from './utils/cmsStore';
 
+const DailyBriefing = React.lazy(() => import('./components/DailyBriefing').then(m => ({ default: m.DailyBriefing })));
+const ApprovalQueueView = React.lazy(() => import('./components/ApprovalQueueView').then(m => ({ default: m.ApprovalQueueView })));
+const RuleEngineView = React.lazy(() => import('./components/RuleEngineView').then(m => ({ default: m.RuleEngineView })));
+const CatalogBrainView = React.lazy(() => import('./components/CatalogBrainView').then(m => ({ default: m.CatalogBrainView })));
+const SuppliersView = React.lazy(() => import('./components/SuppliersView').then(m => ({ default: m.SuppliersView })));
+const CampaignSimulatorView = React.lazy(() => import('./components/CampaignSimulatorView').then(m => ({ default: m.CampaignSimulatorView })));
+const DecisionLogView = React.lazy(() => import('./components/DecisionLogView').then(m => ({ default: m.DecisionLogView })));
+const AskCommerceView = React.lazy(() => import('./components/AskCommerceView').then(m => ({ default: m.AskCommerceView })));
+const SecurityAndCocaView = React.lazy(() => import('./components/SecurityAndCocaView').then(m => ({ default: m.SecurityAndCocaView })));
+const ExplainabilityModal = React.lazy(() => import('./components/ExplainabilityModal').then(m => ({ default: m.ExplainabilityModal })));
+const VisualThemeModal = React.lazy(() => import('./components/VisualThemeModal').then(m => ({ default: m.VisualThemeModal })));
+const ManualTasksView = React.lazy(() => import('./components/ManualTasksView').then(m => ({ default: m.ManualTasksView })));
+const SiteVisualEditor = React.lazy(() => import('./components/storefront/SiteVisualEditor').then(m => ({ default: m.SiteVisualEditor })));
 const VisualCmsStudio = React.lazy(() => import('./components/admin/VisualCmsStudio').then(m => ({ default: m.VisualCmsStudio })));
+const AdminSettingsView = React.lazy(() => import('./components/AdminSettingsView').then(m => ({ default: m.AdminSettingsView })));
 
 export default function App() {
   // Read initial view & active tab from URL or LocalStorage
@@ -222,11 +225,17 @@ export default function App() {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem('commerce_os_visual_theme_config');
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return {
+            ...parsed,
+            accent: parsed.accent === 'indigo' ? 'forest' : (parsed.accent || 'forest'),
+          };
+        }
       } catch {}
     }
     return {
-      accent: 'indigo',
+      accent: 'forest',
       density: 'spacious',
       cyberGrid: true,
       warRoomMode: false,
@@ -277,6 +286,36 @@ export default function App() {
   const [events, setEvents] = useState<CalendarEvent[]>(INITIAL_CALENDAR_EVENTS);
   const [summary, setSummary] = useState<StoreFinancialSummary>(INITIAL_FINANCIAL_SUMMARY);
 
+  const [isInitialBootLoading, setIsInitialBootLoading] = useState<boolean>(true);
+  const [isLoaderPreview, setIsLoaderPreview] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).get('preview_loader') === '1';
+  });
+
+  const handleCloseLoaderPreview = useCallback(() => {
+    setIsLoaderPreview(false);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('preview_loader')) {
+        url.searchParams.delete('preview_loader');
+        window.history.replaceState(window.history.state, '', url.toString());
+      }
+    }
+  }, []);
+
+  const dismissPreBootLoader = useCallback(() => {
+    setIsInitialBootLoading(false);
+    if (typeof document !== 'undefined') {
+      const bootEl = document.getElementById('gordiyeh-boot-loader');
+      if (bootEl) {
+        bootEl.classList.add('is-ready');
+        window.setTimeout(() => {
+          bootEl.remove();
+        }, 320);
+      }
+    }
+  }, []);
+
   // Hydrate persistent state from SQLite backend
   const refreshBootstrapData = useCallback(() => {
     fetch('/api/bootstrap')
@@ -302,12 +341,17 @@ export default function App() {
       })
       .catch(err => {
         console.warn('Backend bootstrap offline, using local cache:', err);
+      })
+      .finally(() => {
+        dismissPreBootLoader();
       });
-  }, []);
+  }, [dismissPreBootLoader]);
 
   useEffect(() => {
+    const capTimer = window.setTimeout(dismissPreBootLoader, 650);
     refreshBootstrapData();
-  }, [refreshBootstrapData]);
+    return () => window.clearTimeout(capTimer);
+  }, [refreshBootstrapData, dismissPreBootLoader]);
 
   // Modal for Explainability
   const [explainingProduct, setExplainingProduct] = useState<CanonicalProduct | null>(null);
@@ -775,18 +819,18 @@ export default function App() {
   const pendingManualTasksCount = manualTasks.filter(t => t.status === 'PENDING').length;
 
   return (
-    <div className={`min-h-screen bg-[#0D1321] text-[#F0EBD8] flex flex-col font-sans transition-colors ${
-      themeConfig.accent === 'emerald' ? 'selection:bg-emerald-500' :
-      themeConfig.accent === 'amber' ? 'selection:bg-amber-500' :
-      themeConfig.accent === 'rose' ? 'selection:bg-rose-500' :
-      'selection:bg-[#3E5C76]'
+    <div className={`min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] gordiyeh-dark-bg flex flex-col font-sans transition-colors ${
+      themeConfig.accent === 'emerald' ? 'selection:bg-emerald-600 selection:text-white' :
+      themeConfig.accent === 'amber' ? 'selection:bg-amber-600 selection:text-white' :
+      themeConfig.accent === 'rose' ? 'selection:bg-rose-600 selection:text-white' :
+      'selection:bg-[var(--accent-primary)] selection:text-[#F7F3EA]'
     }`}>
       {/* Pure Smooth Backdrop without dot pattern */}
 
       {/* War Room Alert Banner */}
       {themeConfig.warRoomMode && (
-        <div className="relative z-50 bg-gradient-to-r from-amber-600 via-rose-600 to-indigo-600 text-white px-4 py-1.5 text-center text-xs font-bold flex items-center justify-center gap-2 shadow-lg">
-          <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+        <div className="relative z-50 bg-gradient-to-r from-[#1E4635] via-[#2D6A4F] to-amber-700 text-[#F7F3EA] px-4 py-1.5 text-center text-xs font-bold flex items-center justify-center gap-2 shadow-lg">
+          <span className="w-2 h-2 rounded-full bg-white animate-ping shrink-0" />
           <span>حالت اتاق جنگ بازرگانی (War Room Presentation Active) • پایش اضطراری حاشیه سود و سیگنال‌های زنده رقبا</span>
         </div>
       )}
@@ -816,6 +860,22 @@ export default function App() {
         />
       )}
 
+      {/* Branded Initial Transition Loader (smoothly fades as soon as bootstrap settles, or stays open in preview mode) */}
+      {(isInitialBootLoading || isLoaderPreview) && (
+        <>
+          <GordiyehLoader variant="fullscreen" />
+          {isLoaderPreview && (
+            <button
+              type="button"
+              onClick={handleCloseLoaderPreview}
+              className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[120] px-5 py-2.5 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] text-xs font-bold shadow-2xl cursor-pointer transition-colors"
+            >
+              بستن پیش‌نمایش لودینگ گُردیه
+            </button>
+          )}
+        </>
+      )}
+
       {/* Main Container */}
       <main className={`flex-1 w-full ${currentView === 'STOREFRONT' ? 'p-0 max-w-full' : 'max-w-7xl mx-auto p-4 sm:p-6 lg:p-8'}`}>
         {/* VIEW 1: Full Customer Storefront (ویترین مشتری ۰ تا ۱۰۰ بدون هدرهای تکراری) */}
@@ -836,9 +896,9 @@ export default function App() {
           />
         )}
 
-        {/* VIEW 2: Supervisor Commerce OS Brain & Admin Modules */}
+        {/* VIEW 2: Supervisor Commerce OS Brain & Admin Modules (Lazy Code-Split) */}
         {currentView === 'SUPERVISOR' && (
-          <>
+          <React.Suspense fallback={<GordiyehLoader variant="inline" label="در حال بارگذاری ماژول مدیریت..." />}>
             {activeTab === 'briefing' && (
               <DailyBriefing
                 summary={summary}
@@ -892,9 +952,11 @@ export default function App() {
             )}
 
             {activeTab === 'cms' && (
-              <React.Suspense fallback={<div className="p-12 text-center text-xs text-[var(--text-muted)]">در حال بارگذاری استودیو مدیریت محتوا و وبلاگ...</div>}>
-                <VisualCmsStudio products={products} />
-              </React.Suspense>
+              <VisualCmsStudio products={products} />
+            )}
+
+            {activeTab === 'settings' && (
+              <AdminSettingsView onPreviewLoader={() => setIsLoaderPreview(true)} />
             )}
 
             {activeTab === 'suppliers' && (
@@ -930,38 +992,48 @@ export default function App() {
             {activeTab === 'security' && (
               <SecurityAndCocaView />
             )}
-          </>
+          </React.Suspense>
         )}
       </main>
 
       {/* Visual Personalization & Theme Modal */}
-      <VisualThemeModal
-        isOpen={isThemeModalOpen}
-        onClose={() => setIsThemeModalOpen(false)}
-        config={themeConfig}
-        onChangeConfig={handleSaveThemeConfig}
-      />
+      {isThemeModalOpen && (
+        <React.Suspense fallback={null}>
+          <VisualThemeModal
+            isOpen={isThemeModalOpen}
+            onClose={() => setIsThemeModalOpen(false)}
+            config={themeConfig}
+            onChangeConfig={handleSaveThemeConfig}
+          />
+        </React.Suspense>
+      )}
 
       {/* Storefront Visual & Sliders Editor Drawer */}
-      <SiteVisualEditor
-        isOpen={isSiteEditorOpen}
-        onClose={() => setIsSiteEditorOpen(false)}
-        config={siteConfig}
-        onSaveConfig={handleSaveSiteConfig}
-        products={products}
-      />
+      {isSiteEditorOpen && (
+        <React.Suspense fallback={null}>
+          <SiteVisualEditor
+            isOpen={isSiteEditorOpen}
+            onClose={() => setIsSiteEditorOpen(false)}
+            config={siteConfig}
+            onSaveConfig={handleSaveSiteConfig}
+            products={products}
+          />
+        </React.Suspense>
+      )}
 
       {/* Explainability "Why?" Modal */}
       {explainingProduct && (
-        <ExplainabilityModal
-          product={explainingProduct}
-          onClose={() => setExplainingProduct(null)}
-        />
+        <React.Suspense fallback={null}>
+          <ExplainabilityModal
+            product={explainingProduct}
+            onClose={() => setExplainingProduct(null)}
+          />
+        </React.Suspense>
       )}
 
       {/* Supervisor Footer (Storefront has its own rich footer) */}
       {currentView === 'SUPERVISOR' && (
-        <footer className="border-t border-[#3E5C76]/40 bg-[#0D1321] py-4 text-center text-xs text-[#748CAB]">
+        <footer className="border-t border-[var(--border-color)] bg-[var(--bg-card)] py-4 px-4 text-center text-xs text-[var(--text-muted)]">
           GORDIYEH Commerce OS • سیستم عامل هوشمند و ویترین فروشگاه مهندسی گُردیه • پنل نظارت و اتوماسیون بازرگانی
         </footer>
       )}

@@ -175,6 +175,24 @@ async function runSeoTests() {
     assert(xmlSitemap.includes('/page/faq'), 'Sitemap has /page/faq');
     assert(xmlSitemap.includes('/page/contact'), 'Sitemap has /page/contact');
     assert(xmlSitemap.includes('/page/privacy'), 'Sitemap has /page/privacy');
+    assert(!xmlSitemap.includes('/page/licenses'), 'Sitemap excludes noindex /page/licenses');
+
+    // 11. Licenses Page /page/licenses (noindex, nofollow)
+    console.log('\n11. Testing Licenses Page (/page/licenses) - noindex, nofollow');
+    const resLicenses = await fetch(`${baseUrl}/page/licenses`);
+    assert(resLicenses.status === 200, 'Licenses page status is 200', `Got ${resLicenses.status}`);
+    const licensesRobotsHeader = resLicenses.headers.get('x-robots-tag') || '';
+    assert(
+      licensesRobotsHeader.includes('noindex') && licensesRobotsHeader.includes('nofollow'),
+      'Licenses page has X-Robots-Tag: noindex, nofollow header',
+      `Got: ${licensesRobotsHeader}`
+    );
+    const htmlLicenses = await resLicenses.text();
+    assert(htmlLicenses.includes('مجوزها و نمادهای اعتماد'), 'Licenses page contains Persian title');
+    assert(
+      /<meta\s+name="robots"\s+content="noindex,\s*nofollow"/i.test(htmlLicenses),
+      'Licenses page HTML has <meta name="robots" content="noindex, nofollow" />'
+    );
 
     console.log('\n----------------------------------------');
     if (allPassed) {

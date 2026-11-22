@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme="forest-dark"], [data-theme="forest-dark"] *));
 
 /* Local Vazirmatn Font Declarations - 100% Offline & Local */
 @font-face {
@@ -30,22 +31,27 @@
 
 @layer base {
   html {
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
+    font-size: 16px;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     scroll-behavior: smooth;
   }
 
   body {
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
     min-height: 100vh;
-    font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans, 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif);
+    font-size: 0.875rem;
+    line-height: 1.8;
     touch-action: manipulation;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: var(--bg-main, #F3EDE0);
+    color: var(--text-main, #182B22);
   }
 
   /* Accessible touch targets on mobile touch devices (preserve compact slider dots/icon pills) */
@@ -62,34 +68,38 @@
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-main, #0D0B18);
+  background: var(--bg-main, #F3EDE0);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-active, rgba(139, 92, 246, 0.5));
+  background: var(--border-active, rgba(30, 70, 53, 0.52));
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-primary, #8B5CF6);
+  background: var(--accent-primary, #1E4635);
 }
 
 /* ========================================================
-   Gordiyeh Storefront — 4 Complete Themes (2 Identities × Day/Night)
-   1. Organic Botanical Forest: forest-light (Default) & forest-dark
-   2. Modern Futuristic Violet: violet-light & violet-dark
+   Gordiyeh Design System — Unified Botanical Forest (Day/Night)
+   1. forest-light (Default): Warm Alabaster & Forest Green
+   2. forest-dark: Deep Charcoal Forest & Emerald
+   Plus 3-Tier Persian Ink Hierarchy & E-Commerce Type Scale (400 / 500 / 700)
    ======================================================== */
 
 /* Theme 1: Organic Botanical Forest Light (Warm Alabaster & Forest Green) */
 :root,
 :root[data-theme="forest-light"],
 [data-theme="forest-light"] {
+  --font-sans: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --bg-main: #F3EDE0;
   --bg-card: #E8E0CD;
   --bg-surface: #FFFFFF;
+  --bg-subtle: #EFE9DA;
   --bg-card-hover: #DFD5BE;
-  --bg-glass: rgba(243, 237, 224, 0.86);
+  --bg-glass: rgba(243, 237, 224, 0.88);
 
   --text-main: #182B22;
-  --text-muted: #4C5A52;
+  --text-secondary: #34473E;
+  --text-muted: #58685F;
 
   --accent-primary: #1E4635;
   --accent-secondary: #2D6A4F;
@@ -109,14 +119,17 @@
 /* Theme 2: Organic Botanical Forest Dark (Deep Charcoal Forest & Emerald) */
 :root[data-theme="forest-dark"],
 [data-theme="forest-dark"] {
+  --font-sans: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --bg-main: #09120E;
   --bg-card: #111E18;
   --bg-surface: #182A22;
+  --bg-subtle: #14241D;
   --bg-card-hover: #21392E;
-  --bg-glass: rgba(9, 18, 14, 0.84);
+  --bg-glass: rgba(9, 18, 14, 0.86);
 
   --text-main: #F2EFE7;
-  --text-muted: #A8BFB3;
+  --text-secondary: #CFDCD4;
+  --text-muted: #9EB6A9;
 
   --accent-primary: #1F7A54;
   --accent-secondary: #2A9D6F;
@@ -133,58 +146,41 @@
   color-scheme: dark;
 }
 
-/* Theme 3: Modern Futuristic Violet Light (Soft Off-White / Pale Lilac & Violet) */
-:root[data-theme="violet-light"],
-[data-theme="violet-light"] {
-  --bg-main: #FAF8FF;
-  --bg-card: #F1ECFE;
-  --bg-surface: #FFFFFF;
-  --bg-card-hover: #E7DFFD;
-  --bg-glass: rgba(250, 248, 255, 0.86);
-
-  --text-main: #1E1538;
-  --text-muted: #5B4F82;
-
-  --accent-primary: #6D28D9;
-  --accent-secondary: #7C3AED;
-  --accent-text: #5B21B6;
-  --accent-soft: #EDE9FE;
-  --accent-glow: #8B5CF6;
-  --accent-gradient: linear-gradient(135deg, #6D28D9 0%, #7C3AED 100%);
-
-  --border-color: rgba(109, 40, 217, 0.18);
-  --border-active: rgba(109, 40, 217, 0.54);
-  --shadow-glow: 0 12px 30px rgba(109, 40, 217, 0.14);
-  --badge-bg: #EDE9FE;
-
-  color-scheme: light;
+/* Gordiyeh Customized Persian E-Commerce Type Scale */
+.gordiyeh-type-display {
+  font-size: clamp(1.375rem, 2.2vw, 2rem);
+  font-weight: 700;
+  line-height: 1.42;
 }
-
-/* Theme 4: Modern Futuristic Violet Dark (Obsidian & Glowing Violet) */
-:root[data-theme="violet-dark"],
-[data-theme="violet-dark"] {
-  --bg-main: #090712;
-  --bg-card: #130F24;
-  --bg-surface: #1D1736;
-  --bg-card-hover: #28204B;
-  --bg-glass: rgba(11, 8, 22, 0.82);
-
-  --text-main: #F5F3FF;
-  --text-muted: #BEB3DE;
-
-  --accent-primary: #7C3AED;
-  --accent-secondary: #8B5CF6;
-  --accent-text: #C4B5FD;
-  --accent-soft: rgba(139, 92, 246, 0.20);
-  --accent-glow: #A855F7;
-  --accent-gradient: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
-
-  --border-color: rgba(167, 139, 250, 0.30);
-  --border-active: rgba(167, 139, 250, 0.72);
-  --shadow-glow: 0 12px 36px rgba(139, 92, 246, 0.30);
-  --badge-bg: rgba(139, 92, 246, 0.22);
-
-  color-scheme: dark;
+.gordiyeh-type-h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.gordiyeh-type-h2 {
+  font-size: clamp(1.0625rem, 1.3vw, 1.1875rem);
+  font-weight: 700;
+  line-height: 1.5;
+}
+.gordiyeh-type-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.65;
+}
+.gordiyeh-type-body {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.gordiyeh-type-caption {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.gordiyeh-type-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 /* Helper Utilities */
@@ -196,6 +192,37 @@
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
+
+/* Sticky Semi-Transparent Frosted Header (Desktop-Focused Glassmorphism) */
+.gordiyeh-sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: rgba(243, 237, 224, 0.86);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 2px 14px rgba(24, 43, 34, 0.05);
+}
+:root[data-theme="forest-dark"] .gordiyeh-sticky-header,
+[data-theme="forest-dark"] .gordiyeh-sticky-header {
+  background-color: rgba(9, 18, 14, 0.84);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
+}
+@media (min-width: 768px) {
+  .gordiyeh-sticky-header {
+    background-color: rgba(243, 237, 224, 0.64);
+    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+    box-shadow: 0 6px 24px rgba(24, 43, 34, 0.07);
+  }
+  :root[data-theme="forest-dark"] .gordiyeh-sticky-header,
+  [data-theme="forest-dark"] .gordiyeh-sticky-header {
+    background-color: rgba(9, 18, 14, 0.62);
+    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+    box-shadow: 0 6px 26px rgba(0, 0, 0, 0.30);
+  }
+}
+
 .text-theme-main { color: var(--text-main) !important; }
 .text-theme-muted { color: var(--text-muted) !important; }
 .border-theme { border-color: var(--border-color) !important; }
@@ -203,21 +230,7 @@
 .shadow-theme-glow { box-shadow: var(--shadow-glow) !important; }
 .accent-gradient-bg { background-image: var(--accent-gradient) !important; }
 
-/* Ambient Radial Backdrops */
-:root[data-theme="violet-dark"] .gordiyeh-dark-bg,
-[data-theme="violet-dark"] .gordiyeh-dark-bg {
-  background-image:
-    radial-gradient(ellipse 80% 420px at 50% 0%, rgba(124, 58, 237, 0.16), transparent 72%),
-    radial-gradient(ellipse 60% 340px at 15% 18%, rgba(168, 85, 247, 0.10), transparent 70%);
-}
-
-:root[data-theme="violet-light"] .gordiyeh-dark-bg,
-[data-theme="violet-light"] .gordiyeh-dark-bg {
-  background-image:
-    radial-gradient(ellipse 80% 400px at 50% 0%, rgba(139, 92, 246, 0.08), transparent 72%),
-    radial-gradient(ellipse 55% 300px at 15% 18%, rgba(167, 139, 250, 0.06), transparent 70%);
-}
-
+/* Ambient Forest Radial Backdrop */
 :root[data-theme="forest-dark"] .gordiyeh-dark-bg,
 [data-theme="forest-dark"] .gordiyeh-dark-bg {
   background-image:
@@ -225,7 +238,7 @@
     radial-gradient(ellipse 60% 340px at 15% 18%, rgba(31, 122, 84, 0.09), transparent 70%);
 }
 
-/* Announcement Bar across all 4 Themes */
+/* Announcement Bar (Forest Light & Forest Dark) */
 .gordiyeh-announcement-bar {
   background-color: #1E4635;
   color: #F7F3EA;
@@ -236,68 +249,8 @@
   color: #D1FAE5;
   border-bottom: 1px solid rgba(52, 211, 153, 0.24);
 }
-:root[data-theme="violet-light"] .gordiyeh-announcement-bar,
-[data-theme="violet-light"] .gordiyeh-announcement-bar {
-  background-color: #5B21B6;
-  color: #FAF8FF;
-}
-:root[data-theme="violet-dark"] .gordiyeh-announcement-bar,
-[data-theme="violet-dark"] .gordiyeh-announcement-bar {
-  background-color: #130F24;
-  color: #E9D5FF;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.25);
-}
 
-/* ========================================================
-   Hero Stage Architecture:
-   - Violet Identity (Dark & Light): Iranian Arch Portal Showcase
-   - Forest Identity (Dark & Light): Full-Bleed Photo-Split Banner
-   ======================================================== */
-.gordiyeh-dark-arch-stage {
-  display: none;
-}
-
-:root[data-theme="violet-dark"] .gordiyeh-dark-arch-stage,
-[data-theme="violet-dark"] .gordiyeh-dark-arch-stage,
-:root[data-theme="violet-light"] .gordiyeh-dark-arch-stage,
-[data-theme="violet-light"] .gordiyeh-dark-arch-stage {
-  display: flex;
-}
-
-:root[data-theme="violet-dark"] .gordiyeh-hero-photo-bg,
-[data-theme="violet-dark"] .gordiyeh-hero-photo-bg {
-  opacity: 0.08;
-  filter: blur(18px) saturate(1.45);
-}
-
-:root[data-theme="violet-light"] .gordiyeh-hero-photo-bg,
-[data-theme="violet-light"] .gordiyeh-hero-photo-bg {
-  opacity: 0.09;
-  filter: blur(16px) saturate(1.2);
-}
-
-:root[data-theme="violet-dark"] .gordiyeh-hero-section,
-[data-theme="violet-dark"] .gordiyeh-hero-section {
-  background:
-    radial-gradient(circle at 22% 50%, rgba(139, 92, 246, 0.34) 0%, rgba(88, 28, 135, 0.22) 28%, rgba(19, 13, 38, 0.96) 62%, #0B0816 100%),
-    linear-gradient(125deg, #0D091A 0%, #191132 55%, #0F0B1D 100%);
-  border-color: rgba(167, 139, 250, 0.34);
-  box-shadow:
-    0 24px 64px rgba(109, 40, 217, 0.26),
-    inset 0 1px 0 rgba(216, 180, 254, 0.14);
-}
-
-:root[data-theme="violet-light"] .gordiyeh-hero-section,
-[data-theme="violet-light"] .gordiyeh-hero-section {
-  background:
-    radial-gradient(circle at 22% 50%, rgba(139, 92, 246, 0.16) 0%, rgba(221, 214, 254, 0.45) 36%, rgba(250, 248, 255, 0.96) 68%, #FFFFFF 100%),
-    linear-gradient(125deg, #FFFFFF 0%, #F4EEFF 58%, #FAF8FF 100%);
-  border-color: rgba(109, 40, 217, 0.22);
-  box-shadow:
-    0 18px 46px rgba(109, 40, 217, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-
+/* Hero Section Styling (Forest Light & Forest Dark) */
 :root[data-theme="forest-dark"] .gordiyeh-hero-section,
 [data-theme="forest-dark"] .gordiyeh-hero-section {
   background-color: #111E18;
@@ -305,207 +258,75 @@
   box-shadow: 0 18px 46px rgba(0, 0, 0, 0.38);
 }
 
-/* Hero Arch Stage Internal Light vs Dark Theme Adaptation */
-.gordiyeh-arch-glow-primary {
-  background: rgba(124, 58, 237, 0.30);
-}
-.gordiyeh-arch-glow-secondary {
-  background: rgba(217, 70, 239, 0.20);
-}
-.gordiyeh-arch-rim {
-  background: linear-gradient(180deg, rgba(196, 181, 253, 0.78) 0%, rgba(168, 85, 247, 0.45) 55%, rgba(46, 16, 101, 0.65) 100%);
-  box-shadow: 0 0 65px rgba(139, 92, 246, 0.45);
-}
-.gordiyeh-arch-frame {
-  background-color: #120D22;
-}
-.gordiyeh-arch-canvas {
-  background-color: #0A0716;
-}
-.gordiyeh-arch-vignette {
-  background: radial-gradient(circle at 50% 42%, transparent 32%, rgba(11, 8, 22, 0.78) 92%);
-}
-.gordiyeh-arch-tint {
-  background: linear-gradient(to top, #0D091D 0%, transparent 45%, rgba(167, 139, 250, 0.15) 100%);
-}
-.gordiyeh-arch-plinth-1 {
-  background: linear-gradient(180deg, #2A1E4D 0%, #130E24 100%);
-  border-color: rgba(196, 181, 253, 0.45);
-  box-shadow: 0 -4px 20px rgba(167, 139, 250, 0.35);
-}
-.gordiyeh-arch-plinth-2 {
-  background: linear-gradient(180deg, #1A1332 0%, #0A0714 100%);
-  border-color: rgba(167, 139, 250, 0.26);
-  box-shadow: 0 14px 34px rgba(124, 58, 237, 0.48);
-}
-
-:root[data-theme="violet-light"] .gordiyeh-arch-glow-primary,
-[data-theme="violet-light"] .gordiyeh-arch-glow-primary {
-  background: rgba(139, 92, 246, 0.20);
-}
-:root[data-theme="violet-light"] .gordiyeh-arch-glow-secondary,
-[data-theme="violet-light"] .gordiyeh-arch-glow-secondary {
-  background: rgba(196, 181, 253, 0.28);
-}
-:root[data-theme="violet-light"] .gordiyeh-arch-rim,
-[data-theme="violet-light"] .gordiyeh-arch-rim {
-  background: linear-gradient(180deg, rgba(109, 40, 217, 0.55) 0%, rgba(139, 92, 246, 0.32) 55%, rgba(196, 181, 253, 0.65) 100%);
-  box-shadow: 0 16px 46px rgba(109, 40, 217, 0.18);
-}
-:root[data-theme="violet-light"] .gordiyeh-arch-frame,
-[data-theme="violet-light"] .gordiyeh-arch-frame {
-  background-color: #FFFFFF;
-}
-:root[data-theme="violet-light"] .gordiyeh-arch-canvas,
-[data-theme="violet-light"] .gordiyeh-arch-canvas {
-  background-color: #F3EEFE;
-}
-:root[data-theme="violet-light"] .gordiyeh-arch-vignette,
-[data-theme="violet-light"] .gordiyeh-arch-vignette {
-  background: radial-gradient(circle at 50% 44%, transparent 50%, rgba(91, 33, 182, 0.14) 100%);
-}
-:root[data-theme="violet-light"] .gordiyeh-arch-tint,
-[data-theme="violet-light"] .gordiyeh-arch-tint {
-  background: linear-gradient(to top, rgba(243, 238, 254, 0.55) 0%, transparent 32%, rgba(255, 255, 255, 0.18) 100%);
-}
-:root[data-theme="violet-light"] .gordiyeh-arch-plinth-1,
-[data-theme="violet-light"] .gordiyeh-arch-plinth-1 {
-  background: linear-gradient(180deg, #FFFFFF 0%, #EDE9FE 100%);
-  border-color: rgba(109, 40, 217, 0.28);
-  box-shadow: 0 -2px 14px rgba(124, 58, 237, 0.14);
-}
-:root[data-theme="violet-light"] .gordiyeh-arch-plinth-2,
-[data-theme="violet-light"] .gordiyeh-arch-plinth-2 {
-  background: linear-gradient(180deg, #E9E2FC 0%, #DDD6FE 100%);
-  border-color: rgba(109, 40, 217, 0.24);
-  box-shadow: 0 12px 26px rgba(109, 40, 217, 0.16);
-}
-
 /* ========================================================
-   Floating Miniature Iranian Arch Support Button (Icon-Only, 4-Theme Aware)
+   Floating Miniature Support Button (Icon-Only, Forest Light & Dark)
    ======================================================== */
 .gordiyeh-support-arch-outer {
-  background: linear-gradient(180deg, rgba(30, 70, 53, 0.65) 0%, rgba(30, 70, 53, 0.92) 100%);
-  box-shadow: 0 8px 22px rgba(24, 43, 34, 0.22);
+  background: linear-gradient(180deg, #2D6A4F 0%, #1E4635 100%);
+  box-shadow: 0 12px 28px rgba(24, 43, 34, 0.30), 0 0 0 1px rgba(30, 70, 53, 0.25);
 }
 .gordiyeh-support-arch-inner {
-  background: radial-gradient(circle at 50% 35%, #FFFFFF 0%, #F3EDE0 85%);
+  background: radial-gradient(ellipse at 50% 38%, #FBF7EE 0%, #EADFC6 62%, #C9D7BE 100%);
 }
 .gordiyeh-support-arch-icon {
-  color: #1E4635;
+  color: #F7F3EA;
 }
 .gordiyeh-support-arch-plinth1 {
-  background: linear-gradient(180deg, #E8E0CD 0%, #D5CBB3 100%);
-  border-color: rgba(30, 70, 53, 0.40);
+  background: linear-gradient(180deg, #2D6A4F 0%, #1E4635 100%);
+  border-color: rgba(247, 243, 234, 0.35);
 }
 .gordiyeh-support-arch-plinth2 {
-  background: linear-gradient(180deg, #D5CBB3 0%, #BFB397 100%);
-  border-color: rgba(30, 70, 53, 0.35);
+  background: linear-gradient(180deg, #1E4635 0%, #132F23 100%);
+  border-color: rgba(24, 43, 34, 0.45);
 }
 
 /* Forest Dark Support Arch */
 :root[data-theme="forest-dark"] .gordiyeh-support-arch-outer,
 [data-theme="forest-dark"] .gordiyeh-support-arch-outer {
-  background: linear-gradient(180deg, rgba(110, 231, 183, 0.72) 0%, #1F7A54 55%, #0D1B14 100%);
-  box-shadow: 0 6px 22px rgba(16, 185, 129, 0.30);
+  background: linear-gradient(180deg, rgba(110, 231, 183, 0.85) 0%, #10B981 50%, #1F7A54 100%);
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.40), 0 0 0 1px rgba(110, 231, 183, 0.28);
 }
 :root[data-theme="forest-dark"] .gordiyeh-support-arch-inner,
 [data-theme="forest-dark"] .gordiyeh-support-arch-inner {
-  background: radial-gradient(circle at 50% 40%, rgba(16, 185, 129, 0.26) 0%, rgba(13, 27, 20, 0.96) 72%, #07100B 100%);
+  background: radial-gradient(ellipse at 50% 38%, rgba(209, 250, 229, 0.90) 0%, rgba(110, 231, 183, 0.48) 56%, #133829 100%);
 }
 :root[data-theme="forest-dark"] .gordiyeh-support-arch-icon,
 [data-theme="forest-dark"] .gordiyeh-support-arch-icon {
-  color: #A7F3D0;
+  color: #D1FAE5;
 }
 :root[data-theme="forest-dark"] .gordiyeh-support-arch-plinth1,
 [data-theme="forest-dark"] .gordiyeh-support-arch-plinth1 {
-  background: linear-gradient(180deg, #1E3B2E 0%, #11221A 100%);
-  border-color: rgba(110, 231, 183, 0.45);
+  background: linear-gradient(180deg, #1E4635 0%, #11221A 100%);
+  border-color: rgba(110, 231, 183, 0.55);
 }
 :root[data-theme="forest-dark"] .gordiyeh-support-arch-plinth2,
 [data-theme="forest-dark"] .gordiyeh-support-arch-plinth2 {
   background: linear-gradient(180deg, #152B21 0%, #09120E 100%);
-  border-color: rgba(52, 211, 153, 0.30);
+  border-color: rgba(52, 211, 153, 0.40);
 }
 
-/* Violet Light Support Arch */
-:root[data-theme="violet-light"] .gordiyeh-support-arch-outer,
-[data-theme="violet-light"] .gordiyeh-support-arch-outer {
-  background: linear-gradient(180deg, rgba(124, 58, 237, 0.72) 0%, #6D28D9 65%, #4C1D95 100%);
-  box-shadow: 0 8px 24px rgba(109, 40, 217, 0.24);
-}
-:root[data-theme="violet-light"] .gordiyeh-support-arch-inner,
-[data-theme="violet-light"] .gordiyeh-support-arch-inner {
-  background: radial-gradient(circle at 50% 35%, #FFFFFF 0%, #F1ECFE 85%);
-}
-:root[data-theme="violet-light"] .gordiyeh-support-arch-icon,
-[data-theme="violet-light"] .gordiyeh-support-arch-icon {
-  color: #5B21B6;
-}
-:root[data-theme="violet-light"] .gordiyeh-support-arch-plinth1,
-[data-theme="violet-light"] .gordiyeh-support-arch-plinth1 {
-  background: linear-gradient(180deg, #FFFFFF 0%, #EDE9FE 100%);
-  border-color: rgba(109, 40, 217, 0.38);
-}
-:root[data-theme="violet-light"] .gordiyeh-support-arch-plinth2,
-[data-theme="violet-light"] .gordiyeh-support-arch-plinth2 {
-  background: linear-gradient(180deg, #EDE9FE 0%, #DDD6FE 100%);
-  border-color: rgba(109, 40, 217, 0.30);
-}
-
-/* Violet Dark Support Arch */
-:root[data-theme="violet-dark"] .gordiyeh-support-arch-outer,
-[data-theme="violet-dark"] .gordiyeh-support-arch-outer {
-  background: linear-gradient(180deg, rgba(196, 181, 253, 0.80) 0%, #7C3AED 55%, #1A1332 100%);
-  box-shadow: 0 6px 22px rgba(124, 58, 237, 0.36);
-}
-:root[data-theme="violet-dark"] .gordiyeh-support-arch-inner,
-[data-theme="violet-dark"] .gordiyeh-support-arch-inner {
-  background: radial-gradient(circle at 50% 40%, rgba(139, 92, 246, 0.34) 0%, rgba(19, 13, 38, 0.96) 72%, #0A0716 100%);
-}
-:root[data-theme="violet-dark"] .gordiyeh-support-arch-icon,
-[data-theme="violet-dark"] .gordiyeh-support-arch-icon {
-  color: #EDE9FE;
-}
-:root[data-theme="violet-dark"] .gordiyeh-support-arch-plinth1,
-[data-theme="violet-dark"] .gordiyeh-support-arch-plinth1 {
-  background: linear-gradient(180deg, #2E2154 0%, #150F28 100%);
-  border-color: rgba(196, 181, 253, 0.45);
-}
-:root[data-theme="violet-dark"] .gordiyeh-support-arch-plinth2,
-[data-theme="violet-dark"] .gordiyeh-support-arch-plinth2 {
-  background: linear-gradient(180deg, #1D1436 0%, #0A0714 100%);
-  border-color: rgba(167, 139, 250, 0.30);
-}
-
-/* Adaptive Gordiyeh Logo */
+/* Adaptive Gordiyeh Logo — High-Clarity Sculpted Painterly Relief */
 .gordiyeh-adaptive-logo,
 .gordiyeh-footer-logo {
   transition: filter 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
   object-fit: contain;
-}
-
-:root[data-theme="violet-dark"] .gordiyeh-adaptive-logo,
-[data-theme="violet-dark"] .gordiyeh-adaptive-logo,
-:root[data-theme="violet-dark"] .gordiyeh-footer-logo,
-[data-theme="violet-dark"] .gordiyeh-footer-logo {
-  filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.35)) brightness(1.06);
+  filter: drop-shadow(0 3px 7px rgba(24, 43, 34, 0.24));
 }
 
 :root[data-theme="forest-dark"] .gordiyeh-adaptive-logo,
 [data-theme="forest-dark"] .gordiyeh-adaptive-logo,
 :root[data-theme="forest-dark"] .gordiyeh-footer-logo,
 [data-theme="forest-dark"] .gordiyeh-footer-logo {
-  filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.28)) brightness(1.06);
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 8px rgba(52, 211, 153, 0.26));
 }
 
-/* Smooth directional scrims for Hero & Spotlight photo-text splits (RTL: text right, photo left) */
+/* Smooth directional scrims for Hero & Spotlight photo-text splits (RTL: text bottom-right, photo left/top) */
 .hero-scrim-rtl {
   background: linear-gradient(
-    to left,
+    288deg,
     #EFE9DB 0%,
-    rgba(239, 233, 219, 0.92) 32%,
-    rgba(239, 233, 219, 0.52) 52%,
+    rgba(239, 233, 219, 0.94) 30%,
+    rgba(239, 233, 219, 0.50) 52%,
     rgba(239, 233, 219, 0) 72%
   );
   transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -513,11 +334,11 @@
 
 .spotlight-scrim-rtl {
   background: linear-gradient(
-    to left,
+    292deg,
     #EFE9DB 0%,
-    rgba(239, 233, 219, 0.90) 26%,
+    rgba(239, 233, 219, 0.92) 26%,
     rgba(239, 233, 219, 0.48) 46%,
-    rgba(239, 233, 219, 0) 65%
+    rgba(239, 233, 219, 0) 66%
   );
   transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -526,9 +347,9 @@
 :root[data-theme="forest-dark"] .hero-scrim-rtl,
 [data-theme="forest-dark"] .hero-scrim-rtl {
   background: linear-gradient(
-    to left,
-    rgba(11, 20, 16, 0.96) 0%,
-    rgba(17, 30, 24, 0.88) 36%,
+    288deg,
+    rgba(11, 20, 16, 0.97) 0%,
+    rgba(17, 30, 24, 0.90) 34%,
     rgba(17, 30, 24, 0.44) 58%,
     rgba(17, 30, 24, 0) 78%
   );
@@ -537,57 +358,11 @@
 :root[data-theme="forest-dark"] .spotlight-scrim-rtl,
 [data-theme="forest-dark"] .spotlight-scrim-rtl {
   background: linear-gradient(
-    to left,
+    292deg,
     #111E18 0%,
-    rgba(17, 30, 24, 0.90) 26%,
+    rgba(17, 30, 24, 0.92) 26%,
     rgba(17, 30, 24, 0.48) 46%,
-    rgba(17, 30, 24, 0) 65%
-  );
-}
-
-/* Violet Light Scrims */
-:root[data-theme="violet-light"] .hero-scrim-rtl,
-[data-theme="violet-light"] .hero-scrim-rtl {
-  background: linear-gradient(
-    to left,
-    rgba(250, 248, 255, 0.96) 0%,
-    rgba(245, 240, 255, 0.88) 38%,
-    rgba(245, 240, 255, 0.42) 60%,
-    rgba(245, 240, 255, 0.05) 86%
-  );
-}
-
-:root[data-theme="violet-light"] .spotlight-scrim-rtl,
-[data-theme="violet-light"] .spotlight-scrim-rtl {
-  background: linear-gradient(
-    to left,
-    #F3EEFE 0%,
-    rgba(243, 238, 254, 0.92) 26%,
-    rgba(243, 238, 254, 0.50) 46%,
-    rgba(243, 238, 254, 0) 65%
-  );
-}
-
-/* Violet Dark Scrims */
-:root[data-theme="violet-dark"] .hero-scrim-rtl,
-[data-theme="violet-dark"] .hero-scrim-rtl {
-  background: linear-gradient(
-    to left,
-    rgba(13, 10, 26, 0.95) 0%,
-    rgba(17, 12, 34, 0.86) 36%,
-    rgba(17, 12, 34, 0.42) 58%,
-    rgba(17, 12, 34, 0.06) 86%
-  );
-}
-
-:root[data-theme="violet-dark"] .spotlight-scrim-rtl,
-[data-theme="violet-dark"] .spotlight-scrim-rtl {
-  background: linear-gradient(
-    to left,
-    #141024 0%,
-    rgba(20, 16, 36, 0.90) 26%,
-    rgba(20, 16, 36, 0.48) 46%,
-    rgba(20, 16, 36, 0) 65%
+    rgba(17, 30, 24, 0) 66%
   );
 }
 
@@ -598,16 +373,6 @@
 
 .group:hover .banner-hover-legible {
   text-shadow: 0 1px 10px rgba(247, 243, 234, 0.95);
-}
-
-:root[data-theme="violet-light"] .group:hover .banner-hover-legible,
-[data-theme="violet-light"] .group:hover .banner-hover-legible {
-  text-shadow: 0 1px 10px rgba(250, 248, 255, 0.96);
-}
-
-:root[data-theme="violet-dark"] .group:hover .banner-hover-legible,
-[data-theme="violet-dark"] .group:hover .banner-hover-legible {
-  text-shadow: 0 1px 12px rgba(13, 11, 24, 0.95);
 }
 
 :root[data-theme="forest-dark"] .group:hover .banner-hover-legible,
@@ -638,30 +403,6 @@
       rgba(17, 30, 24, 0.36) 100%
     );
   }
-  :root[data-theme="violet-light"] .hero-scrim-rtl,
-  :root[data-theme="violet-light"] .spotlight-scrim-rtl,
-  [data-theme="violet-light"] .hero-scrim-rtl,
-  [data-theme="violet-light"] .spotlight-scrim-rtl {
-    background: linear-gradient(
-      to top,
-      rgba(250, 248, 255, 0.97) 0%,
-      rgba(245, 240, 255, 0.90) 48%,
-      rgba(245, 240, 255, 0.72) 78%,
-      rgba(245, 240, 255, 0.40) 100%
-    );
-  }
-  :root[data-theme="violet-dark"] .hero-scrim-rtl,
-  :root[data-theme="violet-dark"] .spotlight-scrim-rtl,
-  [data-theme="violet-dark"] .hero-scrim-rtl,
-  [data-theme="violet-dark"] .spotlight-scrim-rtl {
-    background: linear-gradient(
-      to top,
-      rgba(21, 17, 38, 0.96) 0%,
-      rgba(21, 17, 38, 0.88) 48%,
-      rgba(21, 17, 38, 0.68) 78%,
-      rgba(21, 17, 38, 0.36) 100%
-    );
-  }
 }
 
 .scrollbar-none {
@@ -672,7 +413,20 @@
   display: none;
 }
 
+@keyframes gordiyeh-loader-slide {
+  0% {
+    transform: translateX(120%);
+  }
+  50% {
+    transform: translateX(-20%);
+  }
+  100% {
+    transform: translateX(-140%);
+  }
+}
 
-
-
+.gordiyeh-loader-bar {
+  animation: gordiyeh-loader-slide 1.25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
 

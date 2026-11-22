@@ -11,88 +11,116 @@ export const GORDIYEH_BRAND = {
   nameEn: "GORDIYEH",
   sloganFa: "گجت‌های روزمره؛ بررسی صادقانه، انتخاب مطمئن",
   sloganEn: "Everyday Gadgets with Honest Specs & Reliable Choice",
-  logoAsset: "/assets/gordiyeh-logo-emblem.png",
+  logoAsset: "/assets/gordiyeh-logo-emblem.webp?v=7",
+  supportAvatarAsset: "/assets/gordiyeh-support-emblem-v3.webp?v=2",
 } as const;
 
 /**
- * پالت بنفش آینده‌نگر گُردیه (Futuristic Violet Design System)
- * شامل دو حالت Violet Dark و Violet Light
+ * پالت یکپارچه فراست گُردیه (Organic Botanical Forest Design System)
+ * شامل دو حالت روشن فراست (Warm Alabaster & Forest Green) و تیره فراست (Deep Charcoal Forest & Emerald)
  */
-export const GORDIYEH_VIOLET_PALETTE = {
-  dark: {
-    bgMain: '#0D0B18',
-    bgCard: '#17132A',
-    bgCardHover: '#231C3D',
-    bgGlass: 'rgba(23, 19, 42, 0.75)',
-    textMain: '#F5F3FF',
-    textMuted: '#A78BFA',
-    accentPrimary: '#8B5CF6',
-    accentSecondary: '#EC4899',
-    accentGlow: '#A855F7',
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    borderActive: 'rgba(139, 92, 246, 0.5)',
-    shadowGlow: '0 0 25px rgba(139, 92, 246, 0.25)',
-    badgeBg: 'rgba(139, 92, 246, 0.15)',
-  },
+export const GORDIYEH_FOREST_PALETTE = {
   light: {
-    bgMain: '#F5F3FF',
-    bgCard: '#FFFFFF',
-    bgCardHover: '#EDE9FE',
-    bgGlass: 'rgba(255, 255, 255, 0.85)',
-    textMain: '#1E1B4B',
-    textMuted: '#6B21A8',
-    accentPrimary: '#7C3AED',
-    accentSecondary: '#DB2777',
-    accentGlow: '#9333EA',
-    borderColor: 'rgba(124, 58, 237, 0.15)',
-    borderActive: 'rgba(124, 58, 237, 0.45)',
-    shadowGlow: '0 10px 30px rgba(124, 58, 237, 0.12)',
-    badgeBg: 'rgba(124, 58, 237, 0.08)',
-  }
+    bgMain: '#F3EDE0',
+    bgCard: '#E8E0CD',
+    bgSurface: '#FFFFFF',
+    bgSubtle: '#EFE9DA',
+    bgCardHover: '#DFD5BE',
+    bgGlass: 'rgba(243, 237, 224, 0.88)',
+    textMain: '#182B22',
+    textSecondary: '#34473E',
+    textMuted: '#58685F',
+    accentPrimary: '#1E4635',
+    accentSecondary: '#2D6A4F',
+    accentText: '#1E4635',
+    accentGlow: '#2D6A4F',
+    borderColor: 'rgba(24, 43, 34, 0.22)',
+    borderActive: 'rgba(30, 70, 53, 0.56)',
+    shadowGlow: '0 10px 28px rgba(24, 43, 34, 0.12)',
+    badgeBg: '#D7E2CE',
+  },
+  dark: {
+    bgMain: '#09120E',
+    bgCard: '#111E18',
+    bgSurface: '#182A22',
+    bgSubtle: '#14241D',
+    bgCardHover: '#21392E',
+    bgGlass: 'rgba(9, 18, 14, 0.86)',
+    textMain: '#F2EFE7',
+    textSecondary: '#CFDCD4',
+    textMuted: '#9EB6A9',
+    accentPrimary: '#1F7A54',
+    accentSecondary: '#2A9D6F',
+    accentText: '#6EE7B7',
+    accentGlow: '#34D399',
+    borderColor: 'rgba(110, 231, 183, 0.22)',
+    borderActive: 'rgba(52, 211, 153, 0.62)',
+    shadowGlow: '0 12px 34px rgba(16, 185, 129, 0.22)',
+    badgeBg: 'rgba(16, 185, 129, 0.18)',
+  },
 } as const;
 
 /**
- * پالت رنگی کلاسیک شماره ۹ (Obsidian Navy)
+ * مقیاس تایپوگرافی استاندارد گُردیه (برگرفته و شخصی‌سازی‌شده برای خوانایی فارسی تجارت الکترونیک)
+ * مبتنی بر سه وزن اصیل ۴۰۰ (عادی)، ۵۰۰ (مدیوم) و ۷۰۰ (بولد) با نسبت ارتفاع خط ۱.۳۵ تا ۱.۸
+ */
+export const GORDIYEH_TYPOGRAPHY = {
+  fontFamily: "'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  weights: {
+    regular: 400,
+    medium: 500,
+    bold: 700,
+  },
+  scale: {
+    display: { size: 'clamp(1.375rem, 2.2vw, 2rem)', lineHeight: '1.4', weight: 700 },
+    h1: { size: '1.25rem', lineHeight: '1.5', weight: 700 },       // 20px / 30px
+    h2: { size: '1.125rem', lineHeight: '1.5', weight: 700 },      // 18px / 27px
+    h3: { size: '1rem', lineHeight: '1.65', weight: 700 },         // 16px / 26.4px
+    body: { size: '0.875rem', lineHeight: '1.8', weight: 400 },    // 14px / 25.2px
+    bodyStrong: { size: '0.875rem', lineHeight: '1.8', weight: 700 },
+    caption: { size: '0.75rem', lineHeight: '1.8', weight: 400 },  // 12px / 21.6px
+    label: { size: '0.75rem', lineHeight: '1.4', weight: 500 },    // 12px / 16.8px
+    micro: { size: '0.6875rem', lineHeight: '1.45', weight: 500 }, // 11px / 16px
+  },
+} as const;
+
+/**
+ * پالت متغیرهای رنگی فعال فراست (Forest Core Tokens)
  */
 export const GORDIYEH_PALETTE = {
-  // پس‌زمینه اصلی (Obsidian Slate 950)
-  bgPrimary: "#0D1321",
-  
-  // سطوح کارت‌ها، فرم‌ها و سایدبار (Deep Navy / Petroleum)
-  surface: "#1D2D44",
-  
-  // خطوط جداکننده، حاشیه‌ها و کانتور طاق معمارگونه (Steel Arch Blue)
-  archBorder: "#3E5C76",
-  
-  // متن‌های ثانویه و برچسب‌های اطلاعاتی (Titanium Mist)
-  textMuted: "#748CAB",
-  
-  // تیترها، ارقام قیمت و دکمه‌های کنشی شاخص (Warm Parchment / Ivory)
-  textPrimary: "#F0EBD8",
+  // پس‌زمینه اصلی (Deep Charcoal Forest / Warm Alabaster via CSS var)
+  bgPrimary: "#09120E",
+
+  // سطوح کارت‌ها، فرم‌ها و سایدبار (Forest Card)
+  surface: "#111E18",
+
+  // خطوط جداکننده و حاشیه‌های فراست
+  archBorder: "#1F7A54",
+
+  // متن‌های ثانویه و برچسب‌های اطلاعاتی
+  textMuted: "#A8BFB3",
+
+  // تیترها، ارقام قیمت و متن اصلی
+  textPrimary: "#F2EFE7",
 
   // وضعیت‌های سیستمی
   status: {
     success: "#10B981",
     warning: "#F59E0B",
     danger: "#EF4444",
-    info: "#38BDF8",
+    info: "#1F7A54",
   }
 } as const;
 
 /**
- * مشخصات و هندسه موتیف طاق گُردیه (The Portal Arch Motif)
+ * مشخصات و هندسه موتیف طاق دکمه پشتیبانی گُردیه (Support Widget Motif)
  */
 export const GORDIYEH_ARCH_MOTIF = {
-  // شعاع انحنای گوشه‌ی بالای کارت‌ها و استیج‌ها مطابق الگوی ۷۵ پیکسل
   cardRadius: "rounded-t-[75px] rounded-b-none",
   innerRadius: "rounded-t-[70px] rounded-b-none",
-  heroRadius: "rounded-t-[75px] rounded-b-none",
-  buttonRadius: "rounded-none",
-  
-  // ضخامت کانتور دوخطی متالیک
-  borderStyle: "border-[1.5px] border-[var(--text-main)]/40 hover:border-[var(--text-main)]/80 transition-colors",
-  
-  // واترمارک محو پس‌زمینه
+  heroRadius: "rounded-2xl",
+  buttonRadius: "rounded-full",
+  borderStyle: "border border-[var(--border-color)] hover:border-[var(--border-active)] transition-colors",
   watermarkOpacity: "opacity-[0.06]",
 } as const;
 
@@ -153,6 +181,7 @@ export const GORDIYEH_ROUTES = {
     faq: "/page/faq",
     contact: "/page/contact",
     privacy: "/page/privacy",
+    licenses: "/page/licenses",
   },
 
   // پرتال مشتریان

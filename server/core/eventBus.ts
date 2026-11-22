@@ -32,6 +32,31 @@ export interface SystemEventPayloads {
     event: string;
     payload: any;
   };
+  "competitor:price_fluctuation": {
+    productId: string;
+    sku: string;
+    productTitle: string;
+    previousMarketMedian: number;
+    newMarketMedian: number;
+    retailPrice: number;
+    deltaPercent: number;
+    timestamp: string;
+  };
+  "supervisor:alert": {
+    id: string;
+    dedupeKey: string;
+    category: "BESTSELLER_OUT_OF_STOCK" | "COMPETITOR_PRICE_SPIKE" | "HIGH_RISK_ORDER" | "SUPPLIER_RISK" | "SYSTEM";
+    severity: "CRITICAL" | "HIGH" | "WARNING";
+    title: string;
+    message: string;
+    productId?: string;
+    productTitle?: string;
+    sku?: string;
+    metrics?: Record<string, any>;
+    recommendedActionLabel?: string;
+    targetTab?: string;
+    timestamp: string;
+  };
 }
 
 export interface EventBusMetric {
@@ -95,9 +120,24 @@ class CommerceEventBus extends EventEmitter {
       console.log(`[EventBus:SMS] Async dispatching SMS to ${payload.phone} for ${payload.orderNumber} (Status: ${payload.status})`);
     });
 
-    // 2. High-Risk Alert Queue
+    // 2. High-Risk Alert Queue -> forward to unified supervisor:alert stream
     this.on("order:high_risk", (payload) => {
       console.warn(`[EventBus:SupervisorAlert] High-Risk Order Detected! Order: ${payload.orderNumber}, Risk: ${payload.riskScore}, Reason: ${payload.reason}`);
+      this.publish("supervisor:alert", {
+        id: `srv_risk_${payload.orderNumber}`,
+        dedupeKey: `high_risk_order:${payload.orderNumber}`,
+        category: "HIGH_RISK_ORDER",
+        severity: payload.riskScore >= 75 ? "CRITICAL" : "HIGH",
+        title: `سفارش پرریسک نیازمند بررسی ناظر (#${payload.orderNumber})`,
+        message: `${payload.reason} (مبلغ: ${payload.totalAmount.toLocaleString("fa-IR")} تومان)`,
+        metrics: {
+          orderNumber: payload.orderNumber,
+          riskScore: payload.riskScore,
+        },
+        recommendedActionLabel: "بررسی در صف تأیید",
+        targetTab: "approvals",
+        timestamp: new Date().toISOString(),
+      });
     });
 
     // 3. Webhook Integration Dispatcher

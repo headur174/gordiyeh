@@ -155,22 +155,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
 
             {product.testExchangeBox ? (
-              <div className="space-y-2 text-[11px] leading-relaxed">
+              <div className="space-y-2 text-xs leading-[1.8]">
                 <div className="flex items-start justify-between gap-2">
                   <span className="text-[var(--text-muted)] shrink-0">مهلت تست:</span>
                   <span className="font-bold text-[var(--accent-primary)] text-left">{product.testExchangeBox.testWindow}</span>
                 </div>
                 <div>
-                  <span className="text-emerald-500 font-semibold block mb-0.5">شامل چه چیزهایی می‌شه:</span>
-                  <p className="text-[var(--text-main)]">{product.testExchangeBox.covered}</p>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold block mb-0.5">شامل چه چیزهایی می‌شه:</span>
+                  <p className="text-[var(--text-secondary)] leading-[1.8]">{product.testExchangeBox.covered}</p>
                 </div>
                 <div>
-                  <span className="text-rose-400 font-semibold block mb-0.5">شامل چه چیزهایی نمی‌شه:</span>
-                  <p className="text-[var(--text-muted)]">{product.testExchangeBox.notCovered}</p>
+                  <span className="text-rose-500 dark:text-rose-400 font-bold block mb-0.5">شامل چه چیزهایی نمی‌شه:</span>
+                  <p className="text-[var(--text-secondary)] leading-[1.8]">{product.testExchangeBox.notCovered}</p>
                 </div>
               </div>
             ) : (
-              <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
+              <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">
                 مهلت و شرایط تست این محصول هنوز ثبت نشده؛ برای استعلام پیش از خرید با پشتیبانی تماس بگیرید.
               </p>
             )}
@@ -180,24 +180,24 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         {/* Column 2: Product Identity, Lead, Usage Contexts & Honesty Strip (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
           <div>
-            <div className="flex items-center gap-2 text-xs text-[var(--accent-primary)] font-bold mb-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--accent-primary)] font-bold mb-1.5">
               <span>{product.brandFa || product.brand || 'گُردیه'}</span>
               <span className="opacity-40">•</span>
-              <span className="text-[var(--text-muted)] font-normal">کد محصول: {product.sku}</span>
+              <span className="text-[var(--text-muted)] font-normal">کد محصول: <span className="font-mono">{product.sku}</span></span>
             </div>
 
-            <h1 className="text-base sm:text-lg font-bold text-[var(--text-main)] leading-relaxed">
+            <h1 className="text-[18px] sm:text-xl font-bold text-[var(--text-main)] leading-[1.5]">
               {product.title}
             </h1>
 
             {product.titleEn && (
-              <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5 tracking-tight opacity-80">
+              <p className="text-xs text-[var(--text-muted)] font-mono mt-1 tracking-tight opacity-85">
                 {product.titleEn}
               </p>
             )}
 
             {product.description && (
-              <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed mt-3">
+              <p className="text-[13px] sm:text-sm text-[var(--text-secondary)] leading-[1.85] mt-3">
                 {product.description}
               </p>
             )}
@@ -239,12 +239,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           {/* Usage Contexts: کجا به کارتون می‌آد */}
           {product.usageContexts && product.usageContexts.length > 0 && (
             <div className="space-y-2 pt-2 border-t border-[var(--border-color)]">
-              <h4 className="text-xs font-bold text-[var(--text-main)]">کجا به کارتون می‌آد:</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <h4 className="text-[13px] font-bold text-[var(--text-main)]">کجا به کارتون می‌آد:</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {product.usageContexts.map((ctx, idx) => (
-                  <div key={idx} className="p-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] text-[11px] space-y-1">
+                  <div key={idx} className="p-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] text-xs space-y-1">
                     <div className="font-bold text-[var(--accent-primary)]">{ctx.title}</div>
-                    <p className="text-[var(--text-muted)] leading-relaxed">{ctx.description}</p>
+                    <p className="text-[var(--text-secondary)] leading-[1.8]">{ctx.description}</p>
                   </div>
                 ))}
               </div>
@@ -254,8 +254,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           {/* Key Features Bullet Points */}
           {product.keyFeatures && product.keyFeatures.length > 0 && (
             <div className="space-y-2 pt-2">
-              <h4 className="text-xs font-bold text-[var(--text-main)]">ویژگی‌ها:</h4>
-              <ul className="space-y-1.5 text-xs text-[var(--text-muted)] pr-2">
+              <h4 className="text-[13px] font-bold text-[var(--text-main)]">ویژگی‌ها:</h4>
+              <ul className="space-y-1.5 text-xs sm:text-[13px] text-[var(--text-secondary)] leading-[1.8] pr-2">
                 {product.keyFeatures.map((feat, idx) => (
                   <li key={idx} className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)] flex-shrink-0" />
@@ -270,15 +270,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           {(product.suitableFor || product.notSuitableFor) && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
               {product.suitableFor && (
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 space-y-1 text-[11px]">
-                  <span className="font-bold text-emerald-500 block">برای چه کسی مناسبه؟</span>
-                  <p className="text-[var(--text-main)] leading-relaxed">{product.suitableFor}</p>
+                <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 space-y-1 text-xs">
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400 block">برای چه کسی مناسبه؟</span>
+                  <p className="text-[var(--text-main)] leading-[1.8]">{product.suitableFor}</p>
                 </div>
               )}
               {product.notSuitableFor && (
-                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 space-y-1 text-[11px]">
-                  <span className="font-bold text-rose-400 block">برای چه کسی مناسب نیست؟</span>
-                  <p className="text-[var(--text-main)] leading-relaxed">{product.notSuitableFor}</p>
+                <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 space-y-1 text-xs">
+                  <span className="font-bold text-rose-500 dark:text-rose-400 block">برای چه کسی مناسب نیست؟</span>
+                  <p className="text-[var(--text-main)] leading-[1.8]">{product.notSuitableFor}</p>
                 </div>
               )}
             </div>
@@ -317,7 +317,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               )}
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--text-muted)] font-bold">قیمت:</span>
-                <span className="text-lg font-black text-[var(--text-main)] tabular-nums">
+                <span className="text-lg font-bold text-[var(--text-main)] tabular-nums">
                   {formatCurrency(product.retailPrice, currency)}
                 </span>
               </div>
@@ -425,21 +425,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     <span>{group.group}</span>
                   </h3>
 
-                  <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden divide-y divide-[var(--border-color)] text-xs">
+                  <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden divide-y divide-[var(--border-color)] text-xs sm:text-[13px] leading-[1.8]">
                     {group.items.map((item, iIdx) => (
-                      <div key={iIdx} className="grid grid-cols-1 sm:grid-cols-3 p-3 gap-2">
-                        <span className="font-medium text-[var(--text-muted)]">{item.title || item.key}</span>
-                        <span className="sm:col-span-2 text-[var(--text-main)] font-semibold">{item.value}</span>
+                      <div key={iIdx} className="grid grid-cols-1 sm:grid-cols-3 p-3.5 gap-2">
+                        <span className="font-medium text-[var(--text-secondary)]">{item.title || item.key}</span>
+                        <span className="sm:col-span-2 text-[var(--text-main)] font-medium">{item.value}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               ))
             ) : (
-              <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl p-6 text-center text-xs text-[var(--text-muted)] space-y-2">
+              <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl p-6 text-center text-xs text-[var(--text-secondary)] space-y-2 leading-[1.8]">
                 <p>اطلاعات کلی محصول:</p>
-                <div className="text-[var(--text-main)] font-semibold">
-                  دسته: {product.category} | کد محصول: {product.sku}
+                <div className="text-[var(--text-main)] font-bold">
+                  دسته: {product.category} | کد محصول: <span className="font-mono">{product.sku}</span>
                 </div>
               </div>
             )}
@@ -448,15 +448,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
         {/* Tab 2: Introduction & Review */}
         {activeTab === 'review' && (
-          <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl p-6 space-y-6 text-xs leading-relaxed text-[var(--text-main)]">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl p-6 space-y-6 text-xs sm:text-[13px] leading-[1.85] text-[var(--text-main)]">
             {product.expertReview ? (
               <>
                 <div className="space-y-2">
-                  <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-2">
+                  <h3 className="text-sm sm:text-base font-bold text-[var(--text-main)] flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />
                     <span>نگاه واقع‌بینانه به این محصول</span>
                   </h3>
-                  <p className="text-[var(--text-muted)] text-xs sm:text-sm leading-relaxed">
+                  <p className="text-[var(--text-secondary)] text-[13px] sm:text-sm leading-[1.85]">
                     {product.expertReview.intro || product.expertReview.summary}
                   </p>
                 </div>
@@ -546,10 +546,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </div>
                 <div className="space-y-1">
                   <span className="text-[11px] text-[var(--accent-primary)] font-semibold">{relProd.brandFa || relProd.brand}</span>
-                  <h4 className="text-xs font-bold text-[var(--text-main)] line-clamp-2 leading-snug">
+                  <h4 className="text-[13px] font-bold text-[var(--text-main)] line-clamp-2 leading-[1.7]">
                     {relProd.title}
                   </h4>
-                  <div className="text-xs font-black text-[var(--text-main)] tabular-nums pt-1">
+                  <div className="text-sm font-bold text-[var(--text-main)] tabular-nums pt-1">
                     {formatCurrency(relProd.retailPrice, currency)}
                   </div>
                 </div>
@@ -562,8 +562,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       {/* Sticky Mobile Buy Bar */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 p-3.5 bg-[var(--bg-surface)]/95 border-t border-[var(--border-color)] backdrop-blur-md flex items-center justify-between gap-3 z-50">
         <div>
-          <div className="text-[10px] text-[var(--text-muted)]">قیمت:</div>
-          <div className="text-sm font-black text-[var(--text-main)] tabular-nums">
+          <div className="text-[11px] text-[var(--text-muted)]">قیمت:</div>
+          <div className="text-[15px] font-bold text-[var(--text-main)] tabular-nums">
             {formatCurrency(product.retailPrice, currency)}
           </div>
         </div>

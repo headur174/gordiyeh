@@ -1,16 +1,47 @@
 import express from "express";
+import crypto from "crypto";
 import { commerceRepo } from "../core/repository";
 import { eventBus } from "../core/eventBus";
 import { getArchitectureCharterStatus } from "../core/charter";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { outboxProcessor, paymentStateMachine, CommerceDB } from "../db";
 import { validateWebhookUrl } from "../utils/ssrfGuard";
 import { verifyDatabaseIntegrity, getDatabaseConfig } from "../dbConfig";
+import {
+  getSmsGatewayPublicStatus,
+  sendVerificationSms,
+  SmsProviderType,
+} from "../services/smsService";
+import {
+  getPaymentGatewayPublicStatus,
+  PaymentProviderType,
+  requestLiveGatewayRedirect,
+} from "../services/paymentGatewayService";
+import {
+  containsProfanityOrAbuse,
+  isValidEmail,
+  isValidIranianNationalId,
+  isValidIranianPostalCode,
+  normalizeDigits,
+  validateSafePreferredName,
+} from "../../src/utils/iranianValidators";
+
+const SERVER_SESSION_SECRET =
+  process.env.SESSION_SECRET ||
+  process.env.ADMIN_SECRET_KEY ||
+  crypto.randomBytes(32).toString("hex");
 
 let genAIClient: GoogleGenAI | null = null;
 function getGenAI() {
   if (!genAIClient && process.env.GEMINI_API_KEY) {
-    genAIClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    genAIClient = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+      httpOptions: {
+        headers: {
+          "User-Agent": "aistudio-build",
+        },
+      },
+    });
   }
   return genAIClient;
 }
@@ -159,7 +190,94 @@ v1Router.get("/products/:id", async (req, res) => {
 
 v1Router.put("/products/:id", async (req, res) => {
   try {
+    const prevProduct = await commerceRepo.products.getProductById(req.params.id).catch(() => null);
     await commerceRepo.products.saveProduct(req.body);
+
+    try {
+      const updated = req.body;
+      const rules = await commerceRepo.rules.getRules().catch(() => []);
+      const priceRule = rules.find((r: any) => r.id === "rule_max_price_change");
+      const priceThreshold = Number(priceRule?.thresholdValue) || 15;
+
+      const activeOffer = updated?.supplierOffers?.find((o: any) => o.id === updated.selectedOfferId) || updated?.supplierOffers?.[0];
+      const currentStock = Number(activeOffer?.stock ?? 0);
+      const isBestseller = Number(updated?.winnerScore || 0) >= 85 || Boolean(updated?.isFeatured) || Number(updated?.totalSold30d || 0) >= 80;
+      const fallbackOffer = updated?.supplierOffers?.find((o: any) => o.id !== updated.selectedOfferId && Number(o.stock || 0) > 5);
+
+      if (isBestseller && currentStock <= 5) {
+        eventBus.publish("inventory:depleted", {
+          productId: updated.id,
+          sku: updated.sku,
+          remainingStock: currentStock,
+        });
+        eventBus.publish("supervisor:alert", {
+          id: `srv_stock_${updated.id}_${currentStock}`,
+          dedupeKey: `bestseller_stock:${updated.id}`,
+          category: "BESTSELLER_OUT_OF_STOCK",
+          severity: currentStock <= 0 ? "CRITICAL" : "HIGH",
+          title: currentStock <= 0
+            ? `اتمام موجودی کالای پرفروش: ${updated.title}`
+            : `موجودی بحرانی کالای پرفروش (${currentStock} عدد): ${updated.title}`,
+          message: currentStock <= 0
+            ? `موجودی تأمین‌کننده فعال (${activeOffer?.supplierName || "اصلی"}) برای این کالای پرفروش به صفر رسید.${fallbackOffer ? ` تأمین‌کننده جایگزین (${fallbackOffer.supplierName} با ${fallbackOffer.stock} عدد) آماده سوئیچ است.` : ""}`
+            : `تنها ${currentStock} عدد از این کالای پرفروش در انبار تأمین‌کننده فعال باقی مانده است.`,
+          productId: updated.id,
+          productTitle: updated.title,
+          sku: updated.sku,
+          metrics: {
+            currentStock,
+            thresholdStock: 5,
+            fallbackOfferId: fallbackOffer?.id,
+            fallbackSupplierName: fallbackOffer?.supplierName,
+            fallbackStock: fallbackOffer?.stock,
+          },
+          recommendedActionLabel: fallbackOffer ? "سوئیچ فوری به تأمین‌کننده پشتیبان" : "بررسی موجودی در کاتالوگ",
+          targetTab: "catalog",
+          timestamp: new Date().toISOString(),
+        });
+      }
+
+      if (prevProduct && Number(prevProduct.marketMedianPrice) > 0 && Number(updated?.marketMedianPrice) > 0) {
+        const prevMed = Number(prevProduct.marketMedianPrice);
+        const nextMed = Number(updated.marketMedianPrice);
+        const changePct = Math.round(((nextMed - prevMed) / prevMed) * 1000) / 10;
+        if (Math.abs(changePct) >= Math.min(10, priceThreshold)) {
+          eventBus.publish("competitor:price_fluctuation", {
+            productId: updated.id,
+            sku: updated.sku,
+            productTitle: updated.title,
+            previousMarketMedian: prevMed,
+            newMarketMedian: nextMed,
+            retailPrice: Number(updated.retailPrice || 0),
+            deltaPercent: changePct,
+            timestamp: new Date().toISOString(),
+          });
+          eventBus.publish("supervisor:alert", {
+            id: `srv_price_${updated.id}_${nextMed}`,
+            dedupeKey: `competitor_price:${updated.id}`,
+            category: "COMPETITOR_PRICE_SPIKE",
+            severity: Math.abs(changePct) >= priceThreshold ? "CRITICAL" : "HIGH",
+            title: `نوسان ناگهانی قیمت رقبا (${changePct > 0 ? `+${changePct}` : changePct}٪): ${updated.title}`,
+            message: `میانه قیمت رقبا از ${prevMed.toLocaleString("fa-IR")} به ${nextMed.toLocaleString("fa-IR")} تومان تغییر کرد (قیمت فعلی گُردیه: ${Number(updated.retailPrice || 0).toLocaleString("fa-IR")} تومان).`,
+            productId: updated.id,
+            productTitle: updated.title,
+            sku: updated.sku,
+            metrics: {
+              currentPrice: Number(updated.retailPrice || 0),
+              competitorPrice: nextMed,
+              previousCompetitorPrice: prevMed,
+              deltaPercent: changePct,
+            },
+            recommendedActionLabel: "همگام‌سازی هوشمند قیمت",
+            targetTab: "catalog",
+            timestamp: new Date().toISOString(),
+          });
+        }
+      }
+    } catch {
+      // Non-blocking telemetry
+    }
+
     res.json({ success: true, product: req.body });
   } catch (err: any) {
     res.status(500).json({ error: "Failed to update product" });
@@ -223,6 +341,18 @@ v1Router.post("/orders", async (req, res) => {
     if (!customer || !customer.fullName || !customer.phone) {
       return res.status(400).json({ error: "اطلاعات مشتری و شماره تماس الزامی است." });
     }
+    if (containsProfanityOrAbuse(String(customer.fullName))) {
+      return res.status(400).json({ error: "نام تحویل‌گیرنده حاوی عبارات نامناسب یا غیرمجاز است." });
+    }
+    if (customer.email && !isValidEmail(String(customer.email))) {
+      return res.status(400).json({ error: "فرمت ایمیل واردشده معتبر نیست." });
+    }
+    if (customer.nationalId && !isValidIranianNationalId(String(customer.nationalId))) {
+      return res.status(400).json({ error: "کد ملی ۱۰ رقمی واردشده معتبر نیست." });
+    }
+    if (customer.postalCode && !isValidIranianPostalCode(String(customer.postalCode))) {
+      return res.status(400).json({ error: "کد پستی باید ۱۰ رقم معتبر بدون خط تیره باشد." });
+    }
 
     // Authoritative Server-side Price Verification (Prevents Price Tampering SEC-1)
     const dbProducts = await commerceRepo.products.getProducts();
@@ -273,9 +403,14 @@ v1Router.post("/orders", async (req, res) => {
       trackingCode,
       customerName: customer.fullName.slice(0, 100),
       phone: customer.phone.slice(0, 25),
+      email: customer.email ? String(customer.email).trim().slice(0, 120) : undefined,
+      nationalId: customer.nationalId ? normalizeDigits(customer.nationalId).slice(0, 12) : undefined,
       province: (customer.province || "تهران").slice(0, 50),
       city: (customer.city || "تهران").slice(0, 50),
       address: (customer.address || "تهران").slice(0, 300),
+      postalCode: customer.postalCode ? normalizeDigits(customer.postalCode).slice(0, 12) : undefined,
+      plaque: customer.plaque ? String(customer.plaque).trim().slice(0, 20) : undefined,
+      unit: customer.unit ? String(customer.unit).trim().slice(0, 20) : undefined,
       items: verifiedItems,
       totalAmount,
       shippingCost,
@@ -298,6 +433,52 @@ v1Router.post("/orders", async (req, res) => {
       // Order + Conditional Stock Decrement + KV Financial Summary + Approvals + Outbox Event
       await commerceRepo.orders.createOrder(orderData);
 
+      // Non-blocking best-seller inventory depletion check after checkout
+      try {
+        const updatedProducts = await commerceRepo.products.getProducts();
+        for (const orderedItem of verifiedItems) {
+          const prod = updatedProducts.find((p: any) => p.id === orderedItem.id || p.sku === orderedItem.sku);
+          if (!prod) continue;
+          const activeOffer = prod.supplierOffers?.find((o: any) => o.id === prod.selectedOfferId) || prod.supplierOffers?.[0];
+          const remaining = Number(activeOffer?.stock ?? 0);
+          const isBestseller = Number(prod.winnerScore || 0) >= 85 || Boolean(prod.isFeatured) || Number(prod.totalSold30d || 0) >= 80;
+          if (isBestseller && remaining <= 5) {
+            const fallbackOffer = prod.supplierOffers?.find((o: any) => o.id !== prod.selectedOfferId && Number(o.stock || 0) > 5);
+            eventBus.publish("inventory:depleted", {
+              productId: prod.id,
+              sku: prod.sku,
+              remainingStock: remaining,
+            });
+            eventBus.publish("supervisor:alert", {
+              id: `srv_stock_${prod.id}_${remaining}`,
+              dedupeKey: `bestseller_stock:${prod.id}`,
+              category: "BESTSELLER_OUT_OF_STOCK",
+              severity: remaining <= 0 ? "CRITICAL" : "HIGH",
+              title: remaining <= 0
+                ? `اتمام موجودی کالای پرفروش پس از سفارش #${orderNumber}`
+                : `کاهش شدید موجودی کالای پرفروش (${remaining} عدد باقی‌مانده)`,
+              message: `کالای «${prod.title}» با فروش بالا به موجودی ${remaining} عدد رسید.${fallbackOffer ? ` تأمین‌کننده جایگزین (${fallbackOffer.supplierName}) موجودی ${fallbackOffer.stock} عدد دارد.` : ""}`,
+              productId: prod.id,
+              productTitle: prod.title,
+              sku: prod.sku,
+              metrics: {
+                currentStock: remaining,
+                thresholdStock: 5,
+                orderNumber,
+                fallbackOfferId: fallbackOffer?.id,
+                fallbackSupplierName: fallbackOffer?.supplierName,
+                fallbackStock: fallbackOffer?.stock,
+              },
+              recommendedActionLabel: fallbackOffer ? "سوئیچ فوری تأمین‌کننده" : "مشاهده در کاتالوگ",
+              targetTab: "catalog",
+              timestamp: new Date().toISOString(),
+            });
+          }
+        }
+      } catch {
+        // Never fail checkout response on alert broadcast error
+      }
+
       return res.status(201).json({
         success: true,
         order: orderData,
@@ -318,14 +499,49 @@ v1Router.post("/orders", async (req, res) => {
 // ============================================================================
 // 5. PAYMENT GATEWAY INTEGRATION & STATE MACHINE (Gate 3)
 // ============================================================================
-v1Router.post("/payment/initiate", (req, res) => {
+v1Router.post("/payment/initiate", async (req, res) => {
   try {
-    const { orderId, provider } = req.body;
+    const { orderId, provider, phone, email } = req.body || {};
     if (!orderId) {
       return res.status(400).json({ error: "Missing required orderId" });
     }
-    const session = paymentStateMachine.initiatePayment({ orderId, provider });
-    res.json({ success: true, session });
+
+    const gatewayStatus = getPaymentGatewayPublicStatus();
+    const session = paymentStateMachine.initiatePayment({
+      orderId,
+      provider: provider || gatewayStatus.provider,
+    });
+
+    const host = req.get("host") || "localhost:3000";
+    const protocol =
+      req.protocol === "https" || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+    const fallbackCallbackUrl = `${protocol}://${host}/?payment_callback=1&orderId=${encodeURIComponent(
+      session.orderId
+    )}&txId=${encodeURIComponent(session.transactionId)}`;
+
+    const liveResult = await requestLiveGatewayRedirect({
+      amountToman: session.amount,
+      orderNumber: session.orderId,
+      description: `پرداخت سفارش ${session.orderId} در فروشگاه گُردیه`,
+      phone: typeof phone === "string" ? phone : undefined,
+      email: typeof email === "string" ? email : undefined,
+      fallbackCallbackUrl,
+    });
+
+    res.json({
+      success: true,
+      session: {
+        ...session,
+        provider: liveResult.provider || gatewayStatus.provider,
+        liveGateway: Boolean(liveResult.ok && liveResult.gatewayUrl),
+        gatewayUrl: liveResult.ok && liveResult.gatewayUrl ? liveResult.gatewayUrl : session.gatewayUrl,
+        authority: liveResult.authority,
+        gatewayNotice:
+          !liveResult.ok && gatewayStatus.configured && gatewayStatus.provider !== "sandbox"
+            ? liveResult.error
+            : undefined,
+      },
+    });
   } catch (err: any) {
     res.status(400).json({ error: err?.message || "Payment initiation failed" });
   }
@@ -623,7 +839,7 @@ v1Router.post("/integrations/woocommerce/sync", async (req, res) => {
               category: item.categories?.[0]?.name || "عمومی",
               brand: "تأمینتو / ووکامرس",
               brandFa: "تأمینتو",
-              image: item.images?.[0]?.src || "https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=80",
+              image: item.images?.[0]?.src || "https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=75&fm=webp",
               retailPrice: parseInt(item.regular_price || item.price || "0", 10),
               baseCost: Math.round(parseInt(item.price || "0", 10) * 0.75),
               targetMargin: 25,
@@ -680,7 +896,7 @@ v1Router.post("/integrations/woocommerce/sync", async (req, res) => {
       category: "کالای دیجیتال",
       brand: "تأمینتو",
       brandFa: "تأمینتو",
-      image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=800&q=80",
+      image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=800&q=75&fm=webp",
       retailPrice: 1850000,
       baseCost: 1350000,
       targetMargin: 27,
@@ -1170,45 +1386,734 @@ v1Router.post("/social/publish-preview", async (req, res) => {
   }
 });
 
-v1Router.post("/support/chat", async (req, res) => {
+function normalizeSupportPhone(raw: unknown): string | null {
+  if (typeof raw !== "string" && typeof raw !== "number") return null;
+  let normalized = String(raw)
+    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
+    .replace(/[\s\-().]/g, "");
+
+  if (normalized.startsWith("0098")) {
+    normalized = "0" + normalized.slice(4);
+  } else if (normalized.startsWith("+98")) {
+    normalized = "0" + normalized.slice(3);
+  } else if (normalized.startsWith("98") && normalized.length === 12) {
+    normalized = "0" + normalized.slice(2);
+  } else if (/^9\d{9}$/.test(normalized)) {
+    normalized = "0" + normalized;
+  }
+
+  return /^09\d{9}$/.test(normalized) ? normalized : null;
+}
+
+v1Router.get("/settings/store-features", (_req, res) => {
   try {
-    const { message, activeOrderId = "" } = req.body;
-    if (!message) {
-      return res.status(400).json({ error: "Message is required" });
+    const features = CommerceDB.getStoreFeatureSettings();
+    const smsStatus = getSmsGatewayPublicStatus();
+    const paymentStatus = getPaymentGatewayPublicStatus();
+    return res.json({
+      success: true,
+      settings: {
+        ...features,
+        smsConfigured: smsStatus.configured,
+        smsProvider: smsStatus.provider,
+        paymentConfigured: paymentStatus.configured,
+        paymentProvider: paymentStatus.provider,
+      },
+    });
+  } catch {
+    return res.status(500).json({ error: "خطا در خواندن تنظیمات فروشگاه" });
+  }
+});
+
+v1Router.put("/admin/settings/store-features", (req, res) => {
+  if (!checkSystemAccess(req)) {
+    return res.status(403).json({ error: "دسترسی غیرمجاز به تنظیمات مدیریت" });
+  }
+  try {
+    const body = req.body || {};
+    const saved = CommerceDB.saveStoreFeatureSettings({
+      enableNationalId: typeof body.enableNationalId === "boolean" ? body.enableNationalId : undefined,
+      requireNationalId: typeof body.requireNationalId === "boolean" ? body.requireNationalId : undefined,
+      enableEmail: typeof body.enableEmail === "boolean" ? body.enableEmail : undefined,
+      enablePostalCode: typeof body.enablePostalCode === "boolean" ? body.enablePostalCode : undefined,
+      requirePostalCode: typeof body.requirePostalCode === "boolean" ? body.requirePostalCode : undefined,
+    });
+    const smsStatus = getSmsGatewayPublicStatus();
+    const paymentStatus = getPaymentGatewayPublicStatus();
+    return res.json({
+      success: true,
+      settings: {
+        ...saved,
+        smsConfigured: smsStatus.configured,
+        smsProvider: smsStatus.provider,
+        paymentConfigured: paymentStatus.configured,
+        paymentProvider: paymentStatus.provider,
+      },
+    });
+  } catch {
+    return res.status(500).json({ error: "خطا در ذخیره تنظیمات فیلدهای کاربری" });
+  }
+});
+
+v1Router.get("/admin/integrations/payment", (req, res) => {
+  if (!checkSystemAccess(req)) {
+    return res.status(403).json({ error: "دسترسی غیرمجاز" });
+  }
+  try {
+    return res.json({ success: true, config: getPaymentGatewayPublicStatus() });
+  } catch {
+    return res.status(500).json({ error: "خطا در بازیابی تنظیمات درگاه پرداخت" });
+  }
+});
+
+v1Router.put("/admin/integrations/payment", (req, res) => {
+  if (!checkSystemAccess(req)) {
+    return res.status(403).json({ error: "دسترسی غیرمجاز" });
+  }
+  try {
+    const body = req.body || {};
+    const existing = (CommerceDB.getIntegration("payment_gateway")?.config || {}) as Record<string, any>;
+    const providerRaw = String(body.provider || existing.provider || "zarinpal").trim().toLowerCase();
+    const provider: PaymentProviderType = ["zarinpal", "zibal", "idpay", "sandbox"].includes(providerRaw)
+      ? (providerRaw as PaymentProviderType)
+      : "zarinpal";
+
+    const incomingMerchant = typeof body.merchantId === "string" ? body.merchantId.trim() : "";
+    const keepExistingMerchant =
+      !incomingMerchant || incomingMerchant.includes("••••") || incomingMerchant === "******";
+    const nextMerchantId = keepExistingMerchant ? String(existing.merchantId || "") : incomingMerchant;
+
+    const callbackUrl =
+      typeof body.callbackUrl === "string"
+        ? body.callbackUrl.trim()
+        : String(existing.callbackUrl || "");
+    if (callbackUrl) {
+      const ssrf = validateWebhookUrl(callbackUrl);
+      if (!ssrf.isSafe) {
+        return res.status(400).json({
+          error: ssrf.reason || "آدرس بازگشت درگاه (Callback URL) نامعتبر یا ناامن است.",
+        });
+      }
     }
 
+    const updated = {
+      provider,
+      merchantId: nextMerchantId,
+      sandbox: typeof body.sandbox === "boolean" ? body.sandbox : Boolean(existing.sandbox ?? true),
+      callbackUrl,
+      enabled: typeof body.enabled === "boolean" ? body.enabled : Boolean(existing.enabled ?? true),
+    };
+
+    CommerceDB.saveIntegration("payment_gateway", updated);
+    return res.json({
+      success: true,
+      config: getPaymentGatewayPublicStatus(),
+      message: "تنظیمات درگاه پرداخت به‌صورت رمزنگاری‌شده ذخیره شد.",
+    });
+  } catch {
+    return res.status(500).json({ error: "خطا در ذخیره تنظیمات درگاه پرداخت" });
+  }
+});
+
+v1Router.get("/admin/integrations/sms", (req, res) => {
+  if (!checkSystemAccess(req)) {
+    return res.status(403).json({ error: "دسترسی غیرمجاز" });
+  }
+  try {
+    return res.json({ success: true, config: getSmsGatewayPublicStatus() });
+  } catch {
+    return res.status(500).json({ error: "خطا در بازیابی تنظیمات پیامک" });
+  }
+});
+
+v1Router.put("/admin/integrations/sms", (req, res) => {
+  if (!checkSystemAccess(req)) {
+    return res.status(403).json({ error: "دسترسی غیرمجاز" });
+  }
+  try {
+    const body = req.body || {};
+    const existing = (CommerceDB.getIntegration("sms_gateway")?.config || {}) as Record<string, any>;
+    const providerRaw = String(body.provider || existing.provider || "smsir").trim().toLowerCase();
+    const provider: SmsProviderType = ["smsir", "kavenegar", "melipayamak", "ippanel", "custom"].includes(providerRaw)
+      ? (providerRaw as SmsProviderType)
+      : "smsir";
+
+    const incomingKey = typeof body.apiKey === "string" ? body.apiKey.trim() : "";
+    const keepExistingKey = !incomingKey || incomingKey.includes("••••") || incomingKey === "******";
+    const nextApiKey = keepExistingKey ? String(existing.apiKey || "") : incomingKey;
+
+    const customUrl = typeof body.customUrl === "string" ? body.customUrl.trim() : String(existing.customUrl || "");
+    if (provider === "custom" && customUrl) {
+      const ssrf = validateWebhookUrl(customUrl);
+      if (!ssrf.isSafe) {
+        return res.status(400).json({ error: ssrf.reason || "آدرس سرویس پیامک نامعتبر است." });
+      }
+    }
+
+    const updated = {
+      provider,
+      apiKey: nextApiKey,
+      templateId: typeof body.templateId === "string" ? body.templateId.trim() : String(existing.templateId || ""),
+      lineNumber: typeof body.lineNumber === "string" ? body.lineNumber.trim() : String(existing.lineNumber || ""),
+      paramName: typeof body.paramName === "string" && body.paramName.trim() ? body.paramName.trim() : String(existing.paramName || "Code"),
+      customUrl,
+      enabled: typeof body.enabled === "boolean" ? body.enabled : Boolean(existing.enabled ?? true),
+    };
+
+    CommerceDB.saveIntegration("sms_gateway", updated);
+    return res.json({
+      success: true,
+      config: getSmsGatewayPublicStatus(),
+      message: "تنظیمات درگاه پیامک به‌صورت رمزنگاری‌شده ذخیره شد.",
+    });
+  } catch {
+    return res.status(500).json({ error: "خطا در ذخیره تنظیمات پیامک" });
+  }
+});
+
+v1Router.post("/admin/integrations/sms/test", async (req, res) => {
+  if (!checkSystemAccess(req)) {
+    return res.status(403).json({ error: "دسترسی غیرمجاز" });
+  }
+  const phone = normalizeSupportPhone(req.body?.phone);
+  if (!phone) {
+    return res.status(400).json({ error: "لطفاً شماره موبایل معتبر ۱۱ رقمی (مانند 09123456789) وارد کنید." });
+  }
+  const testCode = String(crypto.randomInt(100000, 999999));
+  const result = await sendVerificationSms(phone, testCode);
+  if (!result.ok) {
+    return res.status(result.code === "SMS_PROVIDER_NOT_CONFIGURED" ? 503 : 502).json({
+      success: false,
+      error: result.error,
+      code: result.code,
+    });
+  }
+  return res.json({
+    success: true,
+    provider: result.provider,
+    messageId: result.messageId,
+    message: `پیامک آزمایشی با موفقیت از طریق ${result.provider} ارسال شد.`,
+  });
+});
+
+v1Router.post("/customer/account/identify", (req, res) => {
+  try {
+    const phone = normalizeSupportPhone(req.body?.phone);
+    if (!phone) {
+      return res.status(400).json({ error: "شماره موبایل معتبر (مانند 09123456789) الزامی است." });
+    }
+    const result = CommerceDB.identifyOrCreateCustomerAccount(phone);
+    return res.json({
+      success: true,
+      isNew: result.isNew,
+      account: result.account,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در ایجاد یا بازیابی حساب کاربری" });
+  }
+});
+
+v1Router.patch("/customer/account", (req, res) => {
+  try {
+    const phone = normalizeSupportPhone(req.body?.phone);
+    if (!phone) {
+      return res.status(400).json({ error: "شماره موبایل معتبر الزامی است." });
+    }
+
+    const body = req.body || {};
+    const features = CommerceDB.getStoreFeatureSettings();
+
+    let rawPreferred = typeof body.preferredName === "string" ? body.preferredName.trim() : undefined;
+    if (typeof rawPreferred === "string" && rawPreferred.length > 0) {
+      const prefCheck = validateSafePreferredName(rawPreferred);
+      if (!prefCheck.ok) {
+        return res.status(400).json({
+          error: prefCheck.reason || "نام انتخابی معتبر یا محترمانه نیست.",
+        });
+      }
+      rawPreferred = prefCheck.cleaned;
+    }
+
+    const rawFull = typeof body.fullName === "string" ? body.fullName.trim() : undefined;
+    if (typeof rawFull === "string" && rawFull.length > 0 && containsProfanityOrAbuse(rawFull)) {
+      return res.status(400).json({
+        error: "نام و نام خانوادگی واردشده حاوی عبارات نامناسب یا غیرمجاز است.",
+      });
+    }
+
+    let cleanEmail: string | undefined = undefined;
+    if (typeof body.email === "string") {
+      const trimmedEmail = body.email.trim();
+      if (trimmedEmail.length > 0 && !isValidEmail(trimmedEmail)) {
+        return res.status(400).json({ error: "فرمت آدرس ایمیل واردشده معتبر نیست." });
+      }
+      cleanEmail = trimmedEmail.toLowerCase();
+    }
+
+    let cleanNationalId: string | undefined = undefined;
+    if (typeof body.nationalId === "string") {
+      const trimmedNid = normalizeDigits(body.nationalId).replace(/[\s\-]/g, "");
+      if (trimmedNid.length > 0 && !isValidIranianNationalId(trimmedNid)) {
+        return res.status(400).json({ error: "کد ملی باید ۱۰ رقم و مطابق الگوریتم صحت‌سنجی رسمی باشد." });
+      }
+      if (features.enableNationalId && features.requireNationalId && !trimmedNid) {
+        return res.status(400).json({ error: "تکمیل فیلد کد ملی الزامی است." });
+      }
+      cleanNationalId = trimmedNid;
+    }
+
+    let cleanAddresses: any[] | undefined = undefined;
+    if (Array.isArray(body.addresses)) {
+      cleanAddresses = [];
+      for (const addr of body.addresses.slice(0, 15)) {
+        if (!addr || typeof addr !== "object") continue;
+        const postalDigits = normalizeDigits(addr.postalCode || "").replace(/[\s\-]/g, "");
+        if (features.requirePostalCode && !isValidIranianPostalCode(postalDigits)) {
+          return res.status(400).json({
+            error: `کد پستی آدرس «${addr.label || "ثبتی"}» باید ۱۰ رقم معتبر بدون خط تیره باشد.`,
+          });
+        }
+        const recPhoneRaw = addr.recipientPhone ? normalizeSupportPhone(addr.recipientPhone) : phone;
+        if (!recPhoneRaw) {
+          return res.status(400).json({ error: "شماره موبایل تحویل‌گیرنده در آدرس معتبر نیست." });
+        }
+        const addrLine = String(addr.addressLine || "").trim();
+        if (!addrLine || addrLine.length < 5) {
+          return res.status(400).json({ error: "نشانی کامل آدرس نمی‌تواند خالی یا خیلی کوتاه باشد." });
+        }
+        cleanAddresses.push({
+          id: typeof addr.id === "string" && addr.id.trim() ? addr.id.trim().slice(0, 60) : `addr_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+          label: String(addr.label || "آدرس من").trim().slice(0, 40),
+          recipientName: String(addr.recipientName || "").trim().slice(0, 80),
+          recipientPhone: recPhoneRaw,
+          province: String(addr.province || "تهران").trim().slice(0, 40),
+          city: String(addr.city || "تهران").trim().slice(0, 40),
+          addressLine: addrLine.slice(0, 300),
+          postalCode: postalDigits,
+          plaque: String(addr.plaque || "").trim().slice(0, 20),
+          unit: String(addr.unit || "").trim().slice(0, 20),
+          isDefault: Boolean(addr.isDefault),
+        });
+      }
+      if (cleanAddresses.length > 0 && !cleanAddresses.some((a) => a.isDefault)) {
+        cleanAddresses[0].isDefault = true;
+      }
+    }
+
+    const account = CommerceDB.updateCustomerAccountProfile(phone, {
+      preferredName: rawPreferred,
+      fullName: rawFull,
+      email: cleanEmail,
+      nationalId: cleanNationalId,
+      addresses: cleanAddresses,
+      keepOneYearGuest: Boolean(body.keepOneYearGuest),
+    });
+
+    return res.json({ success: true, account });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در ذخیره اطلاعات حساب کاربری" });
+  }
+});
+
+v1Router.post("/auth/otp/send", async (req, res) => {
+  try {
+    const clientIp = req.ip || req.socket.remoteAddress || "unknown";
+    if (!checkSystemRateLimit(`otp_ip:${clientIp}`, 12, 60000)) {
+      return res.status(429).json({ error: "تعداد درخواست‌های ارسال کد بیش از حد مجاز است. لطفاً یک دقیقه صبر کنید." });
+    }
+
+    const phone = normalizeSupportPhone(req.body?.phone);
+    if (!phone) {
+      return res.status(400).json({ error: "شماره موبایل معتبر ۱۱ رقمی (مانند 09123456789) الزامی است." });
+    }
+
+    const cooldown = CommerceDB.getOtpCooldownSeconds(phone);
+    if (cooldown > 0) {
+      return res.status(429).json({
+        error: `لطفاً ${cooldown} ثانیه دیگر برای ارسال مجدد کد صبر کنید.`,
+        retryAfterSeconds: cooldown,
+      });
+    }
+
+    const otpCode = String(crypto.randomInt(100000, 999999));
+    const sendResult = await sendVerificationSms(phone, otpCode);
+    if (!sendResult.ok) {
+      return res.status(sendResult.code === "SMS_PROVIDER_NOT_CONFIGURED" ? 503 : 502).json({
+        success: false,
+        error: sendResult.error,
+        code: sendResult.code,
+      });
+    }
+
+    CommerceDB.identifyOrCreateCustomerAccount(phone);
+    CommerceDB.createOtpChallenge(phone, otpCode);
+
+    return res.json({
+      success: true,
+      provider: sendResult.provider,
+      expiresInSeconds: 180,
+      message: `کد تایید به شماره ${phone} ارسال شد.`,
+    });
+  } catch {
+    return res.status(500).json({ error: "خطا در ارسال کد تایید پیامکی" });
+  }
+});
+
+v1Router.post("/auth/otp/verify", (req, res) => {
+  try {
+    const phone = normalizeSupportPhone(req.body?.phone);
+    const code = normalizeDigits(req.body?.code || "");
+    if (!phone || !/^\d{4,8}$/.test(code)) {
+      return res.status(400).json({ error: "شماره موبایل و کد تایید پیامکی معتبر الزامی است." });
+    }
+
+    const verification = CommerceDB.verifyOtpChallenge(phone, code);
+    if (!verification.ok || !verification.account) {
+      return res.status(400).json({ success: false, error: verification.error });
+    }
+
+    const exp = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    const payload = Buffer.from(JSON.stringify({ phone, sub: phone, verified: true, exp })).toString("base64url");
+    const sig = crypto.createHmac("sha256", SERVER_SESSION_SECRET).update(payload).digest("base64url");
+    const sessionToken = `${payload}.${sig}`;
+
+    return res.json({
+      success: true,
+      account: verification.account,
+      sessionToken,
+      message: "حساب کاربری شما با نام کاربری شماره موبایل با موفقیت تایید و ساخته شد.",
+    });
+  } catch {
+    return res.status(500).json({ error: "خطا در تایید کد پیامکی" });
+  }
+});
+
+v1Router.get("/support/sessions", (req, res) => {
+  try {
+    const phone = normalizeSupportPhone(req.query.phone);
+    if (!phone) {
+      return res.status(400).json({ error: "شماره موبایل معتبر (مانند 09123456789) الزامی است." });
+    }
+    const sessions = CommerceDB.getSupportSessionsByPhone(phone);
+    return res.json({ success: true, phone, sessions });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در بازیابی تاریخچه گفتگوهای پشتیبانی" });
+  }
+});
+
+v1Router.post("/support/sessions", (req, res) => {
+  try {
+    const phone = normalizeSupportPhone(req.body?.phone);
+    if (!phone) {
+      return res.status(400).json({ error: "برای ذخیره گفتگو، شماره موبایل معتبر الزامی است." });
+    }
+    const rawId = typeof req.body?.id === "string" ? req.body.id.trim() : "";
+    if (!rawId || rawId.length > 100) {
+      return res.status(400).json({ error: "شناسه گفتگو نامعتبر است." });
+    }
+    const messages = Array.isArray(req.body?.messages) ? req.body.messages.slice(-150) : [];
+    const statusRaw = String(req.body?.status || "ACTIVE");
+    const status = ["ACTIVE", "OPERATOR_REQUESTED", "RESOLVED"].includes(statusRaw) ? statusRaw : "ACTIVE";
+    const nowIso = new Date().toISOString();
+
+    const saved = CommerceDB.saveSupportSession({
+      id: rawId,
+      phone,
+      customerName: typeof req.body?.customerName === "string" ? req.body.customerName.slice(0, 120) : "",
+      title: typeof req.body?.title === "string" && req.body.title.trim() ? req.body.title.trim().slice(0, 140) : "گفتگوی پشتیبانی",
+      status,
+      flowState: req.body?.flowState && typeof req.body.flowState === "object"
+        ? req.body.flowState
+        : { flow: null, step: 0, data: {} },
+      messages,
+      createdAt: typeof req.body?.createdAt === "string" ? req.body.createdAt : nowIso,
+      updatedAt: nowIso
+    });
+
+    return res.json({ success: true, session: saved });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در ذخیره‌سازی گفتگوی پشتیبانی" });
+  }
+});
+
+v1Router.post("/support/sessions/:id/messages", (req, res) => {
+  try {
+    const sessionId = String(req.params.id || "").trim();
+    const phone = normalizeSupportPhone(req.body?.phone);
+    const message = req.body?.message;
+    if (!sessionId || !phone || !message || typeof message.text !== "string") {
+      return res.status(400).json({ error: "اطلاعات پیام یا شماره موبایل کامل نیست." });
+    }
+
+    const existing = CommerceDB.getSupportSessionById(sessionId);
+    const nowIso = new Date().toISOString();
+    if (existing && existing.phone !== phone) {
+      return res.status(403).json({ error: "دسترسی به این گفتگو مجاز نیست." });
+    }
+
+    const nextMessages = [...(existing?.messages || []), message].slice(-150);
+    const saved = CommerceDB.saveSupportSession({
+      id: sessionId,
+      phone,
+      customerName: existing?.customerName || req.body?.customerName || "",
+      title: existing?.title || (message.sender === "user" ? message.text.slice(0, 48) : "گفتگوی پشتیبانی"),
+      status: req.body?.status || existing?.status || "ACTIVE",
+      flowState: req.body?.flowState || existing?.flowState || { flow: null, step: 0, data: {} },
+      messages: nextMessages,
+      createdAt: existing?.createdAt || nowIso,
+      updatedAt: nowIso
+    });
+
+    return res.json({ success: true, session: saved });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در ثبت پیام گفتگو" });
+  }
+});
+
+v1Router.delete("/support/sessions", (req, res) => {
+  try {
+    const phone = normalizeSupportPhone(req.query.phone || req.body?.phone);
+    if (!phone) {
+      return res.status(400).json({ error: "شماره موبایل معتبر الزامی است." });
+    }
+    const deletedCount = CommerceDB.deleteSupportSessionsByPhone(phone);
+    return res.json({ success: true, deletedCount });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در پاکسازی تاریخچه گفتگوها" });
+  }
+});
+
+function stripMarkdownSymbols(text: string): string {
+  return String(text || "")
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/__(.*?)__/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/`{1,3}/g, "")
+    .trim();
+}
+
+v1Router.post("/support/chat", async (req, res) => {
+  try {
+    const {
+      message,
+      phone: rawPhone = "",
+      preferredName = "",
+      chatHistory = [],
+      activeIntent = null,
+      activeOrderId = "",
+    } = req.body || {};
+
+    if (!message || typeof message !== "string" || !message.trim()) {
+      return res.status(400).json({ error: "متن پیام نمی‌تواند خالی باشد." });
+    }
+
+    const normalizedText = message.trim();
+    if (containsProfanityOrAbuse(normalizedText)) {
+      return res.json({
+        success: true,
+        moderated: true,
+        reply: "لطفاً در گفتگو از الفاظ محترمانه و مناسب استفاده کنید تا بتونم با کمال میل راهنماییتون کنم.",
+        source: "moderation-guard",
+        dbOrderFact: false,
+        dbProductFact: false,
+        recommendedProducts: [],
+        operatorRequested: false,
+      });
+    }
+
+    const normalizedPhone = normalizeSupportPhone(rawPhone);
+    const savedAccount = normalizedPhone ? CommerceDB.getCustomerAccountByPhone(normalizedPhone) : null;
+    const rawCandidateName = String(preferredName || savedAccount?.preferredName || "").trim();
+    const safeNameCheck = rawCandidateName ? validateSafePreferredName(rawCandidateName) : null;
+    const customerPreferredName = safeNameCheck?.ok ? safeNameCheck.cleaned : "";
+
+    // 1. Live SQLite Order Lookup (from message order ID / tracking code / customer phone)
     let foundOrder: any = null;
-    const orderMatch = message.match(/ORD-?\d+/i) || message.match(/09\d{9}/) || message.match(/\b\d{5,8}\b/);
-    const queryKey = orderMatch ? orderMatch[0].toUpperCase() : activeOrderId;
+    const orderMatch =
+      normalizedText.match(/ORD-?\d+/i) ||
+      normalizedText.match(/SHP-?\d+/i) ||
+      normalizedText.match(/09\d{9}/) ||
+      normalizedText.match(/\b\d{5,8}\b/);
+    const queryKey = orderMatch ? orderMatch[0].toUpperCase() : activeOrderId || normalizedPhone || "";
 
     if (queryKey) {
       foundOrder = await commerceRepo.orders.lookupOrder(queryKey);
     }
 
-    const relevantProducts = CommerceDB.searchProducts(message);
+    // 2. Live SQLite Catalog Grounding
+    const allProducts = await commerceRepo.products.getProducts();
+    const publishedProducts = allProducts.filter((p) => p.status !== "KILL_LIST");
+    const catalogContext = publishedProducts.map((p) => {
+      const activeOffer = p.supplierOffers?.find((o: any) => o.id === p.selectedOfferId) || p.supplierOffers?.[0];
+      const stock = Number(activeOffer?.stock ?? 0);
+      return {
+        id: p.id,
+        title: p.title,
+        category: p.category,
+        priceToman: p.retailPrice,
+        originalPriceToman: p.originalPrice || p.retailPrice,
+        inStock: stock > 0,
+        stockCount: stock,
+        keyFeatures: (p.keyFeatures || []).slice(0, 4),
+        whoItIsNotFor: (p as any).whoItIsNotFor || (p as any).honestLimitations || "",
+        testWindow: (p as any).warranty || "شرایط تست و تعویض اختصاصی درج‌شده در صفحه محصول",
+      };
+    });
 
-    let reply = "";
-    if (foundOrder) {
-      reply = `وضعیت سفارش ${foundOrder.orderNumber}:\n` +
-        `• گیرنده: ${foundOrder.customerName}\n` +
-        `• وضعیت: ${foundOrder.status === "PAID" ? "پرداخت شده و در حال آماده‌سازی برای ارسال" : foundOrder.status}\n` +
-        `• کد رهگیری پستی: ${foundOrder.trackingCode || "بعد از تحویل به پیک یا پست پیامک می‌شه"}\n` +
-        `• مبلغ پرداختی: ${foundOrder.totalAmount?.toLocaleString()} تومان`;
-    } else if (relevantProducts.length > 0) {
-      const p = relevantProducts[0];
-      reply = `اطلاعات «${p.title}»:\n• قیمت: ${p.retailPrice.toLocaleString()} تومان | وضعیت: موجود\n• شرایط تست و تعویض توی صفحه‌ی همین محصول نوشته شده.`;
-    } else {
-      reply = `سلام. شماره‌ی سفارش یا اسم محصولی که دنبالش هستید رو بنویسید تا راهنمایی‌تون کنیم.`;
+    // 3. Require real Gemini API key & invoke gemini-4-hydrogen naturally (NO hardcoded scripted answers)
+    const client = getGenAI();
+    if (!client) {
+      return res.status(503).json({
+        error: "کلید هوش مصنوعی (GEMINI_API_KEY) روی سرور تنظیم نشده است. لطفاً آن را در متغیرهای محیطی سرور قرار دهید.",
+        code: "GEMINI_API_KEY_MISSING",
+        order: foundOrder || undefined,
+      });
     }
 
+    const sanitizedHistory = Array.isArray(chatHistory)
+      ? chatHistory
+          .slice(-14)
+          .filter((m: any) => m && typeof m.text === "string" && m.text.trim())
+          .map((m: any) => ({
+            role: m.sender === "user" ? "user" : "model",
+            parts: [{ text: m.text.trim().slice(0, 1200) }],
+          }))
+      : [];
+
+    const orderFactBlock = foundOrder
+      ? `سفارش واقعی یافت‌شده در دیتابیس برای این گفتگو:
+- شماره سفارش: ${foundOrder.orderNumber}
+- نام گیرنده: ${foundOrder.customerName || customerPreferredName || "ثبت‌شده"}
+- وضعیت فعلی: ${foundOrder.status}
+- کد رهگیری پستی: ${foundOrder.trackingCode || "در حال آماده‌سازی و ارسال"}
+- مبلغ کل: ${Number(foundOrder.totalAmount || 0).toLocaleString("fa-IR")} تومان
+- اقلام: ${(foundOrder.items || []).map((i: any) => `${i.title} (${i.quantity || 1} عدد)`).join("، ")}`
+      : "هیچ سفارشی برای این شماره یا کد واردشده در دیتابیس پیدا نشد (اگر مشتری درباره سفارش پرسید و هنوز کدی نداد، صادقانه بگو سفارشی با این شماره ثبت نشده و شماره سفارش مثل ORD-12345 رو بپرس).";
+
+    const systemInstruction = `شما دستیار هوشمند و صادق پشتیبانی فروشگاه اینترنتی «گُردیه» هستید.
+
+هویت و لحن گفتگو:
+- نام خطاب مشتری: ${customerPreferredName ? customerPreferredName : "هنوز پرسیده نشده / مشخص نیست"}. در صورت داشتن نام، در گفتگو محترمانه و صمیمی از نامش استفاده کن (اما در هر جمله تکراری نشود).
+- کاملاً طبیعی، انسانی، کوتاه، محترمانه و فارسی روان صحبت کن؛ دقیقاً مثل یک مشاور واقعی فروشگاه نه یک ربات فرمی.
+- هرگز از جملات کلیشه‌ای و قالبی مثل «حتماً! بدون هیچ فرمی، با ۳ تا سؤال کوتاه...» یا پرسش‌های پرسشنامه‌ای شماره‌دار استفاده نکن.
+- هرگز از نشانه‌های مارک‌داون مثل ستاره جفت (**متن**)، هشتگ (#) یا بولت‌های فرمال استفاده نکن. متن کاملاً ساده، تمیز و خوانا باشد.
+- هرگز کلیدهای آماده یا لیست گزینه‌های دکمه‌ای در متن نساز.
+- اگر مشتری قصد خاصی با اسلش فرستاده است (${activeIntent || "گفتگوی آزاد"}):
+  - /هدیه: مثل یک رفیق وارد یا فروشنده دلسوز، خیلی کوتاه بپرس به دنبال چه جور هدیه یا گجتی هست و حدود بودجه‌اش چقدره، یا اگر خودش توضیح داده مستقیماً از کاتالوگ واقعی زیر ۲ تا ۳ گزینه صادقانه پیشنهاد بده و محدودیت هر کدوم رو هم بگو.
+  - /پیگیری: بر اساس بخش «وضعیت سفارش واقعی در دیتابیس» پایین صادقانه گزارش بده؛ اگر سفارش پیدا نشد شماره سفارش رو بخواه.
+  - /اپراتور: اگر موضوع و بازه مناسبش رو گفته، ثبتش رو تایید کن و شماره تماس پشتیبانی (۰۲۱-۸۸۲۹۹۰۴۰) رو یادآوری کن و operatorRequested را true برگردان. اگر هنوز نگفته، کوتاه بپرس درباره چیه و کی تماس بگیریم.
+  - /سوال: مستقیم و دقیق بر اساس اطلاعات واقعی کاتالوگ و سیاست فروشگاه (ارسال تهران ۱-۲ روز کاری، شهرستان ۲-۴ روز پست پیشتاز/تیپاکس، پرداخت شاپرک، تست و تعویض اختصاصی هر کالا در صفحه‌ی خودش) جواب بده.
+- تمام پیشنهادهای محصول فقط باید از IDهای موجود در کاتالوگ واقعی زیر باشد و قیمت یا ویژگی غلط نگو.
+
+${orderFactBlock}
+
+کاتالوگ واقعی محصولات فعال فروشگاه گُردیه (JSON):
+${JSON.stringify(catalogContext)}`;
+
+    const contents = [
+      ...sanitizedHistory,
+      { role: "user", parts: [{ text: normalizedText }] },
+    ];
+
+    const modelsToTry = ["gemini-4-hydrogen", "gemini-3.1-flash-lite"];
+    let aiResponse: any = null;
+    let usedModel = modelsToTry[0];
+    let lastAiErr: any = null;
+
+    for (const modelName of modelsToTry) {
+      try {
+        usedModel = modelName;
+        aiResponse = await client.models.generateContent({
+          model: modelName,
+          contents,
+          config: {
+            systemInstruction,
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: Type.OBJECT,
+              properties: {
+                reply: {
+                  type: Type.STRING,
+                  description: "پاسخ طبیعی، صمیمی و بدون کاراکترهای ** به زبان فارسی",
+                },
+                recommendedProductIds: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING },
+                  description: "شناسه محصولات مرتبط از کاتالوگ واقعی (حداکثر ۳ مورد، در صورت نیاز نبودن آرایه خالی)",
+                },
+                operatorRequested: {
+                  type: Type.BOOLEAN,
+                  description: "آیا درخواست تماس یا پیگیری با اپراتور انسانی نهایی شده است؟",
+                },
+                operatorTopic: {
+                  type: Type.STRING,
+                  description: "خلاصه موضوع درخواست تماس در صورت true بودن operatorRequested",
+                },
+                suggestedSessionTitle: {
+                  type: Type.STRING,
+                  description: "عنوان کوتاه فارسی ۳ تا ۵ کلمه‌ای برای این گفتگو",
+                },
+              },
+              required: ["reply", "recommendedProductIds", "operatorRequested"],
+            },
+          },
+        });
+        break;
+      } catch (err: any) {
+        lastAiErr = err;
+        const status = Number(err?.status) || 0;
+        const msg = String(err?.message || "");
+        if (status === 503 || status === 429 || msg.includes("UNAVAILABLE") || msg.includes("high demand")) {
+          continue;
+        }
+        throw err;
+      }
+    }
+
+    if (!aiResponse) {
+      throw lastAiErr || new Error("Gemini service unavailable");
+    }
+
+    const rawText = aiResponse.text || "{}";
+    let parsed: any = {};
+    try {
+      parsed = JSON.parse(rawText);
+    } catch {
+      parsed = { reply: rawText, recommendedProductIds: [], operatorRequested: false };
+    }
+
+    const cleanReply = stripMarkdownSymbols(parsed.reply || "بفرمایید، در خدمتم.");
+    const recIds: string[] = Array.isArray(parsed.recommendedProductIds)
+      ? parsed.recommendedProductIds.slice(0, 3)
+      : [];
+    const recommendedProducts = recIds
+      .map((id) => publishedProducts.find((p) => p.id === id))
+      .filter(Boolean);
+
     return res.json({
-      reply,
-      source: "modular-sqlite-grounded-brain",
+      success: true,
+      reply: cleanReply,
+      source: usedModel,
       dbOrderFact: !!foundOrder,
-      dbProductFact: relevantProducts.length > 0
+      dbProductFact: recommendedProducts.length > 0,
+      order: foundOrder || undefined,
+      matchedProduct: recommendedProducts[0] || undefined,
+      recommendedProducts,
+      operatorRequested: Boolean(parsed.operatorRequested),
+      operatorTopic: parsed.operatorTopic ? stripMarkdownSymbols(parsed.operatorTopic) : "",
+      suggestedSessionTitle: parsed.suggestedSessionTitle
+        ? stripMarkdownSymbols(parsed.suggestedSessionTitle).slice(0, 48)
+        : "",
     });
   } catch (err: any) {
-    return res.status(500).json({ error: "خطا در چت پشتیبانی" });
+    const status = Number(err?.status) || 502;
+    console.error("Support Chat Gemini error:", err?.message || err);
+    return res.status(status >= 400 && status < 600 ? status : 502).json({
+      error: "ارتباط با سرویس هوش مصنوعی پشتیبانی موقتاً برقرار نشد. لطفاً لحظاتی دیگر دوباره تلاش کنید.",
+      code: "GEMINI_API_ERROR",
+      details: err?.message,
+    });
   }
 });
 
@@ -1285,3 +2190,292 @@ v1Router.get("/dropshipping/dispatch-slip/:orderId", async (req, res) => {
     return res.status(500).json({ error: "خطا در تولید حواله ارسال مستقیم" });
   }
 });
+
+// ============================================================================
+// 9. REAL-TIME SUPERVISOR CRITICAL ALERTS (SSE STREAM + ON-DEMAND SCAN)
+// ============================================================================
+async function evaluateCatalogAndRulesAlerts() {
+  const [allProducts, allRules] = await Promise.all([
+    commerceRepo.products.getProducts(),
+    commerceRepo.rules.getRules().catch(() => []),
+  ]);
+
+  const priceRule = allRules.find((r: any) => r.id === "rule_max_price_change");
+  const priceThresholdPct = Number(priceRule?.thresholdValue) || 15;
+  const nowIso = new Date().toISOString();
+  const alerts: any[] = [];
+
+  for (const prod of allProducts) {
+    const activeOffer = prod.supplierOffers?.find((o: any) => o.id === prod.selectedOfferId) || prod.supplierOffers?.[0];
+    const currentStock = Number(activeOffer?.stock ?? 0);
+    const isBestseller = Number(prod.winnerScore || 0) >= 85 || Boolean(prod.isFeatured) || Number(prod.totalSold30d || 0) >= 80;
+    const fallbackOffer = prod.supplierOffers?.find((o: any) => o.id !== prod.selectedOfferId && Number(o.stock || 0) > 5);
+
+    if (isBestseller && currentStock <= 5 && prod.status !== "KILL_LIST") {
+      alerts.push({
+        id: `scan_stock_${prod.id}_${currentStock}`,
+        dedupeKey: `bestseller_stock:${prod.id}`,
+        category: "BESTSELLER_OUT_OF_STOCK",
+        severity: currentStock <= 0 ? "CRITICAL" : "HIGH",
+        title: currentStock <= 0
+          ? `اتمام موجودی کالای پرفروش: ${prod.title}`
+          : `آستانه بحرانی موجودی کالای پرفروش (${currentStock} عدد)`,
+        message: currentStock <= 0
+          ? `موجودی تأمین‌کننده فعال (${activeOffer?.supplierName || "اصلی"}) برای کالای پرفروش «${prod.title}» به صفر رسیده است.`
+          : `موجودی کالای پرفروش «${prod.title}» به ${currentStock} عدد کاهش یافته و در آستانه اتمام است.`,
+        productId: prod.id,
+        productTitle: prod.title,
+        sku: prod.sku,
+        metrics: {
+          currentStock,
+          thresholdStock: 5,
+          fallbackOfferId: fallbackOffer?.id,
+          fallbackSupplierName: fallbackOffer?.supplierName,
+          fallbackStock: fallbackOffer?.stock,
+        },
+        recommendedActionLabel: fallbackOffer ? "سوئیچ فوری تأمین‌کننده" : "بررسی موجودی در کاتالوگ",
+        targetTab: "catalog",
+        timestamp: nowIso,
+      });
+    }
+
+    const median = Number(prod.marketMedianPrice || 0);
+    const retail = Number(prod.retailPrice || 0);
+    if (median > 0 && retail > 0 && prod.status === "PUBLISHED") {
+      const gapPct = Math.round(((median - retail) / retail) * 1000) / 10;
+      if (Math.abs(gapPct) >= priceThresholdPct) {
+        alerts.push({
+          id: `scan_price_${prod.id}_${median}`,
+          dedupeKey: `competitor_price:${prod.id}`,
+          category: "COMPETITOR_PRICE_SPIKE",
+          severity: Math.abs(gapPct) >= priceThresholdPct + 5 ? "CRITICAL" : "HIGH",
+          title: gapPct > 0
+            ? `جهش قیمت رقبا (+${gapPct}٪ بالاتر از گُردیه): ${prod.title}`
+            : `کاهش شدید قیمت رقبا (${gapPct}٪ پایین‌تر از گُردیه): ${prod.title}`,
+          message: `میانه قیمت بازار رقبا (${median.toLocaleString("fa-IR")} تومان) اختلاف ${Math.abs(gapPct)}٪ با قیمت فعلی شما (${retail.toLocaleString("fa-IR")} تومان) دارد.`,
+          productId: prod.id,
+          productTitle: prod.title,
+          sku: prod.sku,
+          metrics: {
+            currentPrice: retail,
+            competitorPrice: median,
+            deltaPercent: gapPct,
+          },
+          recommendedActionLabel: "تعدیل هوشمند قیمت",
+          targetTab: "catalog",
+          timestamp: nowIso,
+        });
+      }
+    }
+  }
+
+  return alerts;
+}
+
+v1Router.get("/supervisor/notifications/stream", async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+
+  const sendEvent = (eventName: string, data: any) => {
+    try {
+      res.write(`event: ${eventName}\n`);
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    } catch {
+      // client disconnected
+    }
+  };
+
+  sendEvent("connected", { status: "live", timestamp: new Date().toISOString() });
+
+  // Send initial real database audit batch
+  try {
+    const initialAlerts = await evaluateCatalogAndRulesAlerts();
+    if (initialAlerts.length > 0) {
+      sendEvent("supervisor-batch", { alerts: initialAlerts });
+    }
+  } catch {
+    // ignore initial scan failure
+  }
+
+  const onSupervisorAlert = (payload: any) => {
+    sendEvent("supervisor-alert", payload);
+  };
+
+  eventBus.on("supervisor:alert", onSupervisorAlert);
+
+  const heartbeat = setInterval(() => {
+    try {
+      res.write(`: keepalive ${Date.now()}\n\n`);
+    } catch {
+      clearInterval(heartbeat);
+    }
+  }, 25000);
+
+  req.on("close", () => {
+    clearInterval(heartbeat);
+    eventBus.off("supervisor:alert", onSupervisorAlert);
+    res.end();
+  });
+});
+
+v1Router.post("/supervisor/alerts/scan", async (_req, res) => {
+  try {
+    const alerts = await evaluateCatalogAndRulesAlerts();
+    for (const alert of alerts) {
+      eventBus.publish("supervisor:alert", alert);
+    }
+    return res.json({
+      success: true,
+      scannedAt: new Date().toISOString(),
+      alertsCount: alerts.length,
+      alerts,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در پایش لحظه‌ای کاتالوگ و رقبا" });
+  }
+});
+
+v1Router.post("/supervisor/products/:id/competitor-price", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const newMarketMedian = Number(req.body?.marketMedianPrice);
+    if (!Number.isFinite(newMarketMedian) || newMarketMedian <= 0) {
+      return res.status(400).json({ error: "قیمت میانه رقبا باید عدد معتبر مثبت باشد." });
+    }
+
+    const product = await commerceRepo.products.getProductById(id);
+    if (!product) {
+      return res.status(404).json({ error: "محصول یافت نشد." });
+    }
+
+    const previousMarketMedian = Number(product.marketMedianPrice || product.retailPrice);
+    const updatedProduct = {
+      ...product,
+      marketMedianPrice: Math.round(newMarketMedian),
+      updatedAt: new Date().toISOString(),
+    };
+
+    await commerceRepo.products.saveProduct(updatedProduct);
+
+    const deltaPct = previousMarketMedian > 0
+      ? Math.round(((newMarketMedian - previousMarketMedian) / previousMarketMedian) * 1000) / 10
+      : 0;
+    const retailGapPct = product.retailPrice > 0
+      ? Math.round(((newMarketMedian - product.retailPrice) / product.retailPrice) * 1000) / 10
+      : 0;
+
+    eventBus.publish("competitor:price_fluctuation", {
+      productId: product.id,
+      sku: product.sku,
+      productTitle: product.title,
+      previousMarketMedian,
+      newMarketMedian: updatedProduct.marketMedianPrice,
+      retailPrice: product.retailPrice,
+      deltaPercent: deltaPct,
+      timestamp: new Date().toISOString(),
+    });
+
+    if (Math.abs(deltaPct) >= 10 || Math.abs(retailGapPct) >= 15) {
+      const alertPayload = {
+        id: `srv_comp_${product.id}_${Date.now()}`,
+        dedupeKey: `competitor_price:${product.id}`,
+        category: "COMPETITOR_PRICE_SPIKE" as const,
+        severity: (Math.abs(deltaPct) >= 15 || Math.abs(retailGapPct) >= 18) ? "CRITICAL" as const : "HIGH" as const,
+        title: `نوسان ناگهانی قیمت رقبا (${deltaPct > 0 ? `+${deltaPct}` : deltaPct}٪): ${product.title}`,
+        message: `میانه قیمت رقبا از ${previousMarketMedian.toLocaleString("fa-IR")} به ${updatedProduct.marketMedianPrice.toLocaleString("fa-IR")} تومان تغییر کرد (اختلاف با قیمت فروش گُردیه: ${retailGapPct > 0 ? `+${retailGapPct}` : retailGapPct}٪).`,
+        productId: product.id,
+        productTitle: product.title,
+        sku: product.sku,
+        metrics: {
+          currentPrice: product.retailPrice,
+          competitorPrice: updatedProduct.marketMedianPrice,
+          previousCompetitorPrice: previousMarketMedian,
+          deltaPercent: deltaPct,
+        },
+        recommendedActionLabel: "تعدیل هوشمند قیمت",
+        targetTab: "catalog",
+        timestamp: new Date().toISOString(),
+      };
+      eventBus.publish("supervisor:alert", alertPayload);
+    }
+
+    return res.json({
+      success: true,
+      product: updatedProduct,
+      deltaPercent: deltaPct,
+      retailGapPercent: retailGapPct,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در ثبت نوسان قیمت رقبا" });
+  }
+});
+
+v1Router.post("/supervisor/products/:id/stock-adjust", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const nextStock = Math.max(0, Math.floor(Number(req.body?.stock)));
+    if (!Number.isFinite(nextStock)) {
+      return res.status(400).json({ error: "مقدار موجودی نامعتبر است." });
+    }
+
+    const product = await commerceRepo.products.getProductById(id);
+    if (!product) {
+      return res.status(404).json({ error: "محصول یافت نشد." });
+    }
+
+    const updatedOffers = (product.supplierOffers || []).map((offer: any) =>
+      offer.id === product.selectedOfferId ? { ...offer, stock: nextStock } : offer
+    );
+    const updatedProduct = {
+      ...product,
+      supplierOffers: updatedOffers,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await commerceRepo.products.saveProduct(updatedProduct);
+
+    const activeOffer = updatedOffers.find((o: any) => o.id === product.selectedOfferId) || updatedOffers[0];
+    const fallbackOffer = updatedOffers.find((o: any) => o.id !== product.selectedOfferId && Number(o.stock || 0) > 5);
+    const isBestseller = Number(product.winnerScore || 0) >= 85 || Boolean(product.isFeatured) || Number(product.totalSold30d || 0) >= 80;
+
+    if (isBestseller && nextStock <= 5) {
+      eventBus.publish("inventory:depleted", {
+        productId: product.id,
+        sku: product.sku,
+        remainingStock: nextStock,
+      });
+      eventBus.publish("supervisor:alert", {
+        id: `srv_stock_${product.id}_${Date.now()}`,
+        dedupeKey: `bestseller_stock:${product.id}`,
+        category: "BESTSELLER_OUT_OF_STOCK",
+        severity: nextStock <= 0 ? "CRITICAL" : "HIGH",
+        title: nextStock <= 0
+          ? `اتمام موجودی کالای پرفروش: ${product.title}`
+          : `آستانه بحرانی موجودی پرفروش (${nextStock} عدد): ${product.title}`,
+        message: nextStock <= 0
+          ? `موجودی تأمین‌کننده فعال (${activeOffer?.supplierName || "اصلی"}) صفر شد.${fallbackOffer ? ` تأمین‌کننده پشتیبان (${fallbackOffer.supplierName}) ${fallbackOffer.stock} عدد موجودی دارد.` : ""}`
+          : `موجودی فعلی کالای پرفروش «${product.title}» تنها ${nextStock} عدد است.`,
+        productId: product.id,
+        productTitle: product.title,
+        sku: product.sku,
+        metrics: {
+          currentStock: nextStock,
+          thresholdStock: 5,
+          fallbackOfferId: fallbackOffer?.id,
+          fallbackSupplierName: fallbackOffer?.supplierName,
+          fallbackStock: fallbackOffer?.stock,
+        },
+        recommendedActionLabel: fallbackOffer ? "سوئیچ فوری تأمین‌کننده" : "مشاهده در کاتالوگ",
+        targetTab: "catalog",
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    return res.json({ success: true, product: updatedProduct });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در به‌روزرسانی موجودی تأمین‌کننده" });
+  }
+});
+

@@ -48,6 +48,14 @@ export interface SiteConfig {
     newestProductIds?: string[];
     bestsellerProductIds?: string[];
   };
+  trustLicenses?: {
+    enamadUrl?: string;
+    enamadCode?: string;
+    zarinpalUrl?: string;
+    samandehiUrl?: string;
+    unionTitle?: string;
+    unionUrl?: string;
+  };
 }
 
 export interface BlogPost {
@@ -76,6 +84,8 @@ export interface StaticPage {
   contentHtml: string;
   content?: string;
   lastUpdated: string;
+  noindex?: boolean;
+  nofollow?: boolean;
 }
 
 export interface CategoryDetail {
@@ -96,25 +106,25 @@ export interface CategoryDetail {
 export const INITIAL_SITE_CONFIG: SiteConfig = {
   announcementText: 'شرایط تست و تعویض هر محصول توی صفحه‌ی خودش نوشته شده؛ قبل از خرید می‌بینیدش.',
   announcementEnabled: true,
-  announcementBg: 'from-[#0D1321] to-[#1D2D44]',
+  announcementBg: 'from-[#1E4635] to-[#182B22]',
   siteName: 'گُردیه (GORDIYEH)',
   storeName: 'گُردیه',
   siteSlogan: 'فروشگاه گجت‌های کاربردی برای خونه، سفر و باشگاه',
   heroHeadline: 'گجت‌هایی که یه کار روزمره رو راحت‌تر می‌کنن',
   heroSubheadline: 'برای هر محصول می‌گیم چه مشکلی رو حل می‌کنه، چه کاری از دستش برنمی‌آد و شرایط تست و تعویضش چیه.',
-  heroBannerUrl: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=1600&q=80',
+  heroBannerUrl: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=1400&q=75&fm=webp',
   promoBanner1: {
     title: 'سینمای خونگی روی دیوار و سقف',
     subtitle: 'پروژکتور مگ‌کیوبیک با وای‌فای و اندروید ۱۱ برای اتاق کم‌نور',
     badge: 'برای اتاق خواب و سفر',
-    imageUrl: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=75&fm=webp',
     linkUrl: '/product/portable-smart-projector'
   },
   promoBanner2: {
     title: 'یه دستگاه به‌جای چند کابل روی میز',
     subtitle: 'G-Lamp با اسپیکر بلوتوث، شارژر بی‌سیم ۱۵ وات و ساعت دیجیتال',
     badge: 'برای میز کار و اتاق خواب',
-    imageUrl: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=75&fm=webp',
     linkUrl: '/product/g-lamp-smart-speaker'
   },
   contactPhone: '۰۲۱-۸۸۲۹۹۰۴۰',
@@ -139,7 +149,15 @@ export const INITIAL_SITE_CONFIG: SiteConfig = {
     { title: 'تست و تعویض شفاف', text: 'مهلت و شرایطش برای هر محصول جدا و توی صفحه‌ی خودش نوشته شده.', enabled: true },
     { title: 'توضیح صادقانه', text: 'برای هر محصول می‌نویسیم برای چه کسی مناسبه و برای چه کسی نیست.', enabled: true },
     { title: 'پرداخت و پشتیبانی', text: 'پرداخت از درگاه شاپرکی انجام می‌شه و برای راهنمایی می‌تونید با پشتیبانی تماس بگیرید.', enabled: true },
-  ]
+  ],
+  trustLicenses: {
+    enamadUrl: '',
+    enamadCode: '',
+    zarinpalUrl: '',
+    samandehiUrl: '',
+    unionTitle: '',
+    unionUrl: '',
+  }
 };
 
 export const SITE_CONFIG_STORAGE_KEY = 'commerce_os_site_config';
@@ -157,6 +175,10 @@ export function loadSiteConfig(): SiteConfig {
       homepageSliders: {
         ...INITIAL_SITE_CONFIG.homepageSliders,
         ...(parsed.homepageSliders || {}),
+      },
+      trustLicenses: {
+        ...INITIAL_SITE_CONFIG.trustLicenses,
+        ...(parsed.trustLicenses || {}),
       },
     };
   } catch {
@@ -181,7 +203,7 @@ export const INITIAL_BLOG_POSTS: BlogPost[] = [
     content: `عدد لومن روی جعبه‌ی پروژکتورها همیشه یه چیز رو نمی‌سنجه. فقط ANSI لومن یه روش اندازه‌گیری استاندارد داره و مقایسه‌ی درست با همون انجام می‌شه. توی اتاق تاریک یا کم‌نور معمولاً از ۱۰۰ تا چند صد ANSI لومن کافیه؛ برای اتاق روشن‌تر باید سراغ مدل‌های خیلی پرنورتر رفت.`,
     author: 'تیم گُردیه',
     category: 'راهنمای خرید',
-    coverImage: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=75&fm=webp',
     publishedAt: '۱۴۰۵/۰۸/۲۳',
     readingTimeMinutes: 4,
     tags: ['پروژکتور', 'لومن_ANSI', 'راهنمای_خرید'],
@@ -197,7 +219,7 @@ export const INITIAL_BLOG_POSTS: BlogPost[] = [
     content: `میز شلوغ معمولاً از چند دستگاه جدا می‌آد: شارژر، اسپیکر و چراغ. اگه گوشی‌تون شارژ بی‌سیم داره، یه پد روی میز وصل و جدا کردن مداوم کابل رو حذف می‌کنه. نور رو هم با کار متناسب کنید: روشن و خنثی برای کار، ملایم برای شب.`,
     author: 'تیم گُردیه',
     category: 'بررسی کاربرد',
-    coverImage: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=75&fm=webp',
     publishedAt: '۱۴۰۵/۰۸/۲۳',
     readingTimeMinutes: 3,
     tags: ['میز_کار', 'شارژ_بی‌سیم', 'نور_میز'],
@@ -213,7 +235,7 @@ export const INITIAL_BLOG_POSTS: BlogPost[] = [
     content: `باتری لیتیوم‌یون «حافظه» نداره و لازم نیست مرتب تا صفر خالی بشه. چیزی که عمرش رو بیشتر کم می‌کنه گرما و نگه‌داشتن توی شارژ کامله. این راهنما برای لیتیوم‌یون‌های رایجه؛ عمر واقعی هر دستگاه به ظرفیت و کیفیت سلول‌هاش بستگی داره و دفترچه‌ی همون دستگاه مقدمه.`,
     author: 'تیم گُردیه',
     category: 'آموزش و نگهداری',
-    coverImage: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=75&fm=webp',
     publishedAt: '۱۴۰۵/۰۸/۲۳',
     readingTimeMinutes: 4,
     tags: ['باتری', 'گجت_شارژی', 'نگهداری'],
@@ -312,6 +334,20 @@ export const INITIAL_STATIC_PAGES: StaticPage[] = [
 
 ۶. حذف سوابق
 هر زمان بخواید می‌تونید از تنظیمات حساب یا با تماس با پشتیبانی، درخواست حذف آدرس و شماره‌های تماستون رو ثبت کنید.`
+  },
+  {
+    id: 'page_licenses',
+    slug: 'licenses',
+    title: 'مجوزها و نمادهای اعتماد',
+    summary: 'محل درج و استعلام رسمی نماد اعتماد الکترونیکی (اینماد)، گواهی پرداخت زرین‌پال، نشان ساماندهی و اصالت درگاه‌های بانکی فروشگاه گُردیه.',
+    lastUpdated: '۱۴۰۵/۰۸/۲۳',
+    noindex: true,
+    nofollow: true,
+    contentHtml: `۱. نماد اعتماد الکترونیکی (اینماد) و ساماندهی
+کد و لینک استعلام رسمی اینماد و نشان ملی ثبت رسانه‌های دیجیتال (ساماندهی) پس از ثبت و تایید نهایی در کادرهای اختصاصی همین صفحه قرار می‌گیرند تا با یک کلیک قابل بررسی باشند.
+
+۲. درگاه‌های پرداخت شاپرک و زرین‌پال
+پرداخت‌های آنلاین فروشگاه از طریق درگاه‌های دارای رمزنگاری TLS و تحت شبکه شاپرک و شتاب انجام می‌شود و اطلاعات کارت بانکی در سرورهای فروشگاه ذخیره نمی‌گردد.`
   }
 ];
 
@@ -322,7 +358,7 @@ export const INITIAL_CATEGORIES: CategoryDetail[] = [
     slug: 'digital',
     description: 'فیلم رو روی دیوار ببینید، سفرتون رو ضبط کنید یا با دسته بازی کنید.',
     icon: 'Laptop',
-    bannerUrl: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=75&fm=webp',
     itemCount: 4,
     subcategories: ['پروژکتور هوشمند', 'دوربین ورزشی', 'چراغ هوشمند چندکاره', 'دسته بازی بی‌سیم'],
     seoTitle: 'کالای دیجیتال: پروژکتور، دوربین ورزشی و گیم‌پد | گُردیه',
@@ -340,7 +376,7 @@ export const INITIAL_CATEGORIES: CategoryDetail[] = [
     slug: 'smart-home',
     description: 'نظافت، اسموتی و نور شبانه با دستگاه‌های کوچیک.',
     icon: 'Sparkles',
-    bannerUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=75&fm=webp',
     itemCount: 3,
     subcategories: ['شیکر و بلندر شارژی', 'جارو رباتیک هوشمند', 'چراغ خواب کهکشانی'],
     seoTitle: 'لوازم خانگی هوشمند: شیکر، جارو رباتیک و چراغ خواب | گُردیه',
@@ -358,7 +394,7 @@ export const INITIAL_CATEGORIES: CategoryDetail[] = [
     slug: 'travel-camping',
     description: 'قهوه‌ی بدون برق و تشک بادی صندلی عقب ماشین.',
     icon: 'Coffee',
-    bannerUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=75&fm=webp',
     itemCount: 2,
     subcategories: ['اسپرسوساز همراه', 'تشک بادی خودرو'],
     seoTitle: 'تجهیزات سفر و کمپینگ: مینی‌پرسو و تشک بادی خودرو | گُردیه',
@@ -376,7 +412,7 @@ export const INITIAL_CATEGORIES: CategoryDetail[] = [
     slug: 'beauty-health',
     description: 'پاکسازی سطحی منافذ و ماساژ عضله؛ مراقبت روزمره، نه درمان.',
     icon: 'Heart',
-    bannerUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=75&fm=webp',
     itemCount: 2,
     subcategories: ['دستگاه میکرودرم خانگی', 'ماساژورهای عضلانی'],
     seoTitle: 'زیبایی و سلامت: میکرودرم و ماساژور تفنگی | گُردیه',

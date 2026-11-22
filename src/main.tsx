@@ -6,10 +6,11 @@ import '@fontsource/vazirmatn/700.css';
 import '@fontsource/vazirmatn/800.css';
 import App from './App.tsx';
 import './index.css';
-import { getInitialTheme, applyTheme } from './utils/themeManager';
+import { getInitialTheme, applyTheme, watchSystemTheme } from './utils/themeManager';
 
-// Initialize Gordiyeh theme from local storage or default to violet-dark
-applyTheme(getInitialTheme());
+// Initialize Gordiyeh Forest theme (saved preference or system prefers-color-scheme)
+applyTheme(getInitialTheme(), false);
+watchSystemTheme();
 
 // Safeguard against iframe/sandbox environments where fetch is getter-only
 if (typeof window !== 'undefined') {

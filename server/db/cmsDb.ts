@@ -137,7 +137,7 @@ async function seedInitialDocuments(): Promise<void> {
       author: 'تیم گُردیه',
       seoTitle: 'راهنمای خرید مینی پروژکتور: لومن واقعی ANSI چیه؟',
       seoDescription: 'چرا عددهای روی جعبه‌ی پروژکتورها با هم مقایسه نمی‌شن، تفاوت ANSI و LED لومن چیه و چه کسی پروژکتور پرتابل نخره.',
-      coverImage: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80',
+      coverImage: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=75&fm=webp',
       noindex: false,
       publishedAt: '2026-11-13T10:00:00.000Z',
       updatedAt: now,
@@ -246,7 +246,7 @@ async function seedInitialDocuments(): Promise<void> {
       author: 'تیم گُردیه',
       seoTitle: 'میز کار مرتب‌تر: کاهش کابل و انتخاب نور و صدا',
       seoDescription: 'کی دستگاه چندکاره روی میز به کار می‌آد، شارژ بی‌سیم چه چیزی رو ساده می‌کنه و نور میز برای کار و استراحت چطور باشه.',
-      coverImage: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80',
+      coverImage: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=75&fm=webp',
       noindex: false,
       publishedAt: '2026-11-13T09:00:00.000Z',
       updatedAt: now,
@@ -322,7 +322,7 @@ async function seedInitialDocuments(): Promise<void> {
       author: 'تیم گُردیه',
       seoTitle: 'باورهای غلط درباره باتری گجت‌های شارژی',
       seoDescription: 'آیا باید اولین بار ۸ ساعت شارژ کرد، تا صفر خالی کرد یا تا ۱۰۰٪ نگه داشت؟ نکته‌های عملی برای نگهداری از باتری لیتیوم‌یون.',
-      coverImage: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=80',
+      coverImage: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=75&fm=webp',
       noindex: false,
       publishedAt: '2026-11-13T08:00:00.000Z',
       updatedAt: now,
@@ -780,6 +780,61 @@ async function seedInitialDocuments(): Promise<void> {
           colorToken: 'default'
         }
       ]
+    },
+
+    // 9. Static Page: Licenses & Trust Seals (noindex, nofollow)
+    {
+      id: 'doc_page_licenses',
+      kind: 'page',
+      slug: 'licenses',
+      title: 'مجوزها و نمادهای اعتماد',
+      status: 'PUBLISHED',
+      version: 1,
+      author: 'تیم گُردیه',
+      seoTitle: 'مجوزها و نمادهای اعتماد | گُردیه',
+      seoDescription: 'محل درج و استعلام رسمی نماد اعتماد الکترونیکی (اینماد)، گواهی پرداخت زرین‌پال، نشان ساماندهی و درگاه‌های شاپرکی فروشگاه گُردیه.',
+      noindex: true,
+      updatedAt: now,
+      contentModifiedAt: now,
+      derivedPlainText: '',
+      blocks: [
+        {
+          id: 'blk_lic1',
+          schemaVersion: 1,
+          type: 'callout',
+          intent: 'info',
+          title: 'شفافیت اصالت و استعلام مجوزها',
+          text: 'این برگه برای نمایش و استعلام مستقیم نماد اعتماد الکترونیکی (اینماد)، گواهی درگاه پرداخت زرین‌پال، نشان ساماندهی و مشخصات پرداخت رسمی فروشگاه گُردیه در نظر گرفته شده است.'
+        },
+        {
+          id: 'blk_lic2',
+          schemaVersion: 1,
+          type: 'heading',
+          level: 2,
+          text: '۱. نماد اعتماد الکترونیکی (اینماد) و ساماندهی'
+        },
+        {
+          id: 'blk_lic3',
+          schemaVersion: 1,
+          type: 'paragraph',
+          html: 'کد و لینک استعلام رسمی اینماد و نشان ملی ثبت رسانه‌های دیجیتال (ساماندهی) پس از ثبت و تایید نهایی در کادرهای اختصاصی همین صفحه قرار می‌گیرند تا با یک کلیک قابل بررسی باشند.',
+          colorToken: 'default'
+        },
+        {
+          id: 'blk_lic4',
+          schemaVersion: 1,
+          type: 'heading',
+          level: 2,
+          text: '۲. درگاه‌های پرداخت شاپرک و زرین‌پال'
+        },
+        {
+          id: 'blk_lic5',
+          schemaVersion: 1,
+          type: 'paragraph',
+          html: 'پرداخت‌های آنلاین فروشگاه از طریق درگاه‌های دارای رمزنگاری TLS و تحت شبکه شاپرک و شتاب انجام می‌شود و اطلاعات کارت بانکی در سرورهای فروشگاه ذخیره نمی‌گردد.',
+          colorToken: 'default'
+        }
+      ]
     }
   ];
 
@@ -793,7 +848,29 @@ async function seedInitialDocuments(): Promise<void> {
       doc.derivedPlainText = derivePlainTextFromBlocks(doc.blocks);
       const existing = existingById.get(doc.id);
 
-      if (existing && existing.version === 1 && existing.contentModifiedAt < v3CutoffIso) {
+      if (!existing) {
+        memoryDocuments.set(doc.id, doc);
+        upgradedCount++;
+        if (pool && isPgConnected) {
+          try {
+            await pool.query(`
+              INSERT INTO documents (
+                id, kind, slug, title, status, version, blocks_json, derived_plain_text,
+                seo_title, seo_description, author, cover_image, canonical_url, noindex,
+                published_at, updated_at, content_modified_at
+              ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+              ON CONFLICT (id) DO NOTHING;
+            `, [
+              doc.id, doc.kind, doc.slug, doc.title, doc.status, doc.version,
+              JSON.stringify(doc.blocks), doc.derivedPlainText, doc.seoTitle,
+              doc.seoDescription, doc.author, doc.coverImage, doc.canonicalUrl,
+              doc.noindex, doc.publishedAt, doc.updatedAt, doc.contentModifiedAt
+            ]);
+          } catch (err) {
+            console.warn(`[CMS:DB] Failed to insert missing seed doc ${doc.slug}:`, err);
+          }
+        }
+      } else if (existing.version === 1 && existing.contentModifiedAt < v3CutoffIso) {
         memoryDocuments.set(doc.id, doc);
         upgradedCount++;
         if (pool && isPgConnected) {
@@ -827,12 +904,12 @@ async function seedInitialDocuments(): Promise<void> {
 
     if (upgradedCount > 0) {
       latestMemoryTimestamp = now;
-      console.log(`[CMS:DB] Upgraded ${upgradedCount} untouched v1 seed document(s) to v3.0`);
+      console.log(`[CMS:DB] Upgraded/seeded ${upgradedCount} seed document(s) to v3.0`);
     }
     return;
   }
 
-  console.log('[CMS:DB] Seeding initial 3 articles and 5 static pages (v3.0)...');
+  console.log('[CMS:DB] Seeding initial 3 articles and 6 static pages (v3.0)...');
 
   // Seed into memory and PG
   for (const doc of initialDocs) {

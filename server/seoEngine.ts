@@ -200,6 +200,7 @@ function getSitemapXmlStaticSync(siteUrl: string): string {
 export interface SeoRenderResult {
   status: number;
   isNoindex: boolean;
+  isNofollow?: boolean;
   html: string;
   redirectUrl?: string;
 }
@@ -249,10 +250,11 @@ export async function renderStorefrontSeoPageAsync(
 
   let statusCode = 200;
   let isNoindex = false;
+  let isNofollow = false;
   let title = "گُردیه | فروشگاه گجت‌های کاربردی برای خونه، سفر و باشگاه";
   let description = "برای هر محصول می‌گیم چه مشکلی رو حل می‌کنه، چه کاری از دستش برنمی‌آد و شرایط تست و تعویضش چیه. گجت‌های کاربردی با توضیح صادقانه.";
   let canonicalUrl = `${cleanBase}${cleanPath}`;
-  let ogImage = `${cleanBase}/assets/gordiyeh-logo-emblem.png`;
+  let ogImage = `${cleanBase}/assets/gordiyeh-logo-emblem.webp`;
   let ogType = "website";
   let h1Text = "";
   let bodyContent = "";
@@ -264,7 +266,7 @@ export async function renderStorefrontSeoPageAsync(
     "@type": "Organization",
     "name": "گُردیه (GORDIYEH)",
     "url": `${cleanBase}/`,
-    "logo": `${cleanBase}/assets/gordiyeh-logo-emblem.png`,
+    "logo": `${cleanBase}/assets/gordiyeh-logo-emblem.webp`,
     "sameAs": [],
   };
 
@@ -453,7 +455,8 @@ export async function renderStorefrontSeoPageAsync(
       title = baseDocTitle.includes("گُردیه") ? baseDocTitle : `${baseDocTitle} | گُردیه`;
       description = document.seoDescription || document.derivedPlainText.substring(0, 160);
       h1Text = document.title;
-      isNoindex = document.noindex;
+      isNoindex = document.noindex || document.slug === "licenses";
+      isNofollow = document.slug === "licenses";
       ogImage = document.coverImage || ogImage;
       ogType = isBlog ? "article" : "website";
 
@@ -480,7 +483,7 @@ export async function renderStorefrontSeoPageAsync(
             "name": "گُردیه (GORDIYEH)",
             "logo": {
               "@type": "ImageObject",
-              "url": `${cleanBase}/assets/gordiyeh-logo-emblem.png`,
+              "url": `${cleanBase}/assets/gordiyeh-logo-emblem.webp`,
             },
           },
         });
@@ -563,7 +566,7 @@ export async function renderStorefrontSeoPageAsync(
   `;
 
   if (isNoindex) {
-    metaTags += `\n    <meta name="robots" content="noindex, follow" />`;
+    metaTags += `\n    <meta name="robots" content="${isNofollow ? "noindex, nofollow" : "noindex, follow"}" />`;
   }
 
   for (const schema of jsonLdList) {
@@ -585,6 +588,7 @@ export async function renderStorefrontSeoPageAsync(
   return {
     status: statusCode,
     isNoindex,
+    isNofollow,
     html: finalHtml,
   };
 }

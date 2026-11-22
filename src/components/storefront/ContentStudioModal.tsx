@@ -5,19 +5,12 @@ import {
   X,
   FileText,
   Sliders,
-  Send,
   RefreshCw,
   Copy,
   Layers,
   Bot,
-  UserCheck,
   Check,
-  ArrowRight,
-  ExternalLink,
-  MessageSquare,
-  Smartphone,
-  ShieldCheck,
-  Share2
+  Share2,
 } from 'lucide-react';
 import { CanonicalProduct } from '../../types';
 
@@ -36,11 +29,10 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
   product,
   onApplyContentToProduct,
   onApplyGeneratedContent,
-  onOpenSocialPublisher
+  onOpenSocialPublisher,
 }) => {
   if (!isOpen) return null;
 
-  // Delegation Matrix State: Which parts does the site write vs custom content generator
   const [delegation, setDelegation] = useState({
     seoTitle: true,
     review: true,
@@ -59,7 +51,6 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'matrix' | 'results' | 'webhook'>('matrix');
 
-  // Generated Content State
   const [generatedResult, setGeneratedResult] = useState<{
     seoTitle?: string;
     shortPitch?: string;
@@ -73,13 +64,15 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
   } | null>(() => ({
     seoTitle: product ? `بررسی، قیمت و مشخصات خرید ${product.title} | گارانتی اصالت` : '',
     shortPitch: product ? `${product.title} با عملکرد کم‌نظیر و کیفیت ساخت مهندسی، یکی از هوشمندانه‌ترین انتخاب‌ها در رده قیمتی خود است.` : '',
-    expertReview: product ? `بررسی تخصصی ما نشان می‌دهد که ${product.title} با تکیه بر متریال درجه‌یک و هماهنگی کم‌نظیر سخت‌افزاری، تجربه کاربری بی‌نقصی ارائه می‌دهد. پایداری حرارتی و دوام بالا از مزیت‌های شاخص این مدل به شمار می‌رود.` : '',
+    expertReview: product
+      ? `بررسی تخصصی ما نشان می‌دهد که ${product.title} با تکیه بر متریال درجه‌یک و هماهنگی کم‌نظیر سخت‌افزاری، تجربه کاربری بی‌نقصی ارائه می‌دهد. پایداری حرارتی و دوام بالا از مزیت‌های شاخص این مدل به شمار می‌رود.`
+      : '',
     pros: ['کیفیت ساخت ممتاز و ارگونومی بالا', 'ارزش خرید عالی در برابر رقبای هم‌رده', 'گارانتی معتبر شرکتی'],
     cons: ['تعداد محدود در انبار در فصول تخفیف', 'نیاز به خواندن راهنمای راه‌اندازی اولیه'],
-    metaDescription: product ? `خرید ${product.title} با ضمانت ۷ روزه بازگشت وجه، ارسال اکسپرس و کمترین قیمت بازار در فروشگاه آنلاین کامرس او اس.` : '',
+    metaDescription: product ? `خرید ${product.title} با ضمانت ۷ روزه بازگشت وجه، ارسال اکسپرس و کمترین قیمت بازار در فروشگاه گُردیه.` : '',
     retargetingSms: product ? `تخفیف ویژه سفارش ${product.title}! فقط تا ۱۲ ساعت آینده با ارسال رایگان. کد تخفیف: FASTBUY` : '',
     socialCaption: product ? `معرفی محصول جدید: ${product.title}\n\nتضمین کمترین قیمت و اصالت قطعی کالا.\nسفارش آنلاین با ضمانت بازگشت وجه ۷ روزه.` : '',
-    tags: product ? [product.category, 'اصالت_کالا', 'ارسال_اکسپرس', 'تخفیف'] : []
+    tags: product ? [product.category, 'اصالت_کالا', 'ارسال_اکسپرس', 'تخفیف'] : [],
   }));
 
   React.useEffect(() => {
@@ -90,16 +83,16 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
         expertReview: `بررسی تخصصی ما نشان می‌دهد که ${product.title} با تکیه بر متریال درجه‌یک و هماهنگی کم‌نظیر سخت‌افزاری، تجربه کاربری بی‌نقصی ارائه می‌دهد. پایداری حرارتی و دوام بالا از مزیت‌های شاخص این مدل به شمار می‌رود.`,
         pros: ['کیفیت ساخت ممتاز و ارگونومی بالا', 'ارزش خرید عالی در برابر رقبای هم‌رده', 'گارانتی معتبر شرکتی'],
         cons: ['تعداد محدود در انبار در فصول تخفیف', 'نیاز به خواندن راهنمای راه‌اندازی اولیه'],
-        metaDescription: `خرید ${product.title} با ضمانت ۷ روزه بازگشت وجه، ارسال اکسپرس و کمترین قیمت بازار در فروشگاه آنلاین کامرس او اس.`,
+        metaDescription: `خرید ${product.title} با ضمانت ۷ روزه بازگشت وجه، ارسال اکسپرس و کمترین قیمت بازار در فروشگاه گُردیه.`,
         retargetingSms: `تخفیف ویژه سفارش ${product.title}! فقط تا ۱۲ ساعت آینده با ارسال رایگان. کد تخفیف: FASTBUY`,
         socialCaption: `معرفی محصول جدید: ${product.title}\n\nتضمین کمترین قیمت و اصالت قطعی کالا.\nسفارش آنلاین با ضمانت بازگشت وجه ۷ روزه.`,
-        tags: [product.category, 'اصالت_کالا', 'ارسال_اکسپرس', 'تخفیف']
+        tags: [product.category, 'اصالت_کالا', 'ارسال_اکسپرس', 'تخفیف'],
       });
     }
   }, [product?.id]);
 
   const handleToggleDelegation = (key: keyof typeof delegation) => {
-    setDelegation(prev => ({ ...prev, [key]: !prev[key] }));
+    setDelegation((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const handleGenerate = async () => {
@@ -117,8 +110,8 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
           price: product?.retailPrice || (product as any)?.sellPrice || 0,
           delegation,
           customPrompt: customInstructions,
-          customVoice: brandVoice
-        })
+          customVoice: brandVoice,
+        }),
       });
 
       if (res.ok) {
@@ -143,302 +136,202 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
 
   const handleApply = () => {
     if (product && generatedResult) {
-      if (onApplyContentToProduct) {
-        onApplyContentToProduct(product.id, generatedResult);
-      }
-      if (onApplyGeneratedContent) {
-        onApplyGeneratedContent(generatedResult);
-      }
+      onApplyContentToProduct?.(product.id, generatedResult);
+      onApplyGeneratedContent?.(generatedResult);
       onClose();
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-4xl bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-[var(--text-main)]">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/60">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+        <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-card)]">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary)] flex items-center justify-center text-[#F7F3EA] shadow-sm shrink-0">
               <Sparkles className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                استودیوی هوشمند تولید و تفویض محتوا
-                <span className="px-2 py-0.5 rounded-full text-[11px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-bold text-[var(--text-main)] flex items-center gap-2 flex-wrap">
+                <span>استودیوی هوشمند تولید و تفویض محتوا</span>
+                <span className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--accent-soft)] text-[var(--accent-text)] border border-[var(--border-active)]">
                   AI & Custom Generator
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[var(--text-muted)] truncate">
                 {product ? `متصل به محصول: ${product.title}` : 'تولید محتوای هوشمند برای مقالات و صفحات'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/80 transition-colors"
+            className="p-2 text-[var(--text-muted)] hover:text-[var(--text-main)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 px-6 pt-3 border-b border-slate-800 bg-slate-900/50">
+        <div className="flex items-center gap-2 px-4 sm:px-6 pt-3 border-b border-[var(--border-color)] bg-[var(--bg-main)] overflow-x-auto scrollbar-none">
           <button
             onClick={() => setActiveTab('matrix')}
-            className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-all ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs font-medium border-b-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'matrix'
-                ? 'border-indigo-500 text-indigo-400 font-semibold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[var(--accent-primary)] text-[var(--accent-text)] font-bold'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
             }`}
           >
-            <Sliders className="w-4 h-4" />
-            ماتریس تفویض وظایف (چه بخشی را چه کسی بنویسد؟)
+            <Sliders className="w-4 h-4 shrink-0" />
+            ماتریس تفویض وظایف
           </button>
           <button
             onClick={() => setActiveTab('results')}
-            className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-all ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs font-medium border-b-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'results'
-                ? 'border-indigo-500 text-indigo-400 font-semibold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[var(--accent-primary)] text-[var(--accent-text)] font-bold'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
             }`}
           >
-            <FileText className="w-4 h-4" />
+            <FileText className="w-4 h-4 shrink-0" />
             پیش‌نمایش و محتوای تولیدشده
           </button>
           <button
             onClick={() => setActiveTab('webhook')}
-            className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-all ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs font-medium border-b-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'webhook'
-                ? 'border-indigo-500 text-indigo-400 font-semibold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[var(--accent-primary)] text-[var(--accent-text)] font-bold'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
             }`}
           >
-            <Bot className="w-4 h-4" />
-            اتصال به موتور / ابزار تولید محتوای شما
+            <Bot className="w-4 h-4 shrink-0" />
+            اتصال به ابزار تولید محتوای شما
           </button>
         </div>
 
         {/* Tab Contents */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-right">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-6 flex-1 text-right">
           {activeTab === 'matrix' && (
             <div className="space-y-6">
               {/* Generator Source Selector */}
-              <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-3">
-                <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
-                  <Bot className="w-4 h-4 text-indigo-400" />
+              <div className="bg-[var(--bg-main)] p-4 rounded-xl border border-[var(--border-color)] space-y-3">
+                <label className="text-xs font-bold text-[var(--text-main)] flex items-center gap-2">
+                  <Bot className="w-4 h-4 text-[var(--accent-text)]" />
                   موتور اصلی پردازش و تولید:
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <button
                     onClick={() => setGeneratorSource('SITE_AI')}
-                    className={`p-3 rounded-xl border text-right transition-all flex flex-col gap-1 ${
+                    className={`p-3 rounded-xl border text-right transition-all flex flex-col gap-1 cursor-pointer ${
                       generatorSource === 'SITE_AI'
-                        ? 'border-indigo-500 bg-indigo-950/40 text-white'
-                        : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'
+                        ? 'border-[var(--border-active)] bg-[var(--accent-soft)] text-[var(--text-main)]'
+                        : 'border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--border-active)]'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold">هوش مصنوعی خود سایت (Commerce OS)</span>
-                      {generatorSource === 'SITE_AI' && <CheckCircle2 className="w-4 h-4 text-indigo-400" />}
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-[var(--text-main)]">هوش مصنوعی خود سایت</span>
+                      {generatorSource === 'SITE_AI' && <CheckCircle2 className="w-4 h-4 text-[var(--accent-text)] shrink-0" />}
                     </div>
-                    <span className="text-[11px] text-slate-400">تولید سریع با جمینای و قوانین بهینه‌سازی فروشگاهی</span>
+                    <span className="text-[11px] text-[var(--text-muted)]">تولید سریع با قوانین بهینه‌سازی فروشگاهی</span>
                   </button>
 
                   <button
                     onClick={() => setGeneratorSource('MY_GENERATOR_WEBHOOK')}
-                    className={`p-3 rounded-xl border text-right transition-all flex flex-col gap-1 ${
+                    className={`p-3 rounded-xl border text-right transition-all flex flex-col gap-1 cursor-pointer ${
                       generatorSource === 'MY_GENERATOR_WEBHOOK'
-                        ? 'border-purple-500 bg-purple-950/40 text-white'
-                        : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'
+                        ? 'border-amber-500 bg-amber-500/15 text-[var(--text-main)]'
+                        : 'border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--border-active)]'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold">ابزار تولید محتوای اختصاصی من</span>
-                      {generatorSource === 'MY_GENERATOR_WEBHOOK' && <CheckCircle2 className="w-4 h-4 text-purple-400" />}
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-[var(--text-main)]">ابزار تولید محتوای اختصاصی من</span>
+                      {generatorSource === 'MY_GENERATOR_WEBHOOK' && <CheckCircle2 className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />}
                     </div>
-                    <span className="text-[11px] text-slate-400">ارسال به API / وب‌هوک نرم‌افزار شما و بازگشت متن</span>
+                    <span className="text-[11px] text-[var(--text-muted)]">ارسال به API / وب‌هوک نرم‌افزار شما و بازگشت متن</span>
                   </button>
 
                   <button
                     onClick={() => setGeneratorSource('MANUAL_HYBRID')}
-                    className={`p-3 rounded-xl border text-right transition-all flex flex-col gap-1 ${
+                    className={`p-3 rounded-xl border text-right transition-all flex flex-col gap-1 cursor-pointer ${
                       generatorSource === 'MANUAL_HYBRID'
-                        ? 'border-emerald-500 bg-emerald-950/40 text-white'
-                        : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'
+                        ? 'border-emerald-500 bg-emerald-500/15 text-[var(--text-main)]'
+                        : 'border-[var(--border-color)] bg-[var(--bg-card)] text-[var(--text-muted)] hover:border-[var(--border-active)]'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold">حالت هیبریدی و ویرایش دستی</span>
-                      {generatorSource === 'MANUAL_HYBRID' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-[var(--text-main)]">حالت هیبریدی و ویرایش دستی</span>
+                      {generatorSource === 'MANUAL_HYBRID' && <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />}
                     </div>
-                    <span className="text-[11px] text-slate-400">ترکیب اسکلت هوش مصنوعی با بازبینی و نگارش تیم محتوا</span>
+                    <span className="text-[11px] text-[var(--text-muted)]">ترکیب اسکلت هوشمند با بازبینی و نگارش تیم محتوا</span>
                   </button>
                 </div>
               </div>
 
               {/* Granular Delegation Matrix */}
-              <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xs font-bold text-white flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-indigo-400" />
-                      ماتریس تعیین سهم نگارش بخش‌های صفحه
-                    </h3>
-                    <p className="text-[11px] text-slate-400">
-                      مشخص کنید کدام المان‌ها توسط موتور هوشمند نوشته شوند و کدام المان‌ها توسط ابزار اختصاصی شما تکمیل گردند.
-                    </p>
-                  </div>
+              <div className="bg-[var(--bg-main)] p-4 rounded-xl border border-[var(--border-color)] space-y-4">
+                <div>
+                  <h3 className="text-xs font-bold text-[var(--text-main)] flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-[var(--accent-text)]" />
+                    ماتریس تعیین سهم نگارش بخش‌های صفحه
+                  </h3>
+                  <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
+                    مشخص کنید کدام المان‌ها توسط موتور هوشمند نوشته شوند و کدام المان‌ها توسط ابزار اختصاصی شما تکمیل گردند.
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-                  {/* SEO Title */}
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-semibold text-slate-200">عنوان سئو و H1 فروشگاهی</div>
-                      <div className="text-[10px] text-slate-400">شامل کلمات کلیدی پرجستجو و برند معتبر</div>
-                    </div>
-                    <button
-                      onClick={() => handleToggleDelegation('seoTitle')}
-                      className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                        delegation.seoTitle
-                          ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700'
+                  {[
+                    { key: 'seoTitle' as const, title: 'عنوان سئو و H1 فروشگاهی', desc: 'شامل کلمات کلیدی پرجستجو و برند معتبر' },
+                    { key: 'review' as const, title: 'نقد و بررسی تخصصی (Review)', desc: 'بررسی دقیق و تجربه‌ی استفاده‌ی واقعی' },
+                    { key: 'prosCons' as const, title: 'نقاط قوت و ضعف صریح', desc: 'نکات کلیدی تصمیم‌گیری خریدار در یک نگاه' },
+                    { key: 'specs' as const, title: 'جدول خلاصه مشخصات فنی', desc: 'استخراج خودکار از کاتالوگ سازنده کالا' },
+                    { key: 'metaDescription' as const, title: 'توضیحات متای گوگل (Meta Description)', desc: 'حداکثر ۱۶۰ کاراکتر با نرخ کلیک بالا' },
+                    { key: 'retargetingSms' as const, title: 'پیامک فروش و ریتارگتینگ خریدار', desc: 'متن کوتاه پیامکی به همراه کد تخفیف اختصاصی' },
+                    { key: 'socialPost' as const, title: 'کپشن شبکه‌های اجتماعی (اینستاگرام و تلگرام)', desc: 'هشتگ‌گذاری هوشمند و دعوت به اقدام', fullSpan: true },
+                  ].map((item) => (
+                    <div
+                      key={item.key}
+                      className={`p-3 bg-[var(--bg-surface)] rounded-xl border border-[var(--border-color)] flex items-center justify-between gap-2 ${
+                        item.fullSpan ? 'md:col-span-2' : ''
                       }`}
                     >
-                      {delegation.seoTitle ? 'هوش مصنوعی سامانه' : 'موتور اختصاصی کاربر'}
-                    </button>
-                  </div>
-
-                  {/* Expert Review */}
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-semibold text-slate-200">نقد و بررسی تخصصی (Review)</div>
-                      <div className="text-[10px] text-slate-400">بررسی دقیق و تجربه‌ی استفاده‌ی واقعی</div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-[var(--text-main)]">{item.title}</div>
+                        <div className="text-[10px] text-[var(--text-muted)]">{item.desc}</div>
+                      </div>
+                      <button
+                        onClick={() => handleToggleDelegation(item.key)}
+                        className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all shrink-0 cursor-pointer ${
+                          delegation[item.key]
+                            ? 'bg-[var(--accent-soft)] text-[var(--accent-text)] border border-[var(--border-active)]'
+                            : 'bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border-color)]'
+                        }`}
+                      >
+                        {delegation[item.key] ? 'هوش مصنوعی سامانه' : 'موتور اختصاصی کاربر'}
+                      </button>
                     </div>
-                    <button
-                      onClick={() => handleToggleDelegation('review')}
-                      className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                        delegation.review
-                          ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700'
-                      }`}
-                    >
-                      {delegation.review ? 'هوش مصنوعی سامانه' : 'موتور اختصاصی کاربر'}
-                    </button>
-                  </div>
-
-                  {/* Pros & Cons */}
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-semibold text-slate-200">نقاط قوت و ضعف صریح</div>
-                      <div className="text-[10px] text-slate-400">نکات کلیدی تصمیم‌گیری خریدار در یک نگاه</div>
-                    </div>
-                    <button
-                      onClick={() => handleToggleDelegation('prosCons')}
-                      className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                        delegation.prosCons
-                          ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700'
-                      }`}
-                    >
-                      {delegation.prosCons ? 'هوش مصنوعی سامانه' : 'موتور اختصاصی کاربر'}
-                    </button>
-                  </div>
-
-                  {/* Specs Overview */}
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-semibold text-slate-200">جدول خلاصه مشخصات فنی</div>
-                      <div className="text-[10px] text-slate-400">استخراج خودکار از کاتالوگ سازنده کالا</div>
-                    </div>
-                    <button
-                      onClick={() => handleToggleDelegation('specs')}
-                      className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                        delegation.specs
-                          ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700'
-                      }`}
-                    >
-                      {delegation.specs ? 'هوش مصنوعی سامانه' : 'موتور اختصاصی کاربر'}
-                    </button>
-                  </div>
-
-                  {/* Meta Description */}
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-semibold text-slate-200">توضیحات متای گوگل (Meta Description)</div>
-                      <div className="text-[10px] text-slate-400">حداکثر ۱۶۰ کاراکتر با نرخ کلیک بالا (CTR)</div>
-                    </div>
-                    <button
-                      onClick={() => handleToggleDelegation('metaDescription')}
-                      className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                        delegation.metaDescription
-                          ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700'
-                      }`}
-                    >
-                      {delegation.metaDescription ? 'هوش مصنوعی سامانه' : 'موتور اختصاصی کاربر'}
-                    </button>
-                  </div>
-
-                  {/* Retargeting SMS */}
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-semibold text-slate-200">پیامک فروش و ریتارگتینگ خریدار</div>
-                      <div className="text-[10px] text-slate-400">متن کوتاه پیامکی به همراه کد تخفیف اختصاصی</div>
-                    </div>
-                    <button
-                      onClick={() => handleToggleDelegation('retargetingSms')}
-                      className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                        delegation.retargetingSms
-                          ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700'
-                      }`}
-                    >
-                      {delegation.retargetingSms ? 'هوش مصنوعی سامانه' : 'موتور اختصاصی کاربر'}
-                    </button>
-                  </div>
-
-                  {/* Social Post */}
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between md:col-span-2">
-                    <div>
-                      <div className="text-xs font-semibold text-slate-200">کپشن شبکه‌های اجتماعی (اینستاگرام و تلگرام)</div>
-                      <div className="text-[10px] text-slate-400">هشتگ‌گذاری هوشمند، قلاب جلب توجه و دعوت به اقدام (CTA)</div>
-                    </div>
-                    <button
-                      onClick={() => handleToggleDelegation('socialPost')}
-                      className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                        delegation.socialPost
-                          ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700'
-                      }`}
-                    >
-                      {delegation.socialPost ? 'هوش مصنوعی سامانه' : 'موتور اختصاصی کاربر'}
-                    </button>
-                  </div>
+                  ))}
                 </div>
               </div>
 
               {/* Custom Voice & Prompt */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">لحن و صدای برند (Brand Voice):</label>
+                  <label className="block text-xs font-medium text-[var(--text-main)] mb-1">لحن و صدای برند (Brand Voice):</label>
                   <input
                     type="text"
                     value={brandVoice}
-                    onChange={e => setBrandVoice(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                    onChange={(e) => setBrandVoice(e.target.value)}
+                    className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--border-active)]"
                     placeholder="مثال: تخصصی، دوستانه و جوان‌پسند"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">دستور یا پرامپت اختصاصی اضافه:</label>
+                  <label className="block text-xs font-medium text-[var(--text-main)] mb-1">دستور یا پرامپت اختصاصی اضافه:</label>
                   <input
                     type="text"
                     value={customInstructions}
-                    onChange={e => setCustomInstructions(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                    onChange={(e) => setCustomInstructions(e.target.value)}
+                    className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--border-active)]"
                     placeholder="مثال: روی حذف نویز فعال و گارانتی ۱۸ ماهه تاکید ویژه‌ای شود"
                   />
                 </div>
@@ -449,69 +342,69 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
           {activeTab === 'results' && generatedResult && (
             <div className="space-y-4">
               {/* SEO Title */}
-              <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800">
+              <div className="bg-[var(--bg-main)] p-4 rounded-xl border border-[var(--border-color)]">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-indigo-400">عنوان سئو و عنوان فروشگاهی:</span>
+                  <span className="text-xs font-bold text-[var(--accent-text)]">عنوان سئو و عنوان فروشگاهی:</span>
                   <button
                     onClick={() => copyToClipboard(generatedResult.seoTitle || '', 'seoTitle')}
-                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
+                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center gap-1 cursor-pointer"
                   >
-                    {copiedField === 'seoTitle' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedField === 'seoTitle' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     {copiedField === 'seoTitle' ? 'کپی شد' : 'کپی'}
                   </button>
                 </div>
-                <p className="text-xs text-slate-200 font-medium">{generatedResult.seoTitle}</p>
+                <p className="text-xs text-[var(--text-main)] font-medium">{generatedResult.seoTitle}</p>
               </div>
 
               {/* Short Pitch */}
-              <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800">
+              <div className="bg-[var(--bg-main)] p-4 rounded-xl border border-[var(--border-color)]">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-indigo-400">خلاصه معرفی کالا (قلاب اولیه):</span>
+                  <span className="text-xs font-bold text-[var(--accent-text)]">خلاصه معرفی کالا (قلاب اولیه):</span>
                   <button
                     onClick={() => copyToClipboard(generatedResult.shortPitch || '', 'shortPitch')}
-                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
+                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center gap-1 cursor-pointer"
                   >
-                    {copiedField === 'shortPitch' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedField === 'shortPitch' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     کپی
                   </button>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">{generatedResult.shortPitch}</p>
+                <p className="text-xs text-[var(--text-main)] leading-relaxed">{generatedResult.shortPitch}</p>
               </div>
 
               {/* Expert Review */}
-              <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800">
+              <div className="bg-[var(--bg-main)] p-4 rounded-xl border border-[var(--border-color)]">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-indigo-400">نقد و بررسی کارشناسی (In-Depth Review):</span>
+                  <span className="text-xs font-bold text-[var(--accent-text)]">نقد و بررسی کارشناسی (In-Depth Review):</span>
                   <button
                     onClick={() => copyToClipboard(generatedResult.expertReview || '', 'expertReview')}
-                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
+                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center gap-1 cursor-pointer"
                   >
-                    {copiedField === 'expertReview' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedField === 'expertReview' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     کپی
                   </button>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-line">{generatedResult.expertReview}</p>
+                <p className="text-xs text-[var(--text-main)] leading-relaxed whitespace-pre-line">{generatedResult.expertReview}</p>
               </div>
 
               {/* Pros and Cons */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="bg-emerald-950/20 p-4 rounded-xl border border-emerald-900/40">
-                  <span className="text-xs font-bold text-emerald-400 block mb-2">نقاط قوت (مزایا):</span>
-                  <ul className="space-y-1.5 text-xs text-slate-300">
+                <div className="bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/30">
+                  <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block mb-2">نقاط قوت (مزایا):</span>
+                  <ul className="space-y-1.5 text-xs text-[var(--text-main)]">
                     {generatedResult.pros?.map((p, idx) => (
                       <li key={idx} className="flex items-center gap-1.5">
-                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <Check className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400 shrink-0" />
                         <span>{p}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="bg-rose-950/20 p-4 rounded-xl border border-rose-900/40">
-                  <span className="text-xs font-bold text-rose-400 block mb-2">نقاط ضعف و چالش‌ها:</span>
-                  <ul className="space-y-1.5 text-xs text-slate-300">
+                <div className="bg-rose-500/10 p-4 rounded-xl border border-rose-500/30">
+                  <span className="text-xs font-bold text-rose-800 dark:text-rose-300 block mb-2">نقاط ضعف و چالش‌ها:</span>
+                  <ul className="space-y-1.5 text-xs text-[var(--text-main)]">
                     {generatedResult.cons?.map((c, idx) => (
                       <li key={idx} className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-600 dark:bg-rose-400 shrink-0" />
                         <span>{c}</span>
                       </li>
                     ))}
@@ -521,21 +414,21 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
 
               {/* Meta and SMS */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-                  <span className="text-[11px] font-bold text-indigo-400 block mb-1">متاتگ گوگل (Meta Description):</span>
-                  <p className="text-xs text-slate-300">{generatedResult.metaDescription}</p>
+                <div className="bg-[var(--bg-main)] p-3.5 rounded-xl border border-[var(--border-color)]">
+                  <span className="text-[11px] font-bold text-[var(--accent-text)] block mb-1">متاتگ گوگل (Meta Description):</span>
+                  <p className="text-xs text-[var(--text-main)]">{generatedResult.metaDescription}</p>
                 </div>
-                <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-                  <span className="text-[11px] font-bold text-indigo-400 block mb-1">متن پیامک ریتارگتینگ (SMS):</span>
-                  <p className="text-xs text-slate-300">{generatedResult.retargetingSms}</p>
+                <div className="bg-[var(--bg-main)] p-3.5 rounded-xl border border-[var(--border-color)]">
+                  <span className="text-[11px] font-bold text-[var(--accent-text)] block mb-1">متن پیامک ریتارگتینگ (SMS):</span>
+                  <p className="text-xs text-[var(--text-main)]">{generatedResult.retargetingSms}</p>
                 </div>
               </div>
 
               {/* Social Caption & Quick Action */}
-              <div className="bg-gradient-to-r from-purple-950/30 to-indigo-950/30 p-4 rounded-xl border border-purple-800/40 flex items-center justify-between">
+              <div className="bg-[var(--accent-soft)] p-4 rounded-xl border border-[var(--border-active)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
-                  <span className="text-xs font-bold text-purple-300 block mb-1">کپشن شبکه‌های اجتماعی آماده انتشار</span>
-                  <p className="text-xs text-slate-300 line-clamp-2">{generatedResult.socialCaption}</p>
+                  <span className="text-xs font-bold text-[var(--accent-text)] block mb-1">کپشن شبکه‌های اجتماعی آماده انتشار</span>
+                  <p className="text-xs text-[var(--text-main)] line-clamp-2">{generatedResult.socialCaption}</p>
                 </div>
                 {product && onOpenSocialPublisher && (
                   <button
@@ -543,7 +436,7 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
                       onOpenSocialPublisher(product);
                       onClose();
                     }}
-                    className="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium flex items-center gap-1.5 shrink-0 shadow-lg shadow-purple-600/20"
+                    className="px-3 py-2 rounded-xl bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] text-xs font-medium flex items-center gap-1.5 shrink-0 shadow-sm cursor-pointer"
                   >
                     <Share2 className="w-3.5 h-3.5" />
                     انتشار در اینستاگرام و تلگرام
@@ -555,25 +448,25 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
 
           {activeTab === 'webhook' && (
             <div className="space-y-4">
-              <div className="p-4 bg-slate-950/60 rounded-xl border border-slate-800 space-y-3">
-                <div className="flex items-center gap-2 text-xs font-bold text-purple-400">
+              <div className="p-4 bg-[var(--bg-main)] rounded-xl border border-[var(--border-color)] space-y-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-[var(--accent-text)]">
                   <Bot className="w-4 h-4" />
                   اتصال به ابزار تولید محتوای شما از طریق Webhook / API
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  اگر نرم‌افزار، اسکریپت یا موتور تولید محتوای اختصاصی خود را روی سرور یا ابزارهایی مانند n8n، Make، یا پایتون اجرا می‌کنید، آدرس Endpoint آن را در زیر وارد کنید. سایت اطلاعات ورودی کالا را برای شما ارسال کرده و پاسخ را مستقیما در فیلدهای مربوطه می‌نشاند.
+                <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+                  اگر نرم‌افزار، اسکریپت یا موتور تولید محتوای اختصاصی خود را روی سرور یا ابزارهایی مانند n8n، Make، یا پایتون اجرا می‌کنید، آدرس Endpoint آن را در زیر وارد کنید.
                 </p>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Webhook Endpoint URL:</label>
+                  <label className="block text-xs font-medium text-[var(--text-main)] mb-1">Webhook Endpoint URL:</label>
                   <input
                     type="url"
                     value={webhookUrl}
-                    onChange={e => setWebhookUrl(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-purple-300 font-mono focus:outline-none focus:border-purple-500"
+                    onChange={(e) => setWebhookUrl(e.target.value)}
+                    className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-mono focus:outline-none focus:border-[var(--border-active)]"
                     placeholder="https://api.your-custom-ai.com/v1/content-craft"
                   />
                 </div>
-                <div className="p-3 bg-slate-900/80 rounded-lg text-[11px] text-slate-400 font-mono">
+                <div className="p-3 bg-[var(--bg-card)] rounded-lg text-[11px] text-[var(--text-muted)] font-mono">
                   Payload ارسالی شامل: {'{'} productTitle, category, brand, features, delegationMatrix {'}'}
                 </div>
               </div>
@@ -582,16 +475,16 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-800 bg-slate-950/80">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Bot className="w-4 h-4 text-indigo-400" />
-            <span>مدل فعال: Gemini 3.8 Flash + موتور قوانین محتوایی</span>
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-[var(--border-color)] bg-[var(--bg-card)]">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <Bot className="w-4 h-4 text-[var(--accent-text)] shrink-0" />
+            <span>موتور قوانین و تولید محتوای گُردیه</span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium text-slate-300 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
+              className="px-4 py-2 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
             >
               انصراف
             </button>
@@ -599,7 +492,7 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
             <button
               onClick={handleGenerate}
               disabled={isGenerating}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-50"
+              className="px-4 sm:px-5 py-2.5 rounded-xl bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-[#F7F3EA] text-xs font-bold flex items-center gap-2 shadow-md transition-all disabled:opacity-50 cursor-pointer"
             >
               {isGenerating ? (
                 <>
@@ -617,7 +510,7 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
             {activeTab === 'results' && product && onApplyContentToProduct && (
               <button
                 onClick={handleApply}
-                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-600/20"
+                className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 ذخیره و درج در شناسنامه کالا
