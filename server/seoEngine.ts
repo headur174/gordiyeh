@@ -20,8 +20,66 @@ import {
   listAllDocuments,
   getLatestContentTimestamp,
 } from "./db/cmsDb";
-import { DRAFT_PREVIEW_TOKEN } from "./cmsApi";
+import { getDraftPreviewToken } from "./security/adminAuth";
 import { CanonicalProduct } from "../src/types";
+import { CommerceDB } from "./db";
+
+function toAbsoluteUrl(urlOrPath: string, cleanBase: string): string {
+  if (!urlOrPath) return `${cleanBase}/assets/gordiyeh-logo-emblem.webp`;
+  if (/^https?:\/\//i.test(urlOrPath)) return urlOrPath;
+  const normalized = urlOrPath.startsWith("/") ? urlOrPath : `/${urlOrPath}`;
+  return `${cleanBase}${normalized}`;
+}
+
+interface LiveResolvedSeoProduct extends SeoProduct {
+  inStock: boolean;
+}
+
+function resolveWithLiveCatalog(
+  seoProd: SeoProduct,
+  liveById: Map<string, CanonicalProduct>
+): LiveResolvedSeoProduct {
+  const live = liveById.get(seoProd.id);
+  if (!live) {
+    return { ...seoProd, inStock: true };
+  }
+  const activeOffer =
+    live.supplierOffers?.find((o) => o.id === live.selectedOfferId) ||
+    live.supplierOffers?.[0];
+  const offerHasStock = activeOffer ? Number(activeOffer.stock || 0) > 0 : true;
+  const statusAvailable =
+    live.status !== "OUT_OF_STOCK" &&
+    live.status !== "KILL_LIST" &&
+    live.status !== "UNPUBLISHED";
+  const livePriceToman =
+    typeof live.retailPrice === "number" && live.retailPrice > 0
+      ? live.retailPrice
+      : seoProd.retailPriceToman;
+
+  return {
+    ...seoProd,
+    title: live.title || seoProd.title,
+    seoTitle: live.seoTitle || seoProd.seoTitle,
+    description: live.seoDescription || live.description || seoProd.description,
+    sku: live.sku || seoProd.sku,
+    brand: live.brand || seoProd.brand,
+    brandFa: live.brandFa || seoProd.brandFa,
+    image: live.image || seoProd.image,
+    retailPriceToman: livePriceToman,
+    retailPriceRial: livePriceToman * 10,
+    updatedAt: live.updatedAt || seoProd.updatedAt,
+    inStock: statusAvailable && offerHasStock,
+  };
+}
+
+function getLiveProductMap(): Map<string, CanonicalProduct> {
+  try {
+    const products = CommerceDB.getProducts();
+    return new Map(products.map((p) => [p.id, p]));
+  } catch {
+    return new Map();
+  }
+}
 
 export function formatToman(amount: number): string {
   return new Intl.NumberFormat("fa-IR").format(amount);
@@ -42,10 +100,10 @@ export function getSiteUrl(req?: any): string {
   }
   if (req) {
     const proto = req.get("x-forwarded-proto") || req.protocol || "https";
-    const host = req.get("host") || "ais-dev-nursgucwf57kuiaai22xjy-157059526200.asia-southeast1.run.app";
+    const host = req.get("host") || "gordiyeh.ir";
     return `${proto}://${host}`;
   }
-  return "https://ais-dev-nursgucwf57kuiaai22xjy-157059526200.asia-southeast1.run.app";
+  return "https://gordiyeh.ir";
 }
 
 /**
@@ -82,7 +140,12 @@ let cachedSitemapSiteUrl = "";
  */
 export async function getSitemapXmlAsync(siteUrl: string): Promise<string> {
   const cleanBase = siteUrl.replace(/\/+$/, "");
-  const latestDbTs = await getLatestContentTimestamp();
+  const liveMap = getLiveProductMap();
+  let latestProductTs = "";
+  for (const p of liveMap.values()) {
+    if (p.updatedAt && p.updatedAt > latestProductTs) latestProductTs = p.updatedAt;
+  }
+  const latestDbTs = `${await getLatestContentTimestamp()}|${latestProductTs}`;
 
   // Return SWR cache if still valid
   if (cachedSitemapXml && cachedSitemapTimestamp === latestDbTs && cachedSitemapSiteUrl === cleanBase) {
@@ -110,12 +173,26 @@ export async function getSitemapXmlAsync(siteUrl: string): Promise<string> {
     });
   }
 
-  // 3. Products (11)
+  // 3. Products (11 canonical + any live-only published products with slug)
+  const seenSlugs = new Set<string>();
   for (const prod of SEO_PRODUCTS) {
+    const live = liveMap.get(prod.id);
+    if (live && live.status === "KILL_LIST") continue;
+    const modTs = live?.updatedAt || prod.updatedAt;
+    seenSlugs.add(prod.slug);
     entries.push({
       loc: `${cleanBase}/product/${prod.slug}`,
-      lastmod: prod.updatedAt ? prod.updatedAt.split("T")[0] : undefined,
+      lastmod: modTs ? modTs.split("T")[0] : undefined,
     });
+  }
+  for (const live of liveMap.values()) {
+    if (live.slug && !seenSlugs.has(live.slug) && live.status === "PUBLISHED") {
+      seenSlugs.add(live.slug);
+      entries.push({
+        loc: `${cleanBase}/product/${live.slug}`,
+        lastmod: live.updatedAt ? live.updatedAt.split("T")[0] : undefined,
+      });
+    }
   }
 
   // 4. Blog Index (1)
@@ -323,7 +400,10 @@ export async function renderStorefrontSeoPageAsync(
 
       breadcrumbItems.push({ name: category.h1, url: canonicalUrl });
 
-      const catProducts = SEO_PRODUCTS.filter((p) => p.categorySlug === category.slug);
+      const liveMap = getLiveProductMap();
+      const catProducts = SEO_PRODUCTS.filter((p) => p.categorySlug === category.slug).map((p) =>
+        resolveWithLiveCatalog(p, liveMap)
+      );
 
       bodyContent = `
         <div class="ssr-category-page">
@@ -347,7 +427,42 @@ export async function renderStorefrontSeoPageAsync(
     }
   } else if (cleanPath.startsWith("/product/")) {
     const prodSlug = cleanPath.replace(/^\/product\//, "").split("/")[0];
-    const product = PRODUCT_BY_SLUG.get(prodSlug);
+    const liveMap = getLiveProductMap();
+    const baseProduct = PRODUCT_BY_SLUG.get(prodSlug);
+    let product: LiveResolvedSeoProduct | undefined = baseProduct
+      ? resolveWithLiveCatalog(baseProduct, liveMap)
+      : undefined;
+
+    if (!product) {
+      for (const lp of liveMap.values()) {
+        if (lp.slug === prodSlug && lp.status !== "KILL_LIST") {
+          const matchedCat =
+            SEO_CATEGORIES.find((c) => c.h1 === lp.category || c.slug === lp.category) ||
+            SEO_CATEGORIES[0];
+          const activeOffer =
+            lp.supplierOffers?.find((o) => o.id === lp.selectedOfferId) || lp.supplierOffers?.[0];
+          const offerHasStock = activeOffer ? Number(activeOffer.stock || 0) > 0 : true;
+          product = {
+            id: lp.id,
+            slug: lp.slug,
+            title: lp.title,
+            seoTitle: lp.seoTitle,
+            description: lp.seoDescription || lp.description || lp.title,
+            categorySlug: matchedCat.slug,
+            categoryTitleFa: matchedCat.h1,
+            sku: lp.sku,
+            brand: lp.brand || "Gordiyeh",
+            brandFa: lp.brandFa || lp.brand || "گُردیه",
+            image: lp.image,
+            retailPriceToman: lp.retailPrice,
+            retailPriceRial: lp.retailPrice * 10,
+            updatedAt: lp.updatedAt || new Date().toISOString(),
+            inStock: lp.status !== "OUT_OF_STOCK" && lp.status !== "UNPUBLISHED" && offerHasStock,
+          };
+          break;
+        }
+      }
+    }
 
     if (!product) {
       statusCode = 404;
@@ -363,7 +478,7 @@ export async function renderStorefrontSeoPageAsync(
       const rawDesc = product.description;
       description = rawDesc.length > 160 ? rawDesc.slice(0, 158) + "…" : rawDesc;
       h1Text = product.title;
-      ogImage = product.image;
+      ogImage = toAbsoluteUrl(product.image, cleanBase);
       ogType = "product";
 
       const cat = CATEGORY_BY_SLUG.get(product.categorySlug);
@@ -376,7 +491,7 @@ export async function renderStorefrontSeoPageAsync(
         "@context": "https://schema.org",
         "@type": "Product",
         "name": product.title,
-        "image": product.image,
+        "image": ogImage,
         "description": product.description,
         "sku": product.sku,
         "brand": {
@@ -394,7 +509,9 @@ export async function renderStorefrontSeoPageAsync(
             "priceCurrency": "TOMAN",
           },
           "itemCondition": "https://schema.org/NewCondition",
-          "availability": "https://schema.org/InStock",
+          "availability": product.inStock
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
         },
       });
 
@@ -406,6 +523,7 @@ export async function renderStorefrontSeoPageAsync(
           <h1>${h1Text}</h1>
           <div class="ssr-price-box">
             <span class="ssr-price">${formatToman(product.retailPriceToman)} تومان</span>
+            <span class="ssr-availability">${product.inStock ? "موجود در انبار" : "ناموجود"}</span>
           </div>
           <div class="ssr-description">
             <p>${product.description}</p>
@@ -439,7 +557,7 @@ export async function renderStorefrontSeoPageAsync(
     const slug = cleanPath.replace(/^\/(?:blog|page)\//, "").split("/")[0];
 
     // Check signed preview token
-    const isPreview = query.preview_token === DRAFT_PREVIEW_TOKEN;
+    const isPreview = Boolean(query.preview_token) && query.preview_token === getDraftPreviewToken();
     const document = await getDocumentBySlug(slug, docKind, isPreview);
 
     if (!document) {
@@ -489,14 +607,14 @@ export async function renderStorefrontSeoPageAsync(
         });
       }
 
-      // Pre-fetch product_card items for SSR & Hydration
+      // Pre-fetch product_card items for SSR & Hydration (live SQLite price + fallback to seed)
       const productIds = document.blocks
         .filter((b) => b.type === "product_card")
         .map((b: any) => b.productId);
 
       const productMap: Record<string, CanonicalProduct> = {};
       for (const pid of productIds) {
-        const prod = PORTED_PRODUCTS.find((p) => p.id === pid);
+        const prod = CommerceDB.getProductById(pid) || PORTED_PRODUCTS.find((p) => p.id === pid);
         if (prod) productMap[pid] = prod;
       }
 

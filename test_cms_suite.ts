@@ -6,9 +6,13 @@ import assert from 'node:assert';
 import http from 'node:http';
 import { sanitizeInlineHtml, normalizePersianText, ContentBlock } from './src/types/cms';
 
-const PORT = process.env.PORT || '8080';
-const BASE_URL = `http://127.0.0.1:${PORT}`;
-const ADMIN_TOKEN = 'gordiyeh_supervisor_secret_token_2025';
+import { getAdminSecretKey, getBaseUrl } from './test_support_auth';
+
+const BASE_URL = getBaseUrl();
+const ADMIN_TOKEN = getAdminSecretKey();
+if (!ADMIN_TOKEN) {
+  throw new Error('ADMIN_SECRET_KEY must be set in environment to run test_cms_suite.ts');
+}
 
 async function request(path: string, options: RequestInit = {}) {
   const url = `${BASE_URL}${path}`;
@@ -43,10 +47,14 @@ async function runAllTests() {
     }
   }
 
-  // 1. Health & Database check
+  // 1. Health & Database check (admin-protected DB telemetry)
   await check('1. DB Connection & Health Check', async () => {
-    const res = await request('/api/cms/health');
-    assert.strictEqual(res.status, 200, 'Health endpoint should return 200');
+    const unauth = await request('/api/cms/health');
+    assert.strictEqual(unauth.status, 401, 'Unauthenticated /api/cms/health must be rejected');
+    const res = await request('/api/cms/health', {
+      headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+    });
+    assert.strictEqual(res.status, 200, 'Authenticated health endpoint should return 200');
     assert.strictEqual(res.json?.success, true);
     assert.ok(typeof res.json?.latencyMs === 'number', 'Latency should be a number');
     console.log(`   Database driver: ${res.json.driver}, latency: ${res.json.latencyMs}ms`);

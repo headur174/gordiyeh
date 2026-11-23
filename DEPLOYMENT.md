@@ -1,122 +1,67 @@
-# Commerce OS — Production Deployment Guide
+# گُردیه (Commerce OS) — راهنمای استقرار و امنیت روی لیارا (Liara PaaS)
 
-This guide describes how to deploy **Commerce OS (Release Candidate 1)** to production, with a focus on containerized single-instance deployments, Node.js PaaS hosting (specifically **Liara**), and standalone virtual machines.
-
----
-
-## 🏛️ Deployment Architecture Principles
-
-1. **Modular Monolith**: Single process containing the Express API server, React SSR engine, background Outbox worker, and SQLite storage engine.
-2. **Persistence Guarantee**: SQLite requires a persistent disk mount. In containerized environments, ephemeral container storage will lead to data loss on container restart.
-3. **Single Active Instance**: SQLite with Write-Ahead Logging (WAL) is designed for single-node vertical scaling (concurrent multi-threaded reads, sequential serialized writes). Do not deploy behind multi-container auto-scaling without external network volume locking.
+این سند راهنمای گام‌به‌گام استقرار نسخه‌ی سخت‌سازی‌شده‌ی فروشگاه گُردیه در **لیارا** (یا سرورهای داکر/لینوکس) است.
 
 ---
 
-## ☁️ Deployment on Liara PaaS (Node.js Platform)
+## ۱. پیش‌نیازهای سخت‌سازی‌شده (Production Checklist)
 
-Commerce OS is pre-configured with `liara.json` for rapid zero-configuration deployment to Liara.
+سرور در حالت `NODE_ENV=production` به‌صورت **Fail-Closed** راه‌اندازی می‌شود؛ یعنی اگر کلیدهای امنیتی زیر تنظیم نشده باشند یا برابر مقادیر پیش‌فرض لو‌رفته باشند، سرور عمداً استارت نمی‌خورد:
 
-### 1. Prerequisites
-- Liara CLI installed: `npm i -g @liara/cli`
-- Active account and logged in: `liara login`
+- `ADMIN_SECRET_KEY`: حداقل ۲۴ کاراکتر تصادفی (`openssl rand -hex 24`)
+- `ADMIN_PASSWORD`: حداقل ۱۲ کاراکتر (`openssl rand -base64 16`) — رمز ورود به پنل `/admin` و `/tasks` با نام کاربری `admin`
+- `DB_ENCRYPTION_KEY`: کلید ۶۴ کاراکتری هگز (`openssl rand -hex 32`) برای رمزنگاری AES-256-GCM اطلاعات حساس در SQLite
+- `PAYMENT_GATEWAY_SECRET`: کلید ۶۴ کاراکتری هگز (`openssl rand -hex 32`) برای امضای HMAC کال‌بک‌های درگاه پرداخت
 
-### 2. Liara Persistent Disk Creation
-SQLite data files must be preserved across app restarts and updates.
-1. Navigate to Liara Console -> **Disks (دیسک‌ها)**.
-2. Create a persistent disk:
-   - **Disk Name**: `commerce-data`
-   - **Size**: 2 GB (or larger depending on product media)
-   - **Mount Path**: `/data`
+---
 
-### 3. Environment Variables Configuration
-In the Liara Console -> App Settings -> **Environment Variables (متغیرهای محیطی)**, configure:
+## ۲. تنظیم دیسک پایدار و دیتابیس در لیارا
 
-| Variable | Recommended Production Value | Description |
-|---|---|---|
-| `NODE_ENV` | `production` | Enables strict security, SSR caching, and disables dev paths |
-| `PORT` | `3000` | Liara automatically assigns/manages container port |
-| `COMMERCE_DB_PATH` | `/data/commerce.db` | Point to the persistent disk mount path |
-| `DB_ENCRYPTION_KEY` | *(64-hex string)* | Cryptographic master key for AES-256-GCM at-rest encryption |
-| `DB_ENCRYPTION_KEY_ID`| `k1` | Active encryption key ID |
-| `WEBHOOK_ALLOW_LOOPBACK`| `false` | Enforce SSRF defense blocking loopback/private destinations |
+1. **ساخت دیسک پایدار (`commerce-data`)**:
+   - در پنل لیارا به بخش **دیسک‌ها** بروید و دیسکی با نام `commerce-data` (پیشنهادی حداقل ۲ گیگابایت) بسازید.
+   - این دیسک طبق فایل `liara.json` روی مسیر `/data` مونت می‌شود.
+   - فایل دیتابیس SQLite در مسیر `/data/commerce.db` و فایل‌های آپلودشده در مسیر `/data/uploads` نگه‌داری می‌شوند (مسیر `/uploads/*` به‌صورت خودکار توسط سرور سرو می‌شود).
+   - **توجه**: به دلیل استفاده از SQLite در حالت WAL، تعداد نمونه (Replicas) برنامه باید روی **۱** باقی بماند.
 
-*To generate a 64-hex string:*
-```bash
-openssl rand -hex 32
+2. **دیتابیس PostgreSQL برای CMS**:
+   - از بخش دیتابیس‌های لیارا یک **PostgreSQL** بسازید و رشته اتصال آن را در متغیر `DATABASE_URL` یا `LIARA_POSTGRES_URL` قرار دهید تا اسناد، مقالات و تاریخچه تغییرات CMS پس از ری‌استارت حفظ شوند.
+
+---
+
+## ۳. متغیرهای محیطی پیشنهادی در کنسول لیارا
+
+```env
+NODE_ENV=production
+PORT=3000
+APP_URL=https://gordiyeh.ir
+COMMERCE_DB_PATH=/data/commerce.db
+UPLOADS_DIR=/data/uploads
+DB_ENCRYPTION_KEY=<خروجی openssl rand -hex 32>
+DB_ENCRYPTION_KEY_ID=k1
+ADMIN_SECRET_KEY=<خروجی openssl rand -hex 24>
+ADMIN_PASSWORD=<رمز قوی حداقل ۱۲ کاراکتر>
+PAYMENT_GATEWAY_SECRET=<خروجی openssl rand -hex 32>
+DATABASE_URL=<آدرس اتصال PostgreSQL لیارا>
+WEBHOOK_ALLOW_LOOPBACK=false
+GEMINI_API_KEY=<کلید Gemini در صورت استفاده از چت هوشمند>
 ```
 
-### 4. Deploying via CLI
-The repository includes `liara.json`:
-```json
-{
-  "platform": "node",
-  "app": "commerce-os",
-  "port": 3000,
-  "build": {
-    "command": "npm run build"
-  },
-  "start": "npm start",
-  "disks": [
-    {
-      "name": "commerce-data",
-      "mountTo": "/data"
-    }
-  ]
-}
-```
+---
 
-Run the deploy command from the project root:
+## ۴. درگاه پرداخت بانکی و تایید تراکنش (Zarinpal / Zibal / IDPay)
+
+- پس از بازگشت کاربر از صفحه بانک با پارامتر `?payment_callback=1&...`، فرانت‌اند به‌صورت خودکار درخواست استعلام سرور-به-سرور را به `POST /api/v1/payment/verify` می‌فرستد.
+- در صورت ناموفق بودن یا لغو پرداخت، موجودی کالاهای رزروشده با رمزگشایی امن سفارش بلافاصله به انبار برگردانده می‌شود.
+- مرچنت‌کد درگاه را می‌توانید در `/admin` بخش تنظیمات (ذخیره با رمزنگاری AES-256-GCM) یا از طریق متغیرهای محیطی تنظیم کنید.
+
+---
+
+## ۵. استقرار با Liara CLI
+
 ```bash
+npm i -g @liara/cli
+liara login
 liara deploy
 ```
 
----
-
-## 🐳 Docker / Standalone Linux Deployment
-
-### Dockerfile Specification
-```dockerfile
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-FROM node:20-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-ENV PORT=3000
-COPY package*.json ./
-RUN npm ci --omit=dev
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/public ./public
-VOLUME ["/data"]
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-### Docker Run Command
-```bash
-docker run -d \
-  --name commerce-os \
-  -p 3000:3000 \
-  -v /var/commerce-data:/data \
-  -e NODE_ENV=production \
-  -e PORT=3000 \
-  -e COMMERCE_DB_PATH=/data/commerce.db \
-  -e DB_ENCRYPTION_KEY="<64_HEX_RANDOM_KEY>" \
-  -e DB_ENCRYPTION_KEY_ID="k1" \
-  -e WEBHOOK_ALLOW_LOOPBACK="false" \
-  --restart unless-stopped \
-  commerce-os:rc1
-```
-
----
-
-## 🛡️ Health Checks & Monitoring
-
-Commerce OS exposes system verification endpoints:
-- `GET /system/db-info`: Database WAL checkpoint status, page size, encrypted record counts (requires auth token).
-- `GET /robots.txt` & `GET /sitemap.xml`: SEO engine health checks.
-- `GET /api/v1/catalog`: API health check.
+فایل `liara.json` به‌صورت خودکار پلتفرم `node` (نسخه‌ی `>=22.13.0` تعریف‌شده در `package.json`)، پورت `3000`، دستور بیلد `npm run build` و مونت دیسک `commerce-data -> /data` را تنظیم می‌کند.

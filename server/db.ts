@@ -239,6 +239,20 @@ function initSchema() {
       updated_at TEXT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_support_sessions_phone ON support_sessions(phone_blind_index, updated_at);
+
+    /* Scheduled Social Auto-Publishing Queue (Encrypted Payloads) */
+    CREATE TABLE IF NOT EXISTS scheduled_social_posts (
+      id TEXT PRIMARY KEY,
+      channels_json TEXT NOT NULL,
+      payload_encrypted TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'SCHEDULED',
+      scheduled_at TEXT NOT NULL,
+      published_at TEXT,
+      results_json TEXT,
+      last_error TEXT,
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_scheduled_social_due ON scheduled_social_posts(status, scheduled_at);
   `);
 
   // Migration guard: ensure lease_token column exists in existing outbox_events tables
@@ -634,8 +648,9 @@ export const CommerceDB = {
       .filter(Boolean);
   },
 
-  lookupOrder(query: string): any | null {
+  lookupOrder(query: string, opts?: { allowSubstring?: boolean }): any | null {
     const clean = query.trim();
+    if (!clean) return null;
     const phoneBlind = CryptoVault.blindIndex(clean);
 
     const row = db.prepare(`
@@ -651,12 +666,20 @@ export const CommerceDB = {
       }
     }
 
+    const allowSubstring = Boolean(opts?.allowSubstring);
+    const cleanUpper = clean.toUpperCase();
     const allRows = db.prepare("SELECT data FROM orders ORDER BY createdAt DESC LIMIT 100").all() as { data: string }[];
     for (const r of allRows) {
       try {
         const o = CryptoVault.decryptJson(r.data);
+        if (!o) continue;
+        const exactMatch =
+          String(o.orderNumber || "").toUpperCase() === cleanUpper ||
+          String(o.trackingCode || "").toUpperCase() === cleanUpper ||
+          String(o.id || "") === clean;
+        if (exactMatch) return o;
         if (
-          o &&
+          allowSubstring &&
           (o.orderNumber?.includes(clean) ||
             o.phone?.includes(clean) ||
             o.customerName?.includes(clean) ||
@@ -1036,6 +1059,132 @@ export const CommerceDB = {
       ON CONFLICT(id) DO UPDATE SET config = excluded.config, updatedAt = excluded.updatedAt
     `).run(provider, provider, encryptedConfig, updatedAt);
     return { provider, config, updatedAt };
+  },
+
+  // Generic KV Store helpers for structured integration configs
+  getKvJson<T>(key: string, fallback: T): T {
+    const row = db.prepare("SELECT value FROM kv_store WHERE key = ? LIMIT 1").get(key) as { value: string } | undefined;
+    if (!row) return fallback;
+    try {
+      return JSON.parse(row.value) as T;
+    } catch {
+      return fallback;
+    }
+  },
+
+  setKvJson<T>(key: string, value: T): T {
+    db.prepare(`
+      INSERT INTO kv_store (key, value)
+      VALUES (?, ?)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value
+    `).run(key, JSON.stringify(value));
+    return value;
+  },
+
+  // Scheduled Social Posts Queue (Encrypted Payload at Rest)
+  createScheduledSocialPost(input: {
+    channels: string[];
+    payload: Record<string, any>;
+    scheduledAt: string;
+  }) {
+    const id = `soc_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    const nowIso = new Date().toISOString();
+    const encrypted = CryptoVault.encryptJson(input.payload);
+    db.prepare(`
+      INSERT INTO scheduled_social_posts (
+        id, channels_json, payload_encrypted, status, scheduled_at, created_at
+      ) VALUES (?, ?, ?, 'SCHEDULED', ?, ?)
+    `).run(id, JSON.stringify(input.channels), encrypted, input.scheduledAt, nowIso);
+    return {
+      id,
+      channels: input.channels,
+      payload: input.payload,
+      status: "SCHEDULED" as const,
+      scheduledAt: input.scheduledAt,
+      publishedAt: null as string | null,
+      results: null as any,
+      lastError: null as string | null,
+      createdAt: nowIso,
+    };
+  },
+
+  listScheduledSocialPosts(limit: number = 50) {
+    const rows = db.prepare(`
+      SELECT id, channels_json, payload_encrypted, status, scheduled_at, published_at, results_json, last_error, created_at
+      FROM scheduled_social_posts
+      ORDER BY created_at DESC
+      LIMIT ?
+    `).all(limit) as any[];
+
+    return rows.map((row) => ({
+      id: row.id,
+      channels: (() => {
+        try { return JSON.parse(row.channels_json); } catch { return []; }
+      })(),
+      payload: CryptoVault.decryptJson(row.payload_encrypted, {}),
+      status: row.status,
+      scheduledAt: row.scheduled_at,
+      publishedAt: row.published_at || null,
+      results: (() => {
+        try { return row.results_json ? JSON.parse(row.results_json) : null; } catch { return null; }
+      })(),
+      lastError: row.last_error || null,
+      createdAt: row.created_at,
+    }));
+  },
+
+  claimDueScheduledSocialPosts(nowIso: string, limit: number = 5) {
+    const candidates = db.prepare(`
+      SELECT id, channels_json, payload_encrypted, scheduled_at
+      FROM scheduled_social_posts
+      WHERE status = 'SCHEDULED' AND scheduled_at <= ?
+      ORDER BY scheduled_at ASC
+      LIMIT ?
+    `).all(nowIso, limit) as any[];
+
+    const claimed: Array<{ id: string; channels: string[]; payload: any; scheduledAt: string }> = [];
+    for (const row of candidates) {
+      const res = db.prepare(`
+        UPDATE scheduled_social_posts
+        SET status = 'PROCESSING'
+        WHERE id = ? AND status = 'SCHEDULED'
+      `).run(row.id);
+      if (Number(res.changes) > 0) {
+        claimed.push({
+          id: row.id,
+          channels: (() => {
+            try { return JSON.parse(row.channels_json); } catch { return []; }
+          })(),
+          payload: CryptoVault.decryptJson(row.payload_encrypted, {}),
+          scheduledAt: row.scheduled_at,
+        });
+      }
+    }
+    return claimed;
+  },
+
+  completeScheduledSocialPost(
+    id: string,
+    status: "PUBLISHED" | "FAILED",
+    results: any,
+    lastError?: string | null
+  ) {
+    const nowIso = status === "PUBLISHED" ? new Date().toISOString() : null;
+    db.prepare(`
+      UPDATE scheduled_social_posts
+      SET status = ?,
+          published_at = COALESCE(?, published_at),
+          results_json = ?,
+          last_error = ?
+      WHERE id = ?
+    `).run(status, nowIso, JSON.stringify(results ?? null), lastError || null, id);
+  },
+
+  deleteScheduledSocialPost(id: string): boolean {
+    const res = db.prepare(`
+      DELETE FROM scheduled_social_posts WHERE id = ? AND status != 'PROCESSING'
+    `).run(id);
+    return Number(res.changes) > 0;
   },
 
   // Support Chat Sessions (Zero-Plaintext Encrypted per Phone)

@@ -9,38 +9,15 @@ import {
   getDocumentRevisions,
 } from './db/cmsDb';
 import { DocumentInputSchema, DocumentKind } from '../src/types/cms';
+import { getDraftPreviewToken, requireAdmin } from './security/adminAuth';
+import { getSiteUrl } from './seoEngine';
+import { maybeAutoPublishCmsDocument } from './services/socialPublishService';
 
 export const cmsRouter = Router();
 
-// Secret token for previewing unpublished draft documents
-export const DRAFT_PREVIEW_TOKEN = process.env.DRAFT_PREVIEW_TOKEN || 'gordiyeh_draft_secret_token_2026';
-export const ADMIN_AUTH_TOKEN = process.env.ADMIN_TOKEN || 'gordiyeh_supervisor_secret_token_2025';
-
-/**
- * Authentication middleware for Admin write endpoints
- * Supports Bearer token header, x-admin-role header, and cookies
- */
-export function requireAdminAuth(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers['authorization'];
-  const adminRoleHeader = req.headers['x-admin-role'];
-  const cookieRole = (req as any).cookies?.admin_role;
-
-  const isBearerValid = authHeader && (
-    authHeader === `Bearer ${ADMIN_AUTH_TOKEN}` ||
-    authHeader.startsWith('Bearer gordiyeh_')
-  );
-
-  const isRoleValid = adminRoleHeader === 'ADMIN' || cookieRole === 'ADMIN';
-
-  if (!isBearerValid && !isRoleValid) {
-    if (!authHeader && !adminRoleHeader && !cookieRole) {
-      return res.status(401).json({ error: 'Unauthorized: Authentication credentials required' });
-    }
-    return res.status(403).json({ error: 'Forbidden: Insufficient permissions, ADMIN role required' });
-  }
-
-  next();
-}
+// Admin authentication and draft-preview token live in ./security/adminAuth
+export { getDraftPreviewToken };
+export const requireAdminAuth = requireAdmin;
 
 // ==========================================
 // 1. PUBLIC STOREFRONT & HEALTH ENDPOINTS
@@ -79,7 +56,7 @@ cmsRouter.get('/documents/:slug', async (req: Request, res: Response) => {
     const kind = req.query.kind as DocumentKind | undefined;
     const previewToken = (req.query.token || req.query.preview_token) as string | undefined;
 
-    const isPreview = previewToken === DRAFT_PREVIEW_TOKEN;
+    const isPreview = Boolean(previewToken) && previewToken === getDraftPreviewToken();
     const document = await getDocumentBySlug(slug, kind, isPreview);
 
     if (!document) {
@@ -139,6 +116,11 @@ cmsRouter.post('/admin/documents', requireAdminAuth, async (req: Request, res: R
     const userIdentifier = (req.headers['x-admin-user'] as string) || 'admin';
 
     const savedDoc = await saveUnifiedDocument(docInput as any, 'ADMIN', userIdentifier);
+    if (savedDoc.status === 'PUBLISHED' && !savedDoc.noindex) {
+      void maybeAutoPublishCmsDocument(savedDoc, getSiteUrl(req)).catch((err) => {
+        console.warn('[CMS:SocialAutoPublish]', err?.message || err);
+      });
+    }
     return res.status(201).json({ success: true, data: savedDoc, document: savedDoc });
   } catch (err: any) {
     if (err.statusCode === 409) {
@@ -165,6 +147,11 @@ cmsRouter.put('/admin/documents/:id', requireAdminAuth, async (req: Request, res
     const userIdentifier = (req.headers['x-admin-user'] as string) || 'admin';
 
     const savedDoc = await saveUnifiedDocument(docInput as any, 'ADMIN', userIdentifier);
+    if (savedDoc.status === 'PUBLISHED' && !savedDoc.noindex) {
+      void maybeAutoPublishCmsDocument(savedDoc, getSiteUrl(req)).catch((err) => {
+        console.warn('[CMS:SocialAutoPublish]', err?.message || err);
+      });
+    }
     return res.status(200).json({ success: true, data: savedDoc, document: savedDoc });
   } catch (err: any) {
     if (err.statusCode === 409) {
@@ -189,7 +176,7 @@ cmsRouter.post('/admin/documents/:id/preview-token', requireAdminAuth, async (_r
   return res.json({
     success: true,
     data: {
-      previewToken: DRAFT_PREVIEW_TOKEN,
+      previewToken: getDraftPreviewToken(),
       expiresIn: 3600
     }
   });

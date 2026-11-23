@@ -36,9 +36,19 @@ let latestMemoryTimestamp = new Date().toISOString();
 /**
  * Health and connection check to PostgreSQL database
  */
-export async function checkDbConnection(): Promise<{ connected: boolean; latencyMs: number; error?: string }> {
+export async function checkDbConnection(): Promise<{
+  connected: boolean;
+  driver: 'postgresql' | 'memory';
+  latencyMs: number;
+  error?: string;
+}> {
   if (!pool) {
-    return { connected: false, latencyMs: 0, error: 'DATABASE_URL environment variable is not defined' };
+    return {
+      connected: false,
+      driver: 'memory',
+      latencyMs: 0,
+      error: 'DATABASE_URL environment variable is not defined',
+    };
   }
 
   const start = Date.now();
@@ -48,13 +58,18 @@ export async function checkDbConnection(): Promise<{ connected: boolean; latency
       await client.query('SELECT 1');
       const latencyMs = Date.now() - start;
       isPgConnected = true;
-      return { connected: true, latencyMs };
+      return { connected: true, driver: 'postgresql', latencyMs };
     } finally {
       client.release();
     }
   } catch (err: any) {
     isPgConnected = false;
-    return { connected: false, latencyMs: Date.now() - start, error: err.message || String(err) };
+    return {
+      connected: false,
+      driver: 'memory',
+      latencyMs: Date.now() - start,
+      error: err.message || String(err),
+    };
   }
 }
 
@@ -110,7 +125,13 @@ export async function initCmsDatabase(): Promise<void> {
       console.error('[CMS:DB] Schema creation error:', err);
     }
   } else {
-    console.log('[CMS:DB] Operating with in-memory resilient mirror (Zero-cold-start ready)');
+    if (process.env.NODE_ENV === 'production') {
+      console.error(
+        `[CMS:DB] CRITICAL WARNING: PostgreSQL unavailable in production (${health.error}). CMS edits will NOT persist across restarts until DATABASE_URL is configured.`
+      );
+    } else {
+      console.log('[CMS:DB] Operating with in-memory resilient mirror (Zero-cold-start ready)');
+    }
   }
 
   // Seed baseline documents if empty

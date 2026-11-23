@@ -82,6 +82,7 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
   const [editingDoc, setEditingDoc] = useState<UnifiedDocument | null>(null);
   const [editorSubTab, setEditorSubTab] = useState<'builder' | 'seo' | 'preview' | 'guidelines'>('builder');
   const [saveLoading, setSaveLoading] = useState(false);
+  const [authRequired, setAuthRequired] = useState(false);
   const [feedbackBanner, setFeedbackBanner] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
   const [conflictError, setConflictError] = useState<string | null>(null);
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -242,16 +243,18 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
     setPreSaveGate(null);
   }, [editingDoc?.id, editingDoc?.title, editingDoc?.slug, editingDoc?.status, editingDoc?.seoTitle, editingDoc?.seoDescription, editingDoc?.blocks]);
 
-  // Fetch admin documents
+  // Fetch admin documents (uses HttpOnly session cookie issued by /admin login)
   const fetchDocuments = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/documents', {
-        headers: {
-          'x-admin-role': 'ADMIN',
-        },
-      });
+      const res = await fetch('/api/admin/documents');
+      if (res.status === 401 || res.status === 403) {
+        setAuthRequired(true);
+        showBanner('error', 'نشست مدیریت منقضی شده یا وارد نشده‌اید؛ لطفاً صفحه /admin را بازگذاری و ورود کنید.');
+        return;
+      }
       if (res.ok) {
+        setAuthRequired(false);
         const data = await res.json();
         setDocuments(data.documents || []);
       }
@@ -534,13 +537,14 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
     try {
       const res = await fetch('/api/admin/media/upload', {
         method: 'POST',
-        headers: {
-          'x-admin-role': 'ADMIN',
-        },
         body: formData,
       });
 
-      if (res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        setAuthRequired(true);
+        showBanner('error', 'نشست مدیریت منقضی شده است؛ لطفاً صفحه /admin را بازگذاری و مجدداً وارد شوید.');
+      } else if (res.ok) {
+        setAuthRequired(false);
         const data = await res.json();
         const uploaded = data.data || data;
         const blockIdx = editingDoc.blocks.findIndex((b) => b.id === activeImageBlockId);
@@ -603,10 +607,15 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-role': 'ADMIN',
         },
         body: JSON.stringify(editingDoc),
       });
+
+      if (res.status === 401 || res.status === 403) {
+        setAuthRequired(true);
+        showBanner('error', 'نشست مدیریت منقضی شده است؛ لطفاً صفحه /admin را بازگذاری و مجدداً وارد شوید.');
+        return;
+      }
 
       if (res.status === 409) {
         setConflictError(
@@ -616,6 +625,7 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
       }
 
       if (res.ok) {
+        setAuthRequired(false);
         const result = await res.json();
         setEditingDoc(result.document);
         showBanner('success', 'سند ذخیره شد و اطلاعات سئو همگام‌سازی شدن.');
@@ -1073,6 +1083,21 @@ export const VisualCmsStudio: React.FC<VisualCmsStudioProps> = ({ products }) =>
             </button>
           </div>
         </div>
+
+        {authRequired && (
+          <div className="p-3.5 rounded-xl text-xs flex flex-wrap items-center justify-between gap-3 border bg-amber-950/30 border-amber-500/50 text-amber-200">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>برای دسترسی به ابزارهای مدیریت محتوا، نشست مدیر باید فعال باشد.</span>
+            </div>
+            <a
+              href="/admin"
+              className="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition-colors"
+            >
+              ورود مجدد به پنل مدیریت
+            </a>
+          </div>
+        )}
 
         {feedbackBanner && (
           <div

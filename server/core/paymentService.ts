@@ -1,5 +1,6 @@
 import { DatabaseSync } from "node:sqlite";
 import crypto from "node:crypto";
+import { CryptoVault } from "../cryptoVault";
 
 export type OrderStatus =
   | "PENDING_PAYMENT"
@@ -99,6 +100,114 @@ export class PaymentStateMachine {
   }
 
   /**
+   * Persists the bank gateway authority / trackId on the initiated payment transaction.
+   */
+  public attachProviderRef(transactionId: string, providerRef: string, provider?: string): void {
+    const db = this.getDb();
+    const now = new Date().toISOString();
+    if (provider) {
+      db.prepare(`
+        UPDATE payment_transactions
+        SET provider_ref = ?, provider = ?, updated_at = ?
+        WHERE id = ?
+      `).run(providerRef, provider, now, transactionId);
+    } else {
+      db.prepare(`
+        UPDATE payment_transactions
+        SET provider_ref = ?, updated_at = ?
+        WHERE id = ?
+      `).run(providerRef, now, transactionId);
+    }
+  }
+
+  /**
+   * Looks up a payment transaction & authoritative order total using orderId, txId, or provider authority.
+   */
+  public lookupPendingTransaction(params: {
+    orderId?: string;
+    txId?: string;
+    authority?: string;
+  }): {
+    transaction: PaymentTransactionRecord | null;
+    orderId: string;
+    orderNumber: string;
+    amount: number;
+    orderStatus: OrderStatus;
+    provider: string;
+    authority: string;
+  } | null {
+    const db = this.getDb();
+    let txRow: PaymentTransactionRecord | undefined;
+
+    if (params.txId) {
+      txRow = db.prepare(`SELECT * FROM payment_transactions WHERE id = ? LIMIT 1`).get(params.txId) as unknown as PaymentTransactionRecord | undefined;
+    }
+    if (!txRow && params.authority) {
+      txRow = db.prepare(`SELECT * FROM payment_transactions WHERE provider_ref = ? ORDER BY created_at DESC LIMIT 1`).get(params.authority) as unknown as PaymentTransactionRecord | undefined;
+    }
+    if (!txRow && params.orderId) {
+      txRow = db.prepare(`
+        SELECT pt.* FROM payment_transactions pt
+        JOIN orders o ON pt.order_id = o.id
+        WHERE o.id = ? OR o.orderNumber = ?
+        ORDER BY pt.created_at DESC LIMIT 1
+      `).get(params.orderId, params.orderId) as unknown as PaymentTransactionRecord | undefined;
+    }
+
+    const lookupOrderKey = txRow?.order_id || params.orderId;
+    if (!lookupOrderKey) return null;
+
+    const orderRow = db.prepare(`
+      SELECT id, orderNumber, totalAmount, status FROM orders WHERE id = ? OR orderNumber = ? LIMIT 1
+    `).get(lookupOrderKey, lookupOrderKey) as { id: string; orderNumber: string; totalAmount: number; status: OrderStatus } | undefined;
+
+    if (!orderRow) return null;
+
+    return {
+      transaction: txRow || null,
+      orderId: orderRow.id,
+      orderNumber: orderRow.orderNumber,
+      amount: orderRow.totalAmount,
+      orderStatus: orderRow.status,
+      provider: txRow?.provider || "zarinpal",
+      authority: params.authority || txRow?.provider_ref || "",
+    };
+  }
+
+  /**
+   * Restores both aggregate SQLite product stock and encrypted/serialized supplierOffer stock JSON.
+   */
+  private restockOrderItems(db: DatabaseSync, encryptedOrJsonOrderData: string | null | undefined): void {
+    if (!encryptedOrJsonOrderData) return;
+    const rawOrder = CryptoVault.decryptJson<any>(encryptedOrJsonOrderData, null);
+    if (!rawOrder || !Array.isArray(rawOrder.items)) return;
+
+    for (const it of rawOrder.items) {
+      const qty = Math.max(1, parseInt(it.quantity, 10) || 1);
+      const prodRow = db.prepare(`SELECT id, stock, data FROM products WHERE id = ?`).get(it.id || it.productId) as
+        | { id: string; stock: number; data: string }
+        | undefined;
+      if (!prodRow) continue;
+
+      const nextStock = Math.max(0, Number(prodRow.stock || 0)) + qty;
+      let nextData = prodRow.data;
+      try {
+        const prodObj = JSON.parse(prodRow.data);
+        if (Array.isArray(prodObj?.supplierOffers) && prodObj.supplierOffers.length > 0) {
+          const targetOfferId = prodObj.selectedOfferId || prodObj.supplierOffers[0].id;
+          prodObj.supplierOffers = prodObj.supplierOffers.map((off: any) =>
+            off.id === targetOfferId ? { ...off, stock: Number(off.stock || 0) + qty } : off
+          );
+          nextData = JSON.stringify(prodObj);
+        }
+      } catch {
+        // Keep existing product JSON if malformed
+      }
+      db.prepare(`UPDATE products SET stock = ?, data = ? WHERE id = ?`).run(nextStock, nextData, prodRow.id);
+    }
+  }
+
+  /**
    * Idempotent payment callback processor (Gate 3).
    * Ensures duplicate callbacks from payment gateways (e.g. Shaparak/Zarinpal/SnappPay)
    * never duplicate stock operations or financial figures.
@@ -141,8 +250,8 @@ export class PaymentStateMachine {
       };
     }
 
-    // 2. Lookup target order
-    const orderRow = db.prepare(`SELECT id, orderNumber, totalAmount, status FROM orders WHERE id = ? OR orderNumber = ?`).get(params.orderId, params.orderId) as any;
+    // 2. Lookup target order (include data for restocking on FAILED callback)
+    const orderRow = db.prepare(`SELECT id, orderNumber, totalAmount, status, data FROM orders WHERE id = ? OR orderNumber = ?`).get(params.orderId, params.orderId) as any;
     if (!orderRow) {
       throw new Error(`Order '${params.orderId}' not found for payment callback`);
     }
@@ -231,16 +340,11 @@ export class PaymentStateMachine {
           targetOrderStatus = "CANCELLED";
           db.prepare(`UPDATE orders SET status = 'CANCELLED' WHERE id = ?`).run(orderRow.id);
 
-          // Restore inventory for cancelled order
+          // Restore inventory for cancelled order (decrypts encrypted order JSON)
           try {
-            const rawOrder = JSON.parse(orderRow.data || "{}");
-            if (rawOrder.items && Array.isArray(rawOrder.items)) {
-              for (const it of rawOrder.items) {
-                db.prepare(`UPDATE products SET stock = stock + ? WHERE id = ?`).run(it.quantity || 1, it.id);
-              }
-            }
+            this.restockOrderItems(db, orderRow.data);
           } catch {
-            // Ignore parse error on legacy orders
+            // Do not crash callback transaction if legacy order data is unreadable
           }
         }
       }
@@ -321,16 +425,11 @@ export class PaymentStateMachine {
       // 2. Transition order status to REFUNDED
       db.prepare(`UPDATE orders SET status = 'REFUNDED' WHERE id = ?`).run(orderRow.id);
 
-      // 3. Restock inventory
+      // 3. Restock inventory (decrypts encrypted order JSON + updates supplierOffers stock)
       try {
-        const orderData = JSON.parse(orderRow.data || "{}");
-        if (orderData.items && Array.isArray(orderData.items)) {
-          for (const item of orderData.items) {
-            db.prepare(`UPDATE products SET stock = stock + ? WHERE id = ?`).run(item.quantity || 1, item.id);
-          }
-        }
+        this.restockOrderItems(db, orderRow.data);
       } catch {
-        // Fallback
+        // Fallback if legacy order data is unreadable
       }
 
       // 4. Queue outbox event

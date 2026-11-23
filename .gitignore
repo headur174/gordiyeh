@@ -6,7 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
-data/*.db-wal
-data/*.db-shm
+data/*.db*
+data/.keys/
+data/uploads/
 data/test/
+public/uploads/
 test_*.db*
+*.tmp

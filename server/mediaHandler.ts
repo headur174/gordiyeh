@@ -23,7 +23,15 @@ const upload = multer({
   },
 });
 
-const uploadsDir = path.resolve(process.cwd(), 'public', 'uploads');
+function resolveUploadsDir(): string {
+  if (process.env.UPLOADS_DIR) return path.resolve(process.env.UPLOADS_DIR);
+  if (process.env.NODE_ENV === 'production' && process.env.COMMERCE_DB_PATH) {
+    return path.join(path.dirname(path.resolve(process.env.COMMERCE_DB_PATH)), 'uploads');
+  }
+  return path.resolve(process.cwd(), 'public', 'uploads');
+}
+
+export const uploadsDir = resolveUploadsDir();
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }

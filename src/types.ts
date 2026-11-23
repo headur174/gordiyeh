@@ -278,7 +278,7 @@ export interface Order {
   marketingAllocation: number;
   contributionProfit: number;
   marginPercent: number;
-  status: 'PAID' | 'FULFILLING' | 'DELIVERED' | 'HIGH_RISK_HOLD' | 'REFUNDED';
+  status: 'PENDING_PAYMENT' | 'PAID' | 'FULFILLING' | 'DELIVERED' | 'HIGH_RISK_HOLD' | 'REFUNDED' | 'CANCELLED';
   riskScore: number;
   routingSupplier: string;
   items: OrderItem[];

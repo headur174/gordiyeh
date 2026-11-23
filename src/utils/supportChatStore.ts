@@ -146,6 +146,14 @@ export function getActiveCustomerSessionToken(): string | null {
   return activeSessionToken;
 }
 
+export function getCustomerAuthHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  if (!activeSessionToken) return extra;
+  return {
+    ...extra,
+    Authorization: `Bearer ${activeSessionToken}`,
+  };
+}
+
 export function toPersianDigits(input: string | number): string {
   return String(input).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
 }
@@ -321,12 +329,22 @@ export async function identifyCustomerAccount(
   try {
     const res = await fetch('/api/v1/customer/account/identify', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getCustomerAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ phone }),
     });
     if (res.ok) {
       const data = await res.json();
       if (data?.account) {
+        if (data.requiresOtpReauth && cached) {
+          const mergedMeta = saveCachedCustomerAccount({
+            ...cached,
+            preferredName: data.account.preferredName || cached.preferredName,
+            isVerified: true,
+            accountType: 'VERIFIED',
+          });
+          emitSupportUpdated(phone);
+          return { isNew: false, account: mergedMeta };
+        }
         const synced = saveCachedCustomerAccount(data.account);
         emitSupportUpdated(phone);
         return { isNew: Boolean(data.isNew), account: synced };
@@ -409,7 +427,7 @@ export async function updateCustomerProfile(
   try {
     const res = await fetch('/api/v1/customer/account', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getCustomerAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(payload),
     });
     const data = await res.json().catch(() => ({}));
@@ -417,7 +435,10 @@ export async function updateCustomerProfile(
       return {
         ok: false,
         account: null,
-        error: data?.error || 'خطا در ذخیره اطلاعات حساب کاربری.',
+        error:
+          res.status === 401
+            ? data?.error || 'برای ویرایش اطلاعات این حساب تاییدشده، لطفاً ابتدا کد پیامکی را تایید کنید.'
+            : data?.error || 'خطا در ذخیره اطلاعات حساب کاربری.',
       };
     }
 
@@ -673,7 +694,7 @@ export async function syncSessionToServer(session: SupportChatSession): Promise<
   try {
     await fetch('/api/v1/support/sessions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getCustomerAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(session),
     });
   } catch {
@@ -695,7 +716,9 @@ export async function fetchAndMergeSessions(rawPhone: string): Promise<SupportCh
   const local = getLocalSessionsForPhone(phone);
 
   try {
-    const res = await fetch(`/api/v1/support/sessions?phone=${encodeURIComponent(phone)}`);
+    const res = await fetch(`/api/v1/support/sessions?phone=${encodeURIComponent(phone)}`, {
+      headers: getCustomerAuthHeaders(),
+    });
     if (!res.ok) return local;
     const data = await res.json();
     const remote: SupportChatSession[] = Array.isArray(data?.sessions) ? data.sessions : [];
@@ -748,6 +771,7 @@ export async function clearSessionsForPhone(rawPhone: string): Promise<void> {
   try {
     await fetch(`/api/v1/support/sessions?phone=${encodeURIComponent(phone)}`, {
       method: 'DELETE',
+      headers: getCustomerAuthHeaders(),
     });
   } catch {}
 }
@@ -1188,7 +1212,7 @@ export async function processConversationalTurn(
   try {
     const res = await fetch('/api/v1/support/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getCustomerAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         message: text,
         phone,

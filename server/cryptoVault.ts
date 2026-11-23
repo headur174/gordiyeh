@@ -5,7 +5,9 @@ import path from "node:path";
 // Military-Grade Field-Level & Envelope Encryption Engine (AES-256-GCM + HMAC Blind Index)
 // Version 2: Key IDs (kid), backward-compatible v1 decryption, safe key rotation, zero plaintext at rest.
 
-const KEY_DIR = path.join(process.cwd(), "data");
+const KEY_DIR = process.env.COMMERCE_DB_PATH
+  ? path.dirname(path.resolve(process.env.COMMERCE_DB_PATH))
+  : path.join(process.cwd(), "data");
 const KEY_FILE = path.join(KEY_DIR, ".master_vault.key");
 
 // Default fallback seed used when DB_ENCRYPTION_KEY is not supplied in development
@@ -95,7 +97,14 @@ function initKeyStore(): KeyStore {
     }
   }
 
-  // 2. Load file-based master key if present
+  // Fail closed in production when neither DB_ENCRYPTION_KEY nor DB_ENCRYPTION_KEYRING is set.
+  if (!envKey && keys.size === 0 && process.env.NODE_ENV === "production") {
+    throw new Error(
+      "[CryptoVault] DB_ENCRYPTION_KEY is required when NODE_ENV=production. Generate a 64-char hex key via 'openssl rand -hex 32' and configure it in your environment."
+    );
+  }
+
+  // 2. Load file-based master key in non-production environments if present
   if (!fs.existsSync(KEY_DIR)) {
     try {
       fs.mkdirSync(KEY_DIR, { recursive: true });
@@ -135,33 +144,16 @@ function initKeyStore(): KeyStore {
     }
   };
 
-  // 3. Provision fallback / ephemeral-persisted key when DB_ENCRYPTION_KEY is not supplied
+  // 3. Provision development/test fallback key when DB_ENCRYPTION_KEY is not supplied outside production
   if (!envKey) {
-    if (process.env.NODE_ENV === "production") {
-      if (!fileKey) {
-        // Generate a cryptographically strong 256-bit key for managed container environments (e.g. Cloud Run)
-        // where DB_ENCRYPTION_KEY is not pre-injected at container startup.
-        const generatedKey = crypto.randomBytes(32);
-        keys.set("k1", generatedKey);
-        activeKid = "k1";
-        persistKeyFile(generatedKey.toString("hex"));
-        console.warn(
-          "[CryptoVault] DB_ENCRYPTION_KEY not set in production; provisioned cryptographic 256-bit master key."
-        );
-      } else {
-        activeKid = "k1";
-      }
-    } else {
-      // Non-production development/test deterministic fallback seed
-      const fallbackKey = crypto.scryptSync(DEFAULT_LEGACY_SEED, "commerce_os_master_salt_2026", 32);
-      keys.set("k_fallback", fallbackKey);
-      if (!keys.has("k1")) {
-        keys.set("k1", fallbackKey);
-      }
+    const fallbackKey = crypto.scryptSync(DEFAULT_LEGACY_SEED, "commerce_os_master_salt_2026", 32);
+    keys.set("k_fallback", fallbackKey);
+    if (!keys.has("k1")) {
+      keys.set("k1", fallbackKey);
+    }
 
-      if (!fileKey) {
-        persistKeyFile(fallbackKey.toString("hex"));
-      }
+    if (!fileKey) {
+      persistKeyFile(fallbackKey.toString("hex"));
     }
   }
 

@@ -44,7 +44,7 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
   });
 
   const [generatorSource, setGeneratorSource] = useState<'SITE_AI' | 'MY_GENERATOR_WEBHOOK' | 'MANUAL_HYBRID'>('SITE_AI');
-  const [webhookUrl, setWebhookUrl] = useState('https://api.my-content-studio.com/v1/generate');
+  const [webhookUrl, setWebhookUrl] = useState('');
   const [brandVoice, setBrandVoice] = useState('فروشگاهی، متمرکز بر ارزش خرید و اعتمادساز');
   const [customInstructions, setCustomInstructions] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -463,7 +463,7 @@ export const ContentStudioModal: React.FC<ContentStudioModalProps> = ({
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
                     className="w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-mono focus:outline-none focus:border-[var(--border-active)]"
-                    placeholder="https://api.your-custom-ai.com/v1/content-craft"
+                    placeholder="https://n8n.yourdomain.ir/webhook/content-studio"
                   />
                 </div>
                 <div className="p-3 bg-[var(--bg-card)] rounded-lg text-[11px] text-[var(--text-muted)] font-mono">

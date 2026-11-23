@@ -204,7 +204,7 @@ export const AskCommerceView: React.FC<AskCommerceViewProps> = ({
         sender: 'AI',
         text: data.reply || 'پاسخ ساختاریافته پردازش شد.',
         timestamp: 'هم‌اکنون',
-        source: data.source || 'gemini-3.8-flash',
+        source: data.source || 'gemini-4-hydrogen',
         persona: activePersonaKey,
         metrics,
       };
@@ -445,7 +445,7 @@ export const AskCommerceView: React.FC<AskCommerceViewProps> = ({
                 {/* Footer Tools: Source & Copy */}
                 {!isUser && (
                   <div className="mt-2.5 pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-[10px] text-[var(--text-muted)]">
-                    <span className="font-mono text-[var(--accent-text)]">منبع: {m.source || 'gemini-3.8-flash'}</span>
+                    <span className="font-mono text-[var(--accent-text)]">منبع: {m.source || 'gemini-4-hydrogen'}</span>
                     <button
                       onClick={() => handleCopy(m.id, m.text)}
                       className="hover:text-[var(--text-main)] transition-colors flex items-center gap-1 cursor-pointer"

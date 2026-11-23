@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Lock, Trash2, Eye, EyeOff, RefreshCw, Sparkles, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { ZeroTrustBus } from '../../../core/zeroTrustBus';
+import { getCustomerAuthHeaders } from '../../../utils/supportChatStore';
 import { CustomerMemorySnapshot } from '../contract';
 
 interface Props {
@@ -18,7 +19,9 @@ export const CustomerMemoryHubTile: React.FC<Props> = ({ customerId = 'cust_gues
   const fetchMemory = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/customer/memory/${customerId}`);
+      const res = await fetch(`/api/customer/memory/${encodeURIComponent(customerId)}`, {
+        headers: getCustomerAuthHeaders(),
+      });
       const json = await res.json();
       if (json.success && json.memory) {
         setMemory(json.memory);
@@ -68,7 +71,15 @@ export const CustomerMemoryHubTile: React.FC<Props> = ({ customerId = 'cust_gues
 
     setClearing(true);
     try {
-      await fetch(`/api/customer/memory/${customerId}`, { method: 'DELETE' });
+      const delRes = await fetch(`/api/customer/memory/${encodeURIComponent(customerId)}`, {
+        method: 'DELETE',
+        headers: getCustomerAuthHeaders(),
+      });
+      if (!delRes.ok) {
+        const errJson = await delRes.json().catch(() => ({}));
+        setFeedbackMsg(errJson?.error || 'امکان پاکسازی حافظه بدون احراز هویت وجود ندارد.');
+        return;
+      }
       
       // Emit event on ZeroTrustBus with manifest validation
       ZeroTrustBus.emit('piece_customer_memory', 'v1.memory.cleared', {

@@ -41,8 +41,8 @@ class SqliteOrderRepository implements IOrderRepository {
   async getOrders(): Promise<any[]> {
     return CommerceDB.getOrders();
   }
-  async lookupOrder(query: string): Promise<any | null> {
-    return CommerceDB.lookupOrder(query);
+  async lookupOrder(query: string, opts?: { allowSubstring?: boolean }): Promise<any | null> {
+    return CommerceDB.lookupOrder(query, opts);
   }
   async createOrder(order: any): Promise<any> {
     return CommerceDB.createOrder(order);

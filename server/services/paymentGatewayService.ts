@@ -213,3 +213,142 @@ export async function requestLiveGatewayRedirect(params: {
     };
   }
 }
+
+/**
+ * Verifies a completed gateway redirect server-to-server using the authoritative server order amount.
+ */
+export async function verifyLiveGatewayPayment(params: {
+  provider?: PaymentProviderType | string;
+  authority: string;
+  amountToman: number;
+  orderNumber: string;
+}): Promise<{
+  verified: boolean;
+  provider: PaymentProviderType;
+  refId?: string;
+  cardPan?: string;
+  code?: number;
+  error?: string;
+}> {
+  const cfg = resolvePaymentGatewayConfig();
+  const providerRaw = String(params.provider || cfg.provider).toLowerCase();
+  const provider: PaymentProviderType = ["zarinpal", "zibal", "idpay", "sandbox"].includes(providerRaw)
+    ? (providerRaw as PaymentProviderType)
+    : cfg.provider;
+
+  if (!cfg.enabled || !cfg.merchantId || provider === "sandbox") {
+    return { verified: false, provider, error: "GATEWAY_SANDBOX_OR_UNCONFIGURED" };
+  }
+
+  const authority = String(params.authority || "").trim();
+  if (!authority) {
+    return { verified: false, provider, error: "کد مرجع تراکنش (Authority) از درگاه ارسال نشده است." };
+  }
+
+  const amountRials = Math.max(10000, Math.round(params.amountToman * 10));
+
+  try {
+    if (provider === "zarinpal") {
+      const endpoint = cfg.sandbox
+        ? "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
+        : "https://api.zarinpal.com/pg/v4/payment/verify.json";
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", accept: "application/json" },
+        body: JSON.stringify({
+          merchant_id: cfg.merchantId,
+          amount: amountRials,
+          authority,
+        }),
+      });
+      const json = (await res.json().catch(() => ({}))) as any;
+      const code = Number(json?.data?.code || 0);
+      if (res.ok && (code === 100 || code === 101)) {
+        return {
+          verified: true,
+          provider: "zarinpal",
+          refId: String(json?.data?.ref_id || authority),
+          cardPan: json?.data?.card_pan,
+          code,
+        };
+      }
+      return {
+        verified: false,
+        provider: "zarinpal",
+        code,
+        error: json?.errors?.message || "تراکنش توسط زرین‌پال تایید نشد.",
+      };
+    }
+
+    if (provider === "zibal") {
+      const trackIdNum = Number(authority);
+      const res = await fetch("https://gateway.zibal.ir/v1/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          merchant: cfg.sandbox ? "zibal" : cfg.merchantId,
+          trackId: Number.isFinite(trackIdNum) ? trackIdNum : authority,
+        }),
+      });
+      const json = (await res.json().catch(() => ({}))) as any;
+      const result = Number(json?.result || 0);
+      const returnedAmount = Number(json?.amount || 0);
+      if (res.ok && (result === 100 || result === 201) && (returnedAmount === 0 || returnedAmount === amountRials)) {
+        return {
+          verified: true,
+          provider: "zibal",
+          refId: String(json?.refNumber || authority),
+          cardPan: json?.cardNumber,
+          code: result,
+        };
+      }
+      return {
+        verified: false,
+        provider: "zibal",
+        code: result,
+        error: json?.message || "تراکنش توسط زیبال تایید نشد.",
+      };
+    }
+
+    if (provider === "idpay") {
+      const res = await fetch("https://api.idpay.ir/v1.1/payment/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": cfg.merchantId,
+          ...(cfg.sandbox ? { "X-SANDBOX": "1" } : {}),
+        },
+        body: JSON.stringify({
+          id: authority,
+          order_id: params.orderNumber,
+        }),
+      });
+      const json = (await res.json().catch(() => ({}))) as any;
+      const status = Number(json?.status || 0);
+      if (res.ok && (status === 100 || status === 101 || status === 200)) {
+        return {
+          verified: true,
+          provider: "idpay",
+          refId: String(json?.track_id || json?.payment?.track_id || authority),
+          cardPan: json?.payment?.card_no,
+          code: status,
+        };
+      }
+      return {
+        verified: false,
+        provider: "idpay",
+        code: status,
+        error: json?.error_message || "تراکنش توسط آیدی‌پی تایید نشد.",
+      };
+    }
+
+    return { verified: false, provider, error: "GATEWAY_UNSUPPORTED" };
+  } catch (err: any) {
+    return {
+      verified: false,
+      provider,
+      error: err?.message || "خطای شبکه هنگام تایید تراکنش با درگاه بانکی",
+    };
+  }
+}

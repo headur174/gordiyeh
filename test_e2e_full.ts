@@ -17,8 +17,10 @@
  *    - USR-6: Static legal & help policy pages availability
  */
 
+import { adminBearerHeaders, getBaseUrl } from './test_support_auth';
+
 async function runE2ETests() {
-  const baseUrl = 'http://localhost:3000';
+  const baseUrl = getBaseUrl();
   console.log(`=================================================================`);
   console.log(`  RUNNING COMPREHENSIVE E2E SECURITY & USER JOURNEY TEST SUITE`);
   console.log(`  Target: ${baseUrl}`);
@@ -157,7 +159,9 @@ async function runE2ETests() {
   // Test SEC-4: SQL Injection Vector Immunity
   try {
     const sqlPayload = "' OR '1'='1' --";
-    const resSec4 = await fetch(`${baseUrl}/api/orders?search=${encodeURIComponent(sqlPayload)}`);
+    const resSec4 = await fetch(`${baseUrl}/api/orders?search=${encodeURIComponent(sqlPayload)}`, {
+      headers: adminBearerHeaders(),
+    });
     assert(
       resSec4.status === 200 || resSec4.status === 400 || resSec4.status === 404,
       'SEC-4',
@@ -256,7 +260,9 @@ async function runE2ETests() {
 
   // Test USR-3: Order Tracking Verification
   try {
-    const resUsr3 = await fetch(`${baseUrl}/api/orders`);
+    const resUsr3 = await fetch(`${baseUrl}/api/orders`, {
+      headers: adminBearerHeaders(),
+    });
     const jsonRes = await resUsr3.json();
     const ordersList = jsonRes?.orders || jsonRes;
     const foundOrder = Array.isArray(ordersList) 
@@ -330,7 +336,9 @@ async function runE2ETests() {
 
   // Test ARCH-1: Versioned API /api/v1/architecture
   try {
-    const resArch = await fetch(`${baseUrl}/api/v1/architecture`);
+    const resArch = await fetch(`${baseUrl}/api/v1/architecture`, {
+      headers: adminBearerHeaders(),
+    });
     const dataArch = await resArch.json();
     const charter = dataArch?.charter;
     const isCharterValid =
@@ -352,7 +360,9 @@ async function runE2ETests() {
 
   // Test ARCH-2: Backward-Compatibility API Alias (/api/architecture)
   try {
-    const resLegacyAlias = await fetch(`${baseUrl}/api/architecture`);
+    const resLegacyAlias = await fetch(`${baseUrl}/api/architecture`, {
+      headers: adminBearerHeaders(),
+    });
     const dataLegacy = await resLegacyAlias.json();
     assert(
       dataLegacy?.success === true && dataLegacy?.charter?.storageEngine?.pluggablePostgresReady === true,
@@ -365,7 +375,9 @@ async function runE2ETests() {
 
   // Test ARCH-3: Event Bus Metrics & Hexagonal Isolation
   try {
-    const resArch3 = await fetch(`${baseUrl}/api/v1/architecture`);
+    const resArch3 = await fetch(`${baseUrl}/api/v1/architecture`, {
+      headers: adminBearerHeaders(),
+    });
     const dataArch3 = await resArch3.json();
     const eventBusDiag = dataArch3?.charter?.eventBusDiagnostics;
     const isEventBusLive =

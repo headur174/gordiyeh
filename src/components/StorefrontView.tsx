@@ -104,6 +104,14 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
   // PDP (Product Detail Page)
   const [selectedProduct, setSelectedProduct] = useState<CanonicalProduct | null>(null);
 
+  // Payment Gateway Callback Return Verification Banner
+  const [paymentReturnBanner, setPaymentReturnBanner] = useState<{
+    status: 'verifying' | 'success' | 'error';
+    message: string;
+    orderNumber?: string;
+    refId?: string;
+  } | null>(null);
+
   // Hero carousel active slide (Desktop auto-rotate every 6s paused on hover; disabled < 768px)
   const [heroSlide, setHeroSlide] = useState(0);
   const [isHeroPaused, setIsHeroPaused] = useState(false);
@@ -204,6 +212,66 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
       window.removeEventListener(SITE_CONFIG_UPDATED_EVENT, syncSiteConfig);
       window.removeEventListener('storage', handleStorage);
     };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment_callback') !== '1') return;
+
+    const authority = params.get('Authority') || params.get('trackId') || params.get('id') || '';
+    const status = params.get('Status') || params.get('status') || '';
+    const success = params.get('success') ?? undefined;
+    const orderId = params.get('orderId') || undefined;
+    const txId = params.get('txId') || undefined;
+
+    window.history.replaceState({}, '', window.location.pathname);
+    setPaymentReturnBanner({
+      status: 'verifying',
+      message: 'در حال استعلام و تایید نهایی تراکنش از درگاه بانکی...',
+    });
+
+    fetch('/api/v1/payment/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ authority, status, success, orderId, txId }),
+    })
+      .then((res) => res.json().catch(() => ({})))
+      .then((data) => {
+        const targetId = data?.orderNumber || data?.orderId || orderId;
+        try {
+          const existing = JSON.parse(localStorage.getItem('commerce_os_orders') || '[]');
+          if (Array.isArray(existing) && targetId) {
+            const next = existing.map((o: any) =>
+              o.id === targetId || o.orderNumber === targetId
+                ? { ...o, status: data?.success ? 'PAID' : 'CANCELLED', trackingNumber: data?.refId || o.trackingNumber }
+                : o
+            );
+            localStorage.setItem('commerce_os_orders', JSON.stringify(next));
+          }
+        } catch {}
+
+        if (data?.success) {
+          setPaymentReturnBanner({
+            status: 'success',
+            orderNumber: targetId,
+            refId: data?.refId,
+            message: `پرداخت با موفقیت تایید شد${data?.refId ? ` (کد پیگیری بانکی: ${data.refId})` : ''}.`,
+          });
+        } else {
+          setPaymentReturnBanner({
+            status: 'error',
+            orderNumber: targetId,
+            message: data?.message || data?.error || 'پرداخت بانکی لغو شد یا تایید نگردید.',
+          });
+        }
+      })
+      .catch(() => {
+        setPaymentReturnBanner({
+          status: 'error',
+          message: 'خطا در استعلام وضعیت پرداخت از سرور. لطفاً از پنل کاربری وضعیت سفارش را بررسی کنید.',
+        });
+      });
   }, []);
 
   const [blogPosts] = useState<BlogPost[]>(INITIAL_BLOG_POSTS);
@@ -958,6 +1026,34 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
 
       {/* 2. MAIN CONTENT AREA */}
       <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex-1">
+        {paymentReturnBanner && (
+          <div
+            className={`mb-5 rounded-2xl border p-4 flex flex-wrap items-center justify-between gap-3 text-xs shadow-sm ${
+              paymentReturnBanner.status === 'success'
+                ? 'bg-emerald-500/10 border-emerald-500/35 text-emerald-700 dark:text-emerald-300'
+                : paymentReturnBanner.status === 'error'
+                ? 'bg-rose-500/10 border-rose-500/35 text-rose-700 dark:text-rose-300'
+                : 'bg-[var(--bg-card)] border-[var(--border-active)] text-[var(--text-main)]'
+            }`}
+          >
+            <div className="flex items-center gap-2.5 font-medium">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <div>
+                <span>{paymentReturnBanner.message}</span>
+                {paymentReturnBanner.orderNumber && (
+                  <span className="mr-2 font-mono font-bold">({paymentReturnBanner.orderNumber})</span>
+                )}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setPaymentReturnBanner(null)}
+              className="px-3 py-1 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-[11px] font-bold hover:opacity-80 cursor-pointer"
+            >
+              بستن
+            </button>
+          </div>
+        )}
         {selectedProduct ? (
           <React.Suspense fallback={<GordiyehLoader variant="inline" label="در حال بارگذاری صفحه محصول..." />}>
             <ProductDetailPage
@@ -1970,13 +2066,13 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x lg:divide-x-reverse lg:divide-[var(--border-color)] items-start">
             {/* Col 1 (RTL rightmost): Brand Identity + Prominent Enlarged Logo + Description */}
             <div className="lg:pl-7 space-y-5">
-              <div className="flex items-center gap-4">
+              <div className="w-full flex items-center justify-center gap-4">
                 <img
                   src={GORDIYEH_BRAND.logoAsset}
                   alt={GORDIYEH_BRAND.nameFa}
-                  className="h-16 sm:h-[74px] w-auto object-contain gordiyeh-footer-logo shrink-0"
+                  className="h-20 sm:h-24 max-w-full w-auto object-contain gordiyeh-footer-logo shrink-0"
                 />
-                <div>
+                <div className="text-center">
                   <span className="tracking-wide text-xl font-bold text-[var(--text-main)] block leading-[1.3]">
                     گُردیه
                   </span>

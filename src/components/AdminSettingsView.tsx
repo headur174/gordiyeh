@@ -5,6 +5,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   Send,
   Key,
   BookOpen,
@@ -24,6 +25,7 @@ import {
   normalizeIranianPhoneStrict,
 } from '../utils/iranianValidators';
 import { toPersianDigits } from '../utils/supportChatStore';
+import { MarketplaceAndSocialSettings } from './admin/MarketplaceAndSocialSettings';
 
 type PaymentProviderType = 'zarinpal' | 'zibal' | 'idpay' | 'sandbox';
 
@@ -149,6 +151,7 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({ onPreviewL
   const [paymentEnabled, setPaymentEnabled] = useState(true);
   const [isSavingPayment, setIsSavingPayment] = useState(false);
   const [paymentSaveFeedback, setPaymentSaveFeedback] = useState<{ ok: boolean; text: string } | null>(null);
+  const [authRequired, setAuthRequired] = useState(false);
 
   useEffect(() => {
     void loadAllSettings();
@@ -161,6 +164,11 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({ onPreviewL
         fetch('/api/v1/admin/integrations/sms'),
         fetch('/api/v1/admin/integrations/payment'),
       ]);
+      if (smsRes.status === 401 || smsRes.status === 403 || payRes.status === 401 || payRes.status === 403) {
+        setAuthRequired(true);
+      } else {
+        setAuthRequired(false);
+      }
       if (featRes.ok) {
         const featData = await featRes.json();
         if (featData?.settings) {
@@ -205,6 +213,11 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({ onPreviewL
         body: JSON.stringify(nextFeatures),
       });
       const data = await res.json().catch(() => ({}));
+      if (res.status === 401 || res.status === 403) {
+        setAuthRequired(true);
+        setFeatureStatus({ ok: false, text: 'نشست مدیریت منقضی شده است؛ لطفاً صفحه /admin را بازگذاری و ورود کنید.' });
+        return;
+      }
       if (!res.ok) {
         setFeatureStatus({ ok: false, text: data?.error || 'خطا در ذخیره تنظیمات فیلدها.' });
         return;
@@ -242,6 +255,11 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({ onPreviewL
         }),
       });
       const data = await res.json().catch(() => ({}));
+      if (res.status === 401 || res.status === 403) {
+        setAuthRequired(true);
+        setSmsSaveFeedback({ ok: false, text: 'نشست مدیریت منقضی شده است؛ لطفاً صفحه /admin را بازگذاری و ورود کنید.' });
+        return;
+      }
       if (!res.ok) {
         setSmsSaveFeedback({ ok: false, text: data?.error || 'خطا در ذخیره تنظیمات درگاه پیامک.' });
         return;
@@ -279,6 +297,11 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({ onPreviewL
         body: JSON.stringify({ phone: cleanPhone }),
       });
       const data = await res.json().catch(() => ({}));
+      if (res.status === 401 || res.status === 403) {
+        setAuthRequired(true);
+        setTestFeedback({ ok: false, text: 'نشست مدیریت منقضی شده است؛ لطفاً صفحه /admin را بازگذاری و ورود کنید.' });
+        return;
+      }
       if (!res.ok) {
         setTestFeedback({ ok: false, text: data?.error || 'ارسال پیامک آزمایشی ناموفق بود.' });
         return;
@@ -311,6 +334,11 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({ onPreviewL
         }),
       });
       const data = await res.json().catch(() => ({}));
+      if (res.status === 401 || res.status === 403) {
+        setAuthRequired(true);
+        setPaymentSaveFeedback({ ok: false, text: 'نشست مدیریت منقضی شده است؛ لطفاً صفحه /admin را بازگذاری و ورود کنید.' });
+        return;
+      }
       if (!res.ok) {
         setPaymentSaveFeedback({ ok: false, text: data?.error || 'خطا در ذخیره تنظیمات درگاه پرداخت.' });
         return;
@@ -360,6 +388,21 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({ onPreviewL
             : 'درگاه پیامک هنوز متصل نشده'}
         </span>
       </div>
+
+      {authRequired && (
+        <div className="p-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-200 text-xs flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 font-medium">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <span>نشست مدیریت فعال نیست یا منقضی شده است. برای مشاهده و ذخیره تنظیمات درگاه‌ها، وارد پنل مدیریت شوید.</span>
+          </div>
+          <a
+            href="/admin"
+            className="px-3.5 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition-colors"
+          >
+            ورود به پنل مدیریت
+          </a>
+        </div>
+      )}
 
       {/* SECTION 1: CUSTOMER PROFILE FIELD CONTROLS */}
       <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl p-5 space-y-4 shadow-sm">
@@ -956,6 +999,9 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({ onPreviewL
           </div>
         </div>
       </div>
+
+      {/* SECTION 5–7: MARKETPLACES (TOROB, EMALLS, DIGIKALA) & SOCIAL AUTO-PUBLISH */}
+      <MarketplaceAndSocialSettings onAuthRequired={() => setAuthRequired(true)} />
     </div>
   );
 };

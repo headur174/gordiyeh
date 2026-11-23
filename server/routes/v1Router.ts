@@ -16,6 +16,7 @@ import {
   getPaymentGatewayPublicStatus,
   PaymentProviderType,
   requestLiveGatewayRedirect,
+  verifyLiveGatewayPayment,
 } from "../services/paymentGatewayService";
 import {
   containsProfanityOrAbuse,
@@ -25,11 +26,31 @@ import {
   normalizeDigits,
   validateSafePreferredName,
 } from "../../src/utils/iranianValidators";
-
-const SERVER_SESSION_SECRET =
-  process.env.SESSION_SECRET ||
-  process.env.ADMIN_SECRET_KEY ||
-  crypto.randomBytes(32).toString("hex");
+import { isAdminRequest } from "../security/adminAuth";
+import {
+  checkPhoneAccess,
+  isVerifiedCustomerAuthorized,
+  signCustomerToken,
+} from "../security/customerAuth";
+import { getSiteUrl } from "../seoEngine";
+import { CryptoVault } from "../cryptoVault";
+import { PRODUCT_BY_ID } from "../../src/data/seoCatalog";
+import {
+  getSocialChannelsPublicStatus,
+  saveSocialChannelsConfig,
+  publishToSocialChannels,
+  processDueScheduledSocialPosts,
+  SocialChannelKey,
+} from "../services/socialPublishService";
+import {
+  getDigikalaSellerPublicStatus,
+  saveDigikalaSellerConfig,
+  getDigikalaVariantMappings,
+  saveDigikalaVariantMappings,
+  fetchDigikalaVariants,
+  fetchDigikalaOrders,
+  syncDigikalaInventory,
+} from "../services/digikalaSellerService";
 
 let genAIClient: GoogleGenAI | null = null;
 function getGenAI() {
@@ -90,12 +111,93 @@ function checkSystemRateLimit(ip: string, maxCalls: number = 10, windowMs: numbe
   return true;
 }
 
+// Defense in depth: central /api access guard already restricts admin endpoints.
 function checkSystemAccess(req: express.Request): boolean {
-  if (process.env.NODE_ENV !== "production") return true;
-  const adminSecret = process.env.ADMIN_SECRET_KEY;
-  if (!adminSecret) return true; // Default to rate limiting and path redaction
-  const provided = req.headers["x-admin-token"] || (req.headers["authorization"] ? req.headers["authorization"].replace(/^Bearer\s+/i, "") : null);
-  return provided === adminSecret;
+  return isAdminRequest(req);
+}
+
+/**
+ * Strips wholesale costs, supplier identities, and internal margin telemetry from public product responses
+ * while keeping storefront-needed stock & dispatch SLA metadata.
+ */
+function sanitizeProductForPublic(product: any): any {
+  if (!product || typeof product !== "object") return product;
+  const {
+    baseCost: _baseCost,
+    targetMargin: _targetMargin,
+    minMargin: _minMargin,
+    dna: _dna,
+    ...safeRest
+  } = product;
+
+  const safeOffers = Array.isArray(product.supplierOffers)
+    ? product.supplierOffers.map((off: any) => ({
+        id: off.id,
+        stock: Number(off.stock || 0),
+        dispatchTimeHours: Number(off.dispatchTimeHours || 24),
+        leadTimeHours: Number(off.leadTimeHours || 24),
+        isActive: off.isActive !== false,
+      }))
+    : [];
+
+  return {
+    ...safeRest,
+    baseCost: 0,
+    targetMargin: 0,
+    minMargin: 0,
+    supplierOffers: safeOffers,
+  };
+}
+
+/**
+ * Strips internal profit/supplier margins and masks third-party PII on anonymous order lookups.
+ */
+function sanitizeOrderForPublic(order: any, isOwnerVerified: boolean): any {
+  if (!order || typeof order !== "object") return order;
+  const safeItems = Array.isArray(order.items)
+    ? order.items.map((it: any) => ({
+        id: it.id,
+        title: it.title,
+        sku: it.sku,
+        quantity: it.quantity,
+        unitPrice: it.unitPrice,
+      }))
+    : [];
+
+  const baseOrder = {
+    id: order.id,
+    orderNumber: order.orderNumber,
+    trackingCode: order.trackingCode,
+    trackingNumber: order.trackingNumber || order.trackingCode,
+    status: order.status,
+    province: order.province,
+    city: order.city,
+    items: safeItems,
+    totalAmount: order.totalAmount,
+    shippingCost: order.shippingCost,
+    discountAmount: order.discountAmount || 0,
+    createdAt: order.createdAt,
+  };
+
+  if (isOwnerVerified) {
+    return {
+      ...baseOrder,
+      customerName: order.customerName,
+      phone: order.phone,
+      address: order.address,
+      postalCode: order.postalCode,
+      plaque: order.plaque,
+      unit: order.unit,
+    };
+  }
+
+  const nameStr = String(order.customerName || "خریدار");
+  const maskedName = nameStr.length > 2 ? `${nameStr.slice(0, 2)}***` : "***";
+  return {
+    ...baseOrder,
+    customerName: maskedName,
+    phone: order.phone ? CryptoVault.maskPhone(String(order.phone)) : "***",
+  };
 }
 
 v1Router.get("/system/outbox-status", (req, res) => {
@@ -155,9 +257,20 @@ v1Router.get("/security/vault-status", (_req, res) => {
 // ============================================================================
 // 2. UNIFIED BOOTSTRAP STATE (Hydrates entire client state via Repository)
 // ============================================================================
-v1Router.get("/bootstrap", async (_req, res) => {
+v1Router.get("/bootstrap", async (req, res) => {
   try {
-    const data = await commerceRepo.getBootstrap();
+    const data: any = await commerceRepo.getBootstrap();
+    if (!isAdminRequest(req)) {
+      return res.json({
+        success: true,
+        data: {
+          products: Array.isArray(data.products) ? data.products.map(sanitizeProductForPublic) : [],
+          siteConfig: data.siteConfig,
+          categories: data.categories,
+        },
+      });
+    }
+    res.setHeader("Cache-Control", "no-store");
     res.json({ success: true, data });
   } catch (err: any) {
     console.error("Bootstrap fetch error:", err);
@@ -168,9 +281,11 @@ v1Router.get("/bootstrap", async (_req, res) => {
 // ============================================================================
 // 3. CATALOG & PRODUCTS CRUD
 // ============================================================================
-v1Router.get("/products", async (_req, res) => {
+v1Router.get("/products", async (req, res) => {
   try {
-    res.json({ success: true, products: await commerceRepo.products.getProducts() });
+    const list = await commerceRepo.products.getProducts();
+    const products = isAdminRequest(req) ? list : list.map(sanitizeProductForPublic);
+    res.json({ success: true, products });
   } catch (err: any) {
     res.status(500).json({ error: "Failed to read products" });
   }
@@ -182,7 +297,7 @@ v1Router.get("/products/:id", async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: "محصول یافت نشد" });
     }
-    res.json({ success: true, product });
+    res.json({ success: true, product: isAdminRequest(req) ? product : sanitizeProductForPublic(product) });
   } catch (err: any) {
     res.status(500).json({ error: "Failed to read product" });
   }
@@ -322,11 +437,33 @@ v1Router.get("/orders", async (_req, res) => {
 
 v1Router.get("/orders/track/:query", async (req, res) => {
   try {
-    const order = await commerceRepo.orders.lookupOrder(req.params.query);
+    const isAdmin = isAdminRequest(req);
+    const rawQuery = String(req.params.query || "").trim();
+    if (!rawQuery) {
+      return res.status(400).json({ error: "کد سفارش یا شماره پیگیری الزامی است." });
+    }
+
+    const queriedPhone = normalizeSupportPhone(rawQuery);
+    if (!isAdmin && queriedPhone) {
+      const access = checkPhoneAccess(req, queriedPhone);
+      if (!access.allowed) {
+        return res.status(401).json({
+          error: "برای مشاهده سفارش‌های این شماره تاییدشده، ابتدا وارد حساب خود شوید.",
+          code: "CUSTOMER_AUTH_REQUIRED",
+        });
+      }
+    }
+
+    const order = await commerceRepo.orders.lookupOrder(rawQuery, { allowSubstring: isAdmin });
     if (!order) {
       return res.status(404).json({ error: "سفارشی با این مشخصات یافت نشد." });
     }
-    res.json({ success: true, order });
+
+    if (isAdmin) {
+      return res.json({ success: true, order });
+    }
+    const isVerifiedOwner = Boolean(order.phone && isVerifiedCustomerAuthorized(req, order.phone));
+    res.json({ success: true, order: sanitizeOrderForPublic(order, isVerifiedOwner) });
   } catch (err: any) {
     res.status(500).json({ error: "Failed to track order" });
   }
@@ -512,10 +649,8 @@ v1Router.post("/payment/initiate", async (req, res) => {
       provider: provider || gatewayStatus.provider,
     });
 
-    const host = req.get("host") || "localhost:3000";
-    const protocol =
-      req.protocol === "https" || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
-    const fallbackCallbackUrl = `${protocol}://${host}/?payment_callback=1&orderId=${encodeURIComponent(
+    const siteBase = getSiteUrl(req);
+    const fallbackCallbackUrl = `${siteBase}/?payment_callback=1&orderId=${encodeURIComponent(
       session.orderId
     )}&txId=${encodeURIComponent(session.transactionId)}`;
 
@@ -527,6 +662,10 @@ v1Router.post("/payment/initiate", async (req, res) => {
       email: typeof email === "string" ? email : undefined,
       fallbackCallbackUrl,
     });
+
+    if (liveResult.ok && liveResult.authority) {
+      paymentStateMachine.attachProviderRef(session.transactionId, liveResult.authority, liveResult.provider);
+    }
 
     res.json({
       success: true,
@@ -547,6 +686,118 @@ v1Router.post("/payment/initiate", async (req, res) => {
   }
 });
 
+v1Router.post("/payment/verify", async (req, res) => {
+  try {
+    const body = req.body || {};
+    const authorityRaw = String(body.authority || body.Authority || body.trackId || body.id || "").trim();
+    const statusParam = String(body.status || body.Status || "").trim();
+    const zibalSuccess = body.success !== undefined ? String(body.success) : undefined;
+    const orderIdRaw = typeof body.orderId === "string" ? body.orderId.trim() : undefined;
+    const txIdRaw = typeof body.txId === "string" ? body.txId.trim() : undefined;
+
+    const pending = paymentStateMachine.lookupPendingTransaction({
+      orderId: orderIdRaw,
+      txId: txIdRaw,
+      authority: authorityRaw || undefined,
+    });
+
+    if (!pending) {
+      return res.status(404).json({ success: false, error: "تراکنش یا سفارش متناظر یافت نشد." });
+    }
+
+    if (pending.orderStatus === "PAID") {
+      return res.json({
+        success: true,
+        alreadyVerified: true,
+        orderId: pending.orderId,
+        orderNumber: pending.orderNumber,
+        orderStatus: "PAID",
+        refId: pending.transaction?.provider_ref || pending.authority,
+        amount: pending.amount,
+      });
+    }
+
+    const explicitlyCancelled =
+      (statusParam && statusParam.toUpperCase() === "NOK") ||
+      zibalSuccess === "0" ||
+      (pending.provider === "idpay" && statusParam && Number(statusParam) < 10);
+
+    const authority = authorityRaw || pending.authority;
+    const idempotencyKey = `live_${pending.provider}_${authority || pending.transaction?.id || Date.now()}`;
+
+    if (explicitlyCancelled) {
+      const failResult = paymentStateMachine.processCallback({
+        orderId: pending.orderId,
+        idempotencyKey,
+        status: "FAILED",
+        providerRef: authority || "cancelled",
+        amount: pending.amount,
+        provider: pending.provider,
+      });
+      return res.json({
+        success: false,
+        cancelled: true,
+        orderId: pending.orderId,
+        orderNumber: pending.orderNumber,
+        orderStatus: failResult.orderStatus,
+        message: "پرداخت در درگاه بانکی لغو شد یا ناموفق بود و موجودی کالا آزاد شد.",
+      });
+    }
+
+    if (!authority) {
+      return res.status(400).json({ success: false, error: "شناسه مرجع درگاه (Authority) موجود نیست." });
+    }
+
+    const verifyRes = await verifyLiveGatewayPayment({
+      provider: pending.provider,
+      authority,
+      amountToman: pending.amount,
+      orderNumber: pending.orderId,
+    });
+
+    if (!verifyRes.verified) {
+      const failResult = paymentStateMachine.processCallback({
+        orderId: pending.orderId,
+        idempotencyKey: `${idempotencyKey}_fail`,
+        status: "FAILED",
+        providerRef: authority,
+        amount: pending.amount,
+        provider: verifyRes.provider || pending.provider,
+      });
+      return res.status(400).json({
+        success: false,
+        orderId: pending.orderId,
+        orderNumber: pending.orderNumber,
+        orderStatus: failResult.orderStatus,
+        error: verifyRes.error || "تایید تراکنش از سمت درگاه بانکی انجام نشد.",
+      });
+    }
+
+    const finalRef = verifyRes.refId || authority;
+    const paidResult = paymentStateMachine.processCallback({
+      orderId: pending.orderId,
+      idempotencyKey,
+      status: "SUCCESS",
+      providerRef: finalRef,
+      amount: pending.amount,
+      provider: verifyRes.provider || pending.provider,
+    });
+
+    return res.json({
+      success: true,
+      orderId: pending.orderId,
+      orderNumber: pending.orderNumber,
+      orderStatus: paidResult.orderStatus,
+      refId: finalRef,
+      cardPan: verifyRes.cardPan,
+      amount: pending.amount,
+    });
+  } catch (err: any) {
+    console.error("Live payment verify error:", err);
+    return res.status(500).json({ success: false, error: err?.message || "خطا در تایید نهایی پرداخت" });
+  }
+});
+
 v1Router.post("/payment/callback", (req, res) => {
   try {
     const { orderId, idempotencyKey, status, providerRef, amount, signature, provider } = req.body;
@@ -554,12 +805,20 @@ v1Router.post("/payment/callback", (req, res) => {
       return res.status(400).json({ error: "Missing required orderId or idempotencyKey" });
     }
 
-    // Signature verification (Gate 3)
+    // Fail closed: unsigned callbacks must never mark an order as paid in production
     const headerSig = req.headers["x-payment-signature"] || signature;
-    if (process.env.PAYMENT_GATEWAY_SECRET && headerSig) {
+    const gatewaySecret = process.env.PAYMENT_GATEWAY_SECRET;
+    if (!gatewaySecret) {
+      if (process.env.NODE_ENV === "production") {
+        return res.status(503).json({ error: "Payment callback is disabled: PAYMENT_GATEWAY_SECRET is not configured." });
+      }
+    } else {
+      if (!headerSig) {
+        return res.status(401).json({ error: "Unauthorized: payment gateway signature is required." });
+      }
       const isValid = paymentStateMachine.verifyCallbackSignature(
         JSON.stringify({ orderId, idempotencyKey, status, amount: parseInt(amount, 10) || 0 }),
-        process.env.PAYMENT_GATEWAY_SECRET,
+        gatewaySecret,
         String(headerSig)
       );
       if (!isValid) {
@@ -653,6 +912,13 @@ v1Router.put("/approvals/:id", async (req, res) => {
 // ============================================================================
 v1Router.get("/customer/memory/:customerId", async (req, res) => {
   try {
+    const phoneInId = normalizeSupportPhone(req.params.customerId.replace(/^cust_/, ""));
+    if (phoneInId) {
+      const access = checkPhoneAccess(req, phoneInId);
+      if (!access.allowed) {
+        return res.status(401).json({ error: "احراز هویت برای دسترسی به حافظه مشتری تاییدشده الزامی است.", code: "CUSTOMER_AUTH_REQUIRED" });
+      }
+    }
     const memory = await commerceRepo.customerMemory.getCustomerMemory(req.params.customerId);
     res.json({ success: true, memory });
   } catch (err: any) {
@@ -662,6 +928,13 @@ v1Router.get("/customer/memory/:customerId", async (req, res) => {
 
 v1Router.post("/customer/memory/:customerId", async (req, res) => {
   try {
+    const phoneInId = normalizeSupportPhone(req.params.customerId.replace(/^cust_/, ""));
+    if (phoneInId) {
+      const access = checkPhoneAccess(req, phoneInId);
+      if (!access.allowed) {
+        return res.status(401).json({ error: "احراز هویت برای ویرایش حافظه مشتری تاییدشده الزامی است.", code: "CUSTOMER_AUTH_REQUIRED" });
+      }
+    }
     const memory = await commerceRepo.customerMemory.saveCustomerMemory(req.params.customerId, req.body);
     eventBus.publish("customer:memory_updated", {
       customerId: req.params.customerId,
@@ -675,6 +948,13 @@ v1Router.post("/customer/memory/:customerId", async (req, res) => {
 
 v1Router.delete("/customer/memory/:customerId", async (req, res) => {
   try {
+    const phoneInId = normalizeSupportPhone(req.params.customerId.replace(/^cust_/, ""));
+    if (phoneInId) {
+      const access = checkPhoneAccess(req, phoneInId);
+      if (!access.allowed) {
+        return res.status(401).json({ error: "احراز هویت برای پاکسازی حافظه مشتری تاییدشده الزامی است.", code: "CUSTOMER_AUTH_REQUIRED" });
+      }
+    }
     const result = await commerceRepo.customerMemory.resetCustomerMemory(req.params.customerId);
     eventBus.publish("customer:memory_updated", {
       customerId: req.params.customerId,
@@ -1044,13 +1324,26 @@ const TOROB_BLACKLIST_KEYWORDS = [
   "پاسور", "قمار", "ویسکی", "شامپاین", "شیر خشک", "گارداسیل"
 ];
 
-function evaluateTorobCompliance(product: any): { isCompliant: boolean; violationReason?: string } {
-  const textToCheck = `${product.title || ''} ${product.titleEn || ''} ${product.brand || ''} ${product.brandFa || ''} ${product.category || ''}`.toLowerCase();
+function resolveCanonicalSlug(product: any): string {
+  if (product?.slug && typeof product.slug === "string") return product.slug.trim();
+  const seoEntry = product?.id ? PRODUCT_BY_ID.get(product.id) : undefined;
+  return seoEntry?.slug || product?.id || "";
+}
+
+function toAbsoluteMediaUrl(rawPath: string | undefined, baseUrl: string): string {
+  const cleanBase = baseUrl.replace(/\/+$/, "");
+  if (!rawPath) return `${cleanBase}/assets/gordiyeh-logo-emblem.webp`;
+  if (/^https?:\/\//i.test(rawPath)) return rawPath;
+  return `${cleanBase}${rawPath.startsWith("/") ? "" : "/"}${rawPath}`;
+}
+
+function evaluateMarketplaceCompliance(product: any): { isCompliant: boolean; violationReason?: string } {
+  const textToCheck = `${product.title || ""} ${product.titleEn || ""} ${product.brand || ""} ${product.brandFa || ""} ${product.category || ""}`.toLowerCase();
   for (const kw of TOROB_BLACKLIST_KEYWORDS) {
     if (textToCheck.includes(kw.toLowerCase())) {
       return {
         isCompliant: false,
-        violationReason: `حاوی کلمه یا برند ممنوعه ترب: «${kw}» (طبق آیین‌نامه رسمی محصولات غیرمجاز ترب)`
+        violationReason: `حاوی کلمه یا برند ممنوعه ترب/ایمالز: «${kw}» (طبق آیین‌نامه رسمی محصولات غیرمجاز)`,
       };
     }
   }
@@ -1060,60 +1353,84 @@ function evaluateTorobCompliance(product: any): { isCompliant: boolean; violatio
 v1Router.get(["/integrations/torob/feed", "/torob/feed", "/torob/products"], async (req, res) => {
   try {
     const allProducts = await commerceRepo.products.getProducts();
-    const host = req.get("host") || "localhost:3000";
-    const protocol = req.protocol === "https" || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
-    const baseUrl = `${protocol}://${host}`;
+    const baseUrl = getSiteUrl(req);
+    const page = Math.max(1, parseInt(String(req.query.page || "1"), 10) || 1);
+    const limit = Math.min(200, Math.max(1, parseInt(String(req.query.limit || "100"), 10) || 100));
 
     const eligibleProducts: any[] = [];
     const excludedProducts: any[] = [];
 
     for (const p of allProducts) {
-      if (p.status === "KILL_LIST") {
+      if (p.status === "KILL_LIST" || p.status === "UNPUBLISHED") {
+        excludedProducts.push({
+          id: p.id,
+          title: p.title,
+          reason: "وضعیت محصول غیرفعال یا در لیست سیاه است",
+        });
         continue;
       }
-      const compliance = evaluateTorobCompliance(p);
+      const compliance = evaluateMarketplaceCompliance(p);
       if (!compliance.isCompliant) {
         excludedProducts.push({
           id: p.id,
           title: p.title,
-          reason: compliance.violationReason
+          reason: compliance.violationReason,
         });
         continue;
       }
 
       const activeOffer = p.supplierOffers?.find((o: any) => o.id === p.selectedOfferId) || p.supplierOffers?.[0];
-      const inStock = activeOffer ? activeOffer.stock > 0 : true;
+      const inStock = p.status !== "OUT_OF_STOCK" && (activeOffer ? Number(activeOffer.stock || 0) > 0 : true);
+      const slug = resolveCanonicalSlug(p);
+      const canonicalProductUrl = `${baseUrl}/product/${slug}`;
+      const mainImage = toAbsoluteMediaUrl(p.image, baseUrl);
+      const galleryImages = Array.isArray(p.gallery) && p.gallery.length > 0
+        ? p.gallery.map((g: string) => toAbsoluteMediaUrl(g, baseUrl))
+        : [];
+      const allImages = Array.from(new Set([mainImage, ...galleryImages]));
 
       eligibleProducts.push({
+        page_unique: p.id,
         product_id: p.id,
-        page_unique_users: p.id,
+        page_url: canonicalProductUrl,
         title: p.title,
-        page_url: `${baseUrl}/#product-${p.id}`,
+        subtitle: p.titleEn || "",
+        current_price: p.retailPrice,
         price: p.retailPrice,
         old_price: p.originalPrice || p.retailPrice,
         availability: inStock ? "instock" : "outofstock",
-        image_links: [p.image],
         category_name: p.category,
-        brand: p.brand || p.brandFa || "عمومی",
-        guarantee: (p as any).warranty || (p as any).guarantee || "ضمانت اصالت و سلامت فیزیکی کالا",
+        image_link: mainImage,
+        image_links: allImages,
+        short_desc: (p.seoDescription || p.description || "").slice(0, 300),
+        brand: p.brandFa || p.brand || "عمومی",
+        guarantee: p.warranty || "ضمانت اصالت و سلامت فیزیکی کالا",
         delivery_time: "آماده‌سازی و ارسال حداکثر ظرف ۳ روز کاری",
         spec: {
           sku: p.sku,
           dispatch_time_hours: activeOffer?.dispatchTimeHours || 24,
-          key_features: p.keyFeatures || []
-        }
+          key_features: p.keyFeatures || [],
+        },
       });
     }
+
+    const totalCount = eligibleProducts.length;
+    const maxPages = Math.max(1, Math.ceil(totalCount / limit));
+    const offset = (page - 1) * limit;
+    const pagedProducts = eligibleProducts.slice(offset, offset + limit);
 
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     return res.json({
       title: "فید رسمی محصولات فروشگاه جهت اتصال به موتور جستجوی ترب",
       currency: "IRT",
       generated_at: new Date().toISOString(),
-      total_eligible: eligibleProducts.length,
+      count: totalCount,
+      max_pages: maxPages,
+      current_page: page,
+      total_eligible: totalCount,
       total_excluded_for_compliance: excludedProducts.length,
       excluded_summary: excludedProducts,
-      products: eligibleProducts
+      products: pagedProducts,
     });
   } catch (err: any) {
     console.error("Torob feed error:", err);
@@ -1124,22 +1441,21 @@ v1Router.get(["/integrations/torob/feed", "/torob/feed", "/torob/products"], asy
 v1Router.get("/integrations/torob/status", async (req, res) => {
   try {
     const allProducts = await commerceRepo.products.getProducts();
-    const host = req.get("host") || "localhost:3000";
-    const protocol = req.protocol === "https" || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
-    const feedUrl = `${protocol}://${host}/api/v1/integrations/torob/feed`;
+    const baseUrl = getSiteUrl(req);
+    const feedUrl = `${baseUrl}/api/v1/integrations/torob/feed`;
 
     const eligible: any[] = [];
     const excluded: any[] = [];
 
     for (const p of allProducts) {
-      const comp = evaluateTorobCompliance(p);
-      if (comp.isCompliant && p.status !== "KILL_LIST") {
+      const comp = evaluateMarketplaceCompliance(p);
+      if (comp.isCompliant && p.status !== "KILL_LIST" && p.status !== "UNPUBLISHED") {
         eligible.push(p);
       } else {
         excluded.push({
           id: p.id,
           title: p.title,
-          reason: comp.violationReason || "قرار داشتن در لیست سیاه کاتالوگ (Kill List)"
+          reason: comp.violationReason || "قرار داشتن در لیست سیاه یا غیرفعال بودن کاتالوگ",
         });
       }
     }
@@ -1154,14 +1470,319 @@ v1Router.get("/integrations/torob/status", async (req, res) => {
       complianceRules: [
         { key: "enamad", title: "الزام به نماد اعتماد الکترونیک (اینماد)", status: "COMPLIANT", note: "آماده احراز توسط کارشناسان ترب" },
         { key: "direct_checkout", title: "ممنوعیت ریدایرکت واسطه‌ای به دیجی‌کالا و سایر سایت‌ها", status: "COMPLIANT", note: "تمام خریدها مستقیماً در درگاه شاپرک سایت انجام می‌شود" },
-        { key: "all_inclusive_price", title: "قیمت تمام‌شده و شفاف بودن هزینه‌ها", status: "COMPLIANT", note: "تنها هزینه اضافه در سبد خرید هزینه رسمی پست است" },
+        { key: "canonical_ssr_sync", title: "تطابق یکپارچه قیمت و موجودی فید با صفحات SSR محصول", status: "COMPLIANT", note: "صفحات /product/:slug مستقیماً از SQLite قیمت و موجودی زنده را می‌خوانند" },
         { key: "dispatch_sla", title: "زمان ارسال حداکثر ۳ تا ۵ روز کاری", status: "COMPLIANT", note: "تأمین‌کنندگان فعال مقید به بازه ارسال زیر ۳ روز کاری هستند" },
-        { key: "bot_friendly_html", title: "خوانش قیمت بدون نیاز به جاوااسکریپت", status: "COMPLIANT", note: "فید JSON مستقیم و متاتگ‌های Schema.org در صفحات کالا فعال است" },
-        { key: "blacklist_guard", title: "سپر محافظت از کالاهای ممنوعه ترب", status: "ACTIVE", note: "کالاهای غیرمجاز خودکار از فید حذف می‌شوند تا اکانت مسدود نشود" }
-      ]
+        { key: "blacklist_guard", title: "سپر محافظت از کالاهای ممنوعه ترب", status: "ACTIVE", note: "کالاهای غیرمجاز خودکار از فید حذف می‌شوند تا اکانت مسدود نشود" },
+      ],
     });
   } catch (err: any) {
     res.status(500).json({ error: "Failed to fetch Torob status", details: err?.message });
+  }
+});
+
+// ============================================================================
+// 11B. EMALLS SEARCH ENGINE FEED & COMPLIANCE
+// ============================================================================
+v1Router.get(["/integrations/emalls/feed", "/emalls/feed", "/emalls/products"], async (req, res) => {
+  try {
+    const allProducts = await commerceRepo.products.getProducts();
+    const baseUrl = getSiteUrl(req);
+    const page = Math.max(1, parseInt(String(req.query.page || "1"), 10) || 1);
+    const perPage = Math.min(200, Math.max(1, parseInt(String(req.query.item_per_page || req.query.limit || "100"), 10) || 100));
+
+    const eligibleProducts: any[] = [];
+    for (const p of allProducts) {
+      if (p.status === "KILL_LIST" || p.status === "UNPUBLISHED") continue;
+      if (!evaluateMarketplaceCompliance(p).isCompliant) continue;
+
+      const activeOffer = p.supplierOffers?.find((o: any) => o.id === p.selectedOfferId) || p.supplierOffers?.[0];
+      const isAvailable = p.status !== "OUT_OF_STOCK" && (activeOffer ? Number(activeOffer.stock || 0) > 0 : true);
+      const slug = resolveCanonicalSlug(p);
+      const mainImage = toAbsoluteMediaUrl(p.image, baseUrl);
+      const otherImages = Array.isArray(p.gallery)
+        ? p.gallery.map((g: string) => toAbsoluteMediaUrl(g, baseUrl)).filter((img) => img !== mainImage)
+        : [];
+
+      eligibleProducts.push({
+        id: p.id,
+        title: p.title,
+        subtitle: p.titleEn || "",
+        price: p.retailPrice,
+        old_price: p.originalPrice || p.retailPrice,
+        is_available: isAvailable,
+        url: `${baseUrl}/product/${slug}`,
+        image: mainImage,
+        other_images: otherImages,
+        category: p.category,
+        brand: p.brandFa || p.brand || "عمومی",
+        guarantee: p.warranty || "ضمانت اصالت و سلامت فیزیکی کالا",
+      });
+    }
+
+    const totalItems = eligibleProducts.length;
+    const pagesCount = Math.max(1, Math.ceil(totalItems / perPage));
+    const offset = (page - 1) * perPage;
+    const pagedProducts = eligibleProducts.slice(offset, offset + perPage);
+
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.json({
+      success: true,
+      currency: "IRT",
+      generated_at: new Date().toISOString(),
+      total_items: totalItems,
+      pages_count: pagesCount,
+      current_page: page,
+      products: pagedProducts,
+    });
+  } catch (err: any) {
+    console.error("Emalls feed error:", err);
+    res.status(500).json({ error: "Failed to generate Emalls feed", details: err?.message });
+  }
+});
+
+v1Router.get("/integrations/emalls/status", async (req, res) => {
+  try {
+    const allProducts = await commerceRepo.products.getProducts();
+    const baseUrl = getSiteUrl(req);
+    const feedUrl = `${baseUrl}/api/v1/integrations/emalls/feed`;
+
+    let eligibleCount = 0;
+    const excludedList: any[] = [];
+    for (const p of allProducts) {
+      const comp = evaluateMarketplaceCompliance(p);
+      if (comp.isCompliant && p.status !== "KILL_LIST" && p.status !== "UNPUBLISHED") {
+        eligibleCount++;
+      } else {
+        excludedList.push({
+          id: p.id,
+          title: p.title,
+          reason: comp.violationReason || "غیرفعال یا لیست سیاه",
+        });
+      }
+    }
+
+    return res.json({
+      success: true,
+      feedUrl,
+      totalProducts: allProducts.length,
+      eligibleCount,
+      excludedCount: excludedList.length,
+      excludedList,
+      complianceRules: [
+        { key: "emalls_schema", title: "استاندارد JSON صفحه‌بندی‌شده ایمالز (total_items / pages_count)", status: "COMPLIANT" },
+        { key: "canonical_urls", title: "آدرس‌های کانونیکال /product/:slug همگام با SSR و Schema.org", status: "COMPLIANT" },
+        { key: "live_stock", title: "همگام‌سازی لحظه‌ای is_available و قیمت تومان از SQLite", status: "COMPLIANT" },
+      ],
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: "Failed to fetch Emalls status", details: err?.message });
+  }
+});
+
+// ============================================================================
+// 11C. SOCIAL AUTO-PUBLISHING CHANNELS & SCHEDULER (TELEGRAM/BALE/EITAA/IG)
+// ============================================================================
+v1Router.get("/admin/integrations/social", (_req, res) => {
+  try {
+    return res.json({ success: true, config: getSocialChannelsPublicStatus() });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در خواندن تنظیمات شبکه‌های اجتماعی" });
+  }
+});
+
+v1Router.put("/admin/integrations/social", (req, res) => {
+  try {
+    const config = saveSocialChannelsConfig(req.body || {});
+    return res.json({ success: true, config });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در ذخیره تنظیمات شبکه‌های اجتماعی" });
+  }
+});
+
+v1Router.post("/social/publish", async (req, res) => {
+  try {
+    const { channels, title, caption, targetUrl, imageUrl, kind, productId, documentId } = req.body || {};
+    if (!caption || typeof caption !== "string" || !caption.trim()) {
+      return res.status(400).json({ error: "متن یا کپشن پست برای انتشار الزامی است." });
+    }
+    const baseUrl = getSiteUrl(req);
+    const resolvedTarget = targetUrl
+      ? /^https?:\/\//i.test(targetUrl)
+        ? targetUrl
+        : `${baseUrl}${targetUrl.startsWith("/") ? "" : "/"}${targetUrl}`
+      : undefined;
+    const resolvedImage = imageUrl ? toAbsoluteMediaUrl(imageUrl, baseUrl) : undefined;
+
+    const results = await publishToSocialChannels(
+      Array.isArray(channels) ? (channels as SocialChannelKey[]) : undefined,
+      {
+        title: typeof title === "string" ? title.trim() : undefined,
+        caption: caption.trim(),
+        targetUrl: resolvedTarget,
+        imageUrl: resolvedImage,
+        kind: kind || "CUSTOM",
+        productId,
+        documentId,
+      }
+    );
+
+    const anyOk = results.some((r) => r.ok);
+    return res.json({
+      success: anyOk,
+      results,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در انتشار خودکار پست", details: err?.message });
+  }
+});
+
+v1Router.get("/social/schedule", (_req, res) => {
+  try {
+    return res.json({ success: true, items: CommerceDB.listScheduledSocialPosts(50) });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در دریافت صف انتشار زمان‌بندی‌شده" });
+  }
+});
+
+v1Router.post("/social/schedule", (req, res) => {
+  try {
+    const { channels, scheduledAt, title, caption, targetUrl, imageUrl, kind, productId } = req.body || {};
+    if (!caption || typeof caption !== "string" || !caption.trim()) {
+      return res.status(400).json({ error: "متن پست برای زمان‌بندی الزامی است." });
+    }
+    if (!scheduledAt || isNaN(Date.parse(String(scheduledAt)))) {
+      return res.status(400).json({ error: "تاریخ و ساعت زمان‌بندی معتبر نیست (ISO 8601)." });
+    }
+    const validChannels = Array.isArray(channels) && channels.length > 0 ? channels : ["telegram"];
+    const baseUrl = getSiteUrl(req);
+    const resolvedTarget = targetUrl
+      ? /^https?:\/\//i.test(targetUrl)
+        ? targetUrl
+        : `${baseUrl}${targetUrl.startsWith("/") ? "" : "/"}${targetUrl}`
+      : undefined;
+    const resolvedImage = imageUrl ? toAbsoluteMediaUrl(imageUrl, baseUrl) : undefined;
+
+    const item = CommerceDB.createScheduledSocialPost({
+      channels: validChannels,
+      scheduledAt: new Date(String(scheduledAt)).toISOString(),
+      payload: {
+        title: typeof title === "string" ? title.trim() : undefined,
+        caption: caption.trim(),
+        targetUrl: resolvedTarget,
+        imageUrl: resolvedImage,
+        kind: kind || "CUSTOM",
+        productId,
+      },
+    });
+    return res.status(201).json({ success: true, item });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در ثبت پست زمان‌بندی‌شده" });
+  }
+});
+
+v1Router.delete("/social/schedule/:id", (req, res) => {
+  try {
+    const deleted = CommerceDB.deleteScheduledSocialPost(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: "آیتم زمان‌بندی‌شده پیدا نشد یا در حال پردازش است." });
+    }
+    return res.json({ success: true });
+  } catch {
+    return res.status(500).json({ error: "خطا در حذف آیتم زمان‌بندی‌شده" });
+  }
+});
+
+v1Router.post("/social/schedule/run-due", async (_req, res) => {
+  try {
+    const summary = await processDueScheduledSocialPosts();
+    return res.json({ success: true, ...summary });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در اجرای صف انتشار زمان‌بندی‌شده" });
+  }
+});
+
+// ============================================================================
+// 11D. DIGIKALA SELLER CENTER API INTEGRATION & VARIANT SYNC
+// ============================================================================
+v1Router.get("/admin/integrations/digikala", (_req, res) => {
+  try {
+    return res.json({
+      success: true,
+      config: getDigikalaSellerPublicStatus(),
+      mappings: getDigikalaVariantMappings(),
+    });
+  } catch {
+    return res.status(500).json({ error: "خطا در خواندن تنظیمات پنل فروشندگان دیجی‌کالا" });
+  }
+});
+
+v1Router.put("/admin/integrations/digikala", (req, res) => {
+  try {
+    const body = req.body || {};
+    if (body.baseUrl && typeof body.baseUrl === "string" && body.baseUrl.trim()) {
+      const ssrf = validateWebhookUrl(body.baseUrl.trim());
+      if (!ssrf.isSafe) {
+        return res.status(400).json({ error: ssrf.reason || "آدرس پایه دیجی‌کالا نامعتبر است." });
+      }
+    }
+    const config = saveDigikalaSellerConfig(body);
+    return res.json({ success: true, config });
+  } catch {
+    return res.status(500).json({ error: "خطا در ذخیره تنظیمات دیجی‌کالا" });
+  }
+});
+
+v1Router.put("/admin/integrations/digikala/mappings", (req, res) => {
+  try {
+    const items = Array.isArray(req.body?.mappings) ? req.body.mappings : [];
+    const saved = saveDigikalaVariantMappings(items);
+    return res.json({ success: true, mappings: saved });
+  } catch {
+    return res.status(500).json({ error: "خطا در ذخیره نگاشت کالاهای دیجی‌کالا" });
+  }
+});
+
+v1Router.get("/integrations/digikala/variants", async (req, res) => {
+  try {
+    const page = parseInt(String(req.query.page || "1"), 10) || 1;
+    const result = await fetchDigikalaVariants(page);
+    if (!result.ok) {
+      return res.status(result.status || 400).json({ error: result.error, details: result.data });
+    }
+    return res.json({ success: true, data: result.data });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در دریافت تنوع‌های دیجی‌کالا", details: err?.message });
+  }
+});
+
+v1Router.post("/integrations/digikala/sync-inventory", async (req, res) => {
+  try {
+    const productIds = Array.isArray(req.body?.productIds) ? req.body.productIds : undefined;
+    const syncRes = await syncDigikalaInventory(productIds);
+    if (!syncRes.ok && syncRes.results.length === 0) {
+      return res.status(syncRes.status || 400).json({ error: syncRes.error });
+    }
+    return res.status(syncRes.status || 200).json({
+      success: syncRes.ok,
+      syncedCount: syncRes.syncedCount,
+      failedCount: syncRes.failedCount,
+      results: syncRes.results,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در همگام‌سازی موجودی و قیمت دیجی‌کالا", details: err?.message });
+  }
+});
+
+v1Router.post("/integrations/digikala/sync-orders", async (req, res) => {
+  try {
+    const page = parseInt(String(req.body?.page || req.query.page || "1"), 10) || 1;
+    const result = await fetchDigikalaOrders(page);
+    if (!result.ok) {
+      return res.status(result.status || 400).json({ error: result.error, details: result.data });
+    }
+    return res.json({ success: true, orders: result.data?.data?.items || result.data?.items || result.data });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در دریافت سفارش‌های دیجی‌کالا", details: err?.message });
   }
 });
 
@@ -1203,7 +1824,7 @@ Structure with clear headings, bullet points, and specific numbers.`;
         const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Network timeout')), 5000));
         const response: any = await Promise.race([
           client.models.generateContent({
-            model: "gemini-3.8-flash",
+            model: "gemini-4-hydrogen",
             contents: prompt,
           }),
           timeoutPromise
@@ -1211,7 +1832,7 @@ Structure with clear headings, bullet points, and specific numbers.`;
 
         return res.json({
           reply: response.text || "تحلیل انجام شد.",
-          source: "gemini-3.8-flash",
+          source: "gemini-4-hydrogen",
           persona,
         });
       } catch (geminiErr: any) {
@@ -1298,7 +1919,7 @@ v1Router.post("/content/generate", async (req, res) => {
 }`;
 
       const response = await client.models.generateContent({
-        model: "gemini-3.8-flash",
+        model: "gemini-4-hydrogen",
         contents: prompt,
         config: { responseMimeType: "application/json" }
       });
@@ -1314,7 +1935,7 @@ v1Router.post("/content/generate", async (req, res) => {
         success: true,
         data: parsed,
         delegation,
-        source: "gemini-3.8-flash"
+        source: "gemini-4-hydrogen"
       });
     }
 
@@ -1351,8 +1972,13 @@ v1Router.post("/content/generate", async (req, res) => {
 v1Router.post("/social/publish-preview", async (req, res) => {
   try {
     const { channel, format, product, customOffer } = req.body;
+    const baseUrl = getSiteUrl(req);
+    const slug = resolveCanonicalSlug(product);
+    const targetUrl = `${baseUrl}/product/${slug || "mini-shaker-blender"}`;
+    const imageUrl = toAbsoluteMediaUrl(product?.image, baseUrl);
     const title = product?.title || "کالای ویژه";
-    const price = product?.sellPrice ? product.sellPrice.toLocaleString() + " تومان" : "تماس بگیرید";
+    const sellPrice = product?.retailPrice || product?.sellPrice || 0;
+    const price = sellPrice ? Number(sellPrice).toLocaleString("fa-IR") + " تومان" : "تماس بگیرید";
 
     const formattedContent: any = {
       channel,
@@ -1362,22 +1988,23 @@ v1Router.post("/social/publish-preview", async (req, res) => {
       payload: {
         title,
         price,
-        targetUrl: `https://store.example.ir/product/${product?.id || "1"}`,
-        cta: "خرید آنلاین با ارسال رایگان",
-        formattedText: ""
-      }
+        targetUrl,
+        imageUrl,
+        cta: "خرید آنلاین از فروشگاه گُردیه",
+        formattedText: "",
+      },
     };
 
     if (channel === "INSTAGRAM") {
-      formattedContent.payload.formattedText = `🌟 پرچمدار جدید بازار رسید: ${title}\n\n💵 قیمت امروز: ${price}\n${customOffer || "🎁 به همراه ارسال رایگان با کد تخفیف YALDA"}`;
+      formattedContent.payload.formattedText = `🌟 معرفی محصول: ${title}\n\n💵 قیمت امروز: ${price}\n${customOffer || "🎁 گارانتی اصالت و مهلت تست کالا"}\n\n🛒 خرید از لینک بیو:\n${targetUrl}`;
       formattedContent.aspectRatio = "1:1";
-    } else if (channel === "TELEGRAM") {
-      formattedContent.payload.formattedText = `🔥 <b>${title}</b>\n\n🔹 قیمت ویژه: <b>${price}</b>\n🔹 وضعیت: موجود`;
+    } else if (channel === "TELEGRAM" || channel === "BALE" || channel === "EITAA") {
+      formattedContent.payload.formattedText = `🔥 <b>${title}</b>\n\n🔹 قیمت ویژه: <b>${price}</b>\n🔹 وضعیت: موجود در انبار\n\n🛍 ${targetUrl}`;
       formattedContent.buttons = [
-        [{ text: "🛍 مشاهده و خرید آنلاین", url: formattedContent.payload.targetUrl }]
+        [{ text: "🛍 مشاهده و خرید آنلاین", url: targetUrl }],
       ];
     } else {
-      formattedContent.payload.formattedText = `🚀 موجود شد: ${title} با قیمت ${price}.\nخرید مستقیم: ${formattedContent.payload.targetUrl}`;
+      formattedContent.payload.formattedText = `🚀 موجود شد: ${title} با قیمت ${price}.\nخرید مستقیم: ${targetUrl}`;
     }
 
     return res.json({ success: true, preview: formattedContent });
@@ -1604,6 +2231,21 @@ v1Router.post("/customer/account/identify", (req, res) => {
       return res.status(400).json({ error: "شماره موبایل معتبر (مانند 09123456789) الزامی است." });
     }
     const result = CommerceDB.identifyOrCreateCustomerAccount(phone);
+    if (result.account.isVerified && !isVerifiedCustomerAuthorized(req, phone) && !isAdminRequest(req)) {
+      return res.json({
+        success: true,
+        isNew: false,
+        requiresOtpReauth: true,
+        account: {
+          username: result.account.username,
+          phone: result.account.phone,
+          preferredName: result.account.preferredName || "",
+          accountType: "VERIFIED",
+          isVerified: true,
+          requiresOtpReauth: true,
+        },
+      });
+    }
     return res.json({
       success: true,
       isNew: result.isNew,
@@ -1619,6 +2261,13 @@ v1Router.patch("/customer/account", (req, res) => {
     const phone = normalizeSupportPhone(req.body?.phone);
     if (!phone) {
       return res.status(400).json({ error: "شماره موبایل معتبر الزامی است." });
+    }
+    const access = checkPhoneAccess(req, phone);
+    if (!access.allowed) {
+      return res.status(401).json({
+        error: "برای ویرایش اطلاعات این حساب کاربری تاییدشده، لطفاً ابتدا کد پیامکی را تایید کنید.",
+        code: "CUSTOMER_AUTH_REQUIRED",
+      });
     }
 
     const body = req.body || {};
@@ -1773,10 +2422,7 @@ v1Router.post("/auth/otp/verify", (req, res) => {
       return res.status(400).json({ success: false, error: verification.error });
     }
 
-    const exp = Date.now() + 30 * 24 * 60 * 60 * 1000;
-    const payload = Buffer.from(JSON.stringify({ phone, sub: phone, verified: true, exp })).toString("base64url");
-    const sig = crypto.createHmac("sha256", SERVER_SESSION_SECRET).update(payload).digest("base64url");
-    const sessionToken = `${payload}.${sig}`;
+    const sessionToken = signCustomerToken(phone);
 
     return res.json({
       success: true,
@@ -1795,6 +2441,13 @@ v1Router.get("/support/sessions", (req, res) => {
     if (!phone) {
       return res.status(400).json({ error: "شماره موبایل معتبر (مانند 09123456789) الزامی است." });
     }
+    const access = checkPhoneAccess(req, phone);
+    if (!access.allowed) {
+      return res.status(401).json({
+        error: "برای مشاهده گفتگوهای این حساب تاییدشده، ابتدا با کد پیامکی وارد شوید.",
+        code: "CUSTOMER_AUTH_REQUIRED",
+      });
+    }
     const sessions = CommerceDB.getSupportSessionsByPhone(phone);
     return res.json({ success: true, phone, sessions });
   } catch (err: any) {
@@ -1807,6 +2460,13 @@ v1Router.post("/support/sessions", (req, res) => {
     const phone = normalizeSupportPhone(req.body?.phone);
     if (!phone) {
       return res.status(400).json({ error: "برای ذخیره گفتگو، شماره موبایل معتبر الزامی است." });
+    }
+    const access = checkPhoneAccess(req, phone);
+    if (!access.allowed) {
+      return res.status(401).json({
+        error: "برای ذخیره گفتگو در حساب تاییدشده، ابتدا با کد پیامکی وارد شوید.",
+        code: "CUSTOMER_AUTH_REQUIRED",
+      });
     }
     const rawId = typeof req.body?.id === "string" ? req.body.id.trim() : "";
     if (!rawId || rawId.length > 100) {
@@ -1846,6 +2506,14 @@ v1Router.post("/support/sessions/:id/messages", (req, res) => {
       return res.status(400).json({ error: "اطلاعات پیام یا شماره موبایل کامل نیست." });
     }
 
+    const access = checkPhoneAccess(req, phone);
+    if (!access.allowed) {
+      return res.status(401).json({
+        error: "برای ادامه گفتگوی این حساب تاییدشده، ابتدا با کد پیامکی وارد شوید.",
+        code: "CUSTOMER_AUTH_REQUIRED",
+      });
+    }
+
     const existing = CommerceDB.getSupportSessionById(sessionId);
     const nowIso = new Date().toISOString();
     if (existing && existing.phone !== phone) {
@@ -1876,6 +2544,13 @@ v1Router.delete("/support/sessions", (req, res) => {
     const phone = normalizeSupportPhone(req.query.phone || req.body?.phone);
     if (!phone) {
       return res.status(400).json({ error: "شماره موبایل معتبر الزامی است." });
+    }
+    const access = checkPhoneAccess(req, phone);
+    if (!access.allowed) {
+      return res.status(401).json({
+        error: "برای پاکسازی گفتگوهای این حساب تاییدشده، ابتدا با کد پیامکی وارد شوید.",
+        code: "CUSTOMER_AUTH_REQUIRED",
+      });
     }
     const deletedCount = CommerceDB.deleteSupportSessionsByPhone(phone);
     return res.json({ success: true, deletedCount });
@@ -2089,7 +2764,15 @@ ${JSON.stringify(catalogContext)}`;
       : [];
     const recommendedProducts = recIds
       .map((id) => publishedProducts.find((p) => p.id === id))
-      .filter(Boolean);
+      .filter(Boolean)
+      .map(sanitizeProductForPublic);
+
+    const safeOrderForChat = foundOrder
+      ? sanitizeOrderForPublic(
+          foundOrder,
+          isAdminRequest(req) || Boolean(foundOrder.phone && isVerifiedCustomerAuthorized(req, foundOrder.phone))
+        )
+      : undefined;
 
     return res.json({
       success: true,
@@ -2097,7 +2780,7 @@ ${JSON.stringify(catalogContext)}`;
       source: usedModel,
       dbOrderFact: !!foundOrder,
       dbProductFact: recommendedProducts.length > 0,
-      order: foundOrder || undefined,
+      order: safeOrderForChat,
       matchedProduct: recommendedProducts[0] || undefined,
       recommendedProducts,
       operatorRequested: Boolean(parsed.operatorRequested),
@@ -2145,7 +2828,7 @@ v1Router.post("/companion/recommend", async (req, res) => {
       honestAdvice: 'شرایط تست و تعویض هر محصول توی صفحه‌ی همون محصول نوشته شده و قبل از خرید می‌تونید محدودیت‌هاش رو هم ببینید.',
       recommendations: scored.map(s => ({
         productId: s.product.id,
-        product: s.product,
+        product: isAdminRequest(req) ? s.product : sanitizeProductForPublic(s.product),
         matchReason: `هماهنگ با استفاده‌ی ${style || 'کاربردی'} و بودجه‌ی مشخص‌شده`,
         prosForRecipient: 'کاربری ساده و مشخصات روشن بدون ادعای اضافه',
         watchOut: 'قبل از ثبت سفارش، بخش «برای چه کسی نیست» رو توی صفحه‌ی محصول بخونید.'
@@ -2160,7 +2843,7 @@ v1Router.post("/companion/recommend", async (req, res) => {
 v1Router.get("/dropshipping/dispatch-slip/:orderId", async (req, res) => {
   try {
     const { orderId } = req.params;
-    const order = await commerceRepo.orders.lookupOrder(orderId);
+    const order = await commerceRepo.orders.lookupOrder(orderId, { allowSubstring: true });
 
     const slipData = {
       slipNumber: `DS-IR-${order ? order.orderNumber : Date.now()}`,
@@ -2170,12 +2853,12 @@ v1Router.get("/dropshipping/dispatch-slip/:orderId", async (req, res) => {
       orderId: order?.id || orderId,
       orderNumber: order?.orderNumber || `ORD-${orderId.slice(-6)}`,
       customer: {
-        fullName: order?.customerName || "علیرضا محمدی",
-        phone: order?.phone || "09121234567",
+        fullName: order?.customerName || "گیرنده نامشخص",
+        phone: order?.phone || "ثبت نشده",
         province: order?.province || "تهران",
         city: order?.city || "تهران",
         address: order?.address || "نشانی ثبت‌شده در سفارش",
-        postalCode: "1969764512",
+        postalCode: order?.postalCode || "ثبت نشده",
       },
       shippingProvider: "پست پیشتاز / پیک",
       trackingNumber: order?.trackingCode || "در انتظار ثبت کد رهگیری",

@@ -94,6 +94,9 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
   // Payment choice: Standard Online Gateway only
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+  const [isSandboxReceipt, setIsSandboxReceipt] = useState(false);
   const [gatewayRedirectUrl, setGatewayRedirectUrl] = useState<string | null>(null);
 
   const applySavedAddress = (addr: CustomerAddress) => {
@@ -114,6 +117,9 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
       setStep('cart');
       setCreatedOrder(null);
       setAddressError(null);
+      setCheckoutError(null);
+      setIsSubmittingOrder(false);
+      setIsSandboxReceipt(false);
       setGatewayRedirectUrl(null);
       return;
     }
@@ -217,145 +223,168 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
     setStep('payment');
   };
 
-  const handleCompleteOrder = () => {
-    const orderId = `ORD-${Date.now().toString().slice(-6)}`;
-    const trackingNo = `TRK-${Math.floor(10000000 + Math.random() * 90000000)}`;
+  const handleCompleteOrder = async () => {
+    if (isSubmittingOrder) return;
+    setCheckoutError(null);
+    setIsSubmittingOrder(true);
+
     const cleanPhone = normalizeIranianPhoneStrict(customerPhone) || customerPhone || '09120000000';
     const cleanEmail = email.trim().toLowerCase();
     const cleanNationalId = normalizeDigits(nationalId).replace(/[\s\-]/g, '');
     const cleanPostal = normalizeDigits(postalCode).replace(/[\s\-]/g, '');
 
-    const newOrder: Order = {
-      id: orderId,
-      orderNumber: orderId,
-      customerName: customerName || 'مشتری گُردیه',
-      customerPhone: cleanPhone,
-      city,
-      province,
-      address: address || 'نشانی ثبت‌شده',
-      items: cart.map((i) => ({
-        id: i.product.id,
-        title: i.product.title,
-        sku: i.product.sku,
-        quantity: i.quantity,
-        unitPrice: i.unitPrice,
-        unitCost: i.product.baseCost || Math.round(i.unitPrice * 0.75),
-      })),
-      totalAmount: finalPayable,
-      shippingCost: shippingFee,
-      paymentFee: 0,
-      discountAmount,
-      supplierCost: Math.round(finalPayable * 0.75),
-      marketingAllocation: Math.round(finalPayable * 0.05),
-      contributionProfit: Math.round(finalPayable * 0.2),
-      marginPercent: 20,
-      status: 'PAID',
-      riskScore: 10,
-      routingSupplier: 'انبار مرکزی',
-      shippingMethod: 'post',
-      deliveryTimeSlot: 'morning',
-      paymentMethod: 'gateway',
-      trackingNumber: trackingNo,
-      createdAt: new Date().toISOString(),
-    };
+    const requestItems = cart.map((i) => ({
+      id: i.product.id,
+      title: i.product.title,
+      sku: i.product.sku,
+      quantity: i.quantity,
+      unitPrice: i.unitPrice,
+      unitCost: 0,
+    }));
 
-    setCreatedOrder(newOrder);
-    setStep('receipt');
-    onOrderCompleted(newOrder);
-    onClearCart();
-
-    if (isValidIranianPhoneStrict(cleanPhone)) {
-      setSavedSupportPhone(cleanPhone);
-      const nextAddr: CustomerAddress = {
-        id: selectedAddressId || `addr_${Date.now()}`,
-        label: savedAddresses.find((a) => a.id === selectedAddressId)?.label || 'آخرین نشانی ارسال',
-        recipientName: customerName.trim(),
-        recipientPhone: cleanPhone,
-        province,
-        city,
-        addressLine: address.trim(),
-        postalCode: cleanPostal,
-        plaque: plaque.trim() || undefined,
-        unit: unit.trim() || undefined,
-        isDefault: true,
-      };
-      const mergedAddresses = [
-        nextAddr,
-        ...savedAddresses
-          .filter((a) => a.id !== nextAddr.id && a.postalCode !== cleanPostal)
-          .map((a) => ({ ...a, isDefault: false })),
-      ];
-      void updateCustomerProfile(cleanPhone, {
-        fullName: customerName.trim(),
-        ...(cleanEmail ? { email: cleanEmail } : {}),
-        ...(cleanNationalId ? { nationalId: cleanNationalId } : {}),
-        ...(isValidIranianPostalCode(cleanPostal) ? { addresses: mergedAddresses } : {}),
-      });
-    }
-
-    // Persist real order in browser localStorage
     try {
-      const existingOrders = JSON.parse(localStorage.getItem('commerce_os_orders') || '[]');
-      localStorage.setItem('commerce_os_orders', JSON.stringify([newOrder, ...existingOrders]));
-      localStorage.setItem(
-        'commerce_os_last_customer',
-        JSON.stringify({
-          name: customerName,
-          phone: cleanPhone,
-          email: cleanEmail || undefined,
-          nationalId: cleanNationalId || undefined,
-          province,
-          city,
-          address,
-          plaque,
-          unit,
-          postalCode: cleanPostal,
-        })
-      );
-    } catch (e) {
-      console.warn('Error saving order to localStorage:', e);
-    }
-
-    // Persist real order in server database & initiate configured gateway session if active
-    fetch('/api/v1/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        items: newOrder.items,
-        customer: {
-          fullName: customerName,
-          phone: cleanPhone,
-          email: cleanEmail || undefined,
-          nationalId: cleanNationalId || undefined,
-          province,
-          city,
-          address,
-          plaque: plaque || undefined,
-          unit: unit || undefined,
-          postalCode: cleanPostal || undefined,
-        },
-        discountAmount,
-      }),
-    })
-      .then((res) => (res.ok ? res.json() : null))
-      .then(async (orderResp) => {
-        const persistedId = orderResp?.order?.id || orderResp?.order?.orderNumber;
-        if (!persistedId) return;
-        const payRes = await fetch('/api/v1/payment/initiate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderId: persistedId,
+      const orderRes = await fetch('/api/v1/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: requestItems,
+          customer: {
+            fullName: customerName,
             phone: cleanPhone,
             email: cleanEmail || undefined,
-          }),
-        }).catch(() => null);
-        const payData = payRes && payRes.ok ? await payRes.json().catch(() => null) : null;
-        if (payData?.session?.liveGateway && payData?.session?.gatewayUrl) {
-          setGatewayRedirectUrl(payData.session.gatewayUrl);
-        }
-      })
-      .catch((e) => console.error('Error saving order to backend:', e));
+            nationalId: cleanNationalId || undefined,
+            province,
+            city,
+            address,
+            plaque: plaque || undefined,
+            unit: unit || undefined,
+            postalCode: cleanPostal || undefined,
+          },
+          discountAmount,
+        }),
+      });
+
+      const orderResp = await orderRes.json().catch(() => ({}));
+      if (!orderRes.ok || !orderResp?.order) {
+        setCheckoutError(orderResp?.error || 'ثبت سفارش در سرور با خطا مواجه شد. لطفاً دوباره تلاش کنید.');
+        return;
+      }
+
+      const persistedOrder = orderResp.order;
+      const persistedId = persistedOrder.id || persistedOrder.orderNumber;
+
+      const payRes = await fetch('/api/v1/payment/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: persistedId,
+          phone: cleanPhone,
+          email: cleanEmail || undefined,
+        }),
+      });
+      const payData = await payRes.json().catch(() => ({}));
+      if (!payRes.ok || !payData?.session) {
+        setCheckoutError(payData?.error || 'ایجاد نشست پرداخت ناموفق بود. لطفاً مجدداً اقدام کنید.');
+        return;
+      }
+
+      const isLiveGateway = Boolean(payData.session.liveGateway && payData.session.gatewayUrl);
+      const nextStatus: Order['status'] = isLiveGateway ? 'PENDING_PAYMENT' : 'PAID';
+
+      const newOrder: Order = {
+        id: persistedOrder.id,
+        orderNumber: persistedOrder.orderNumber || persistedOrder.id,
+        customerName: persistedOrder.customerName || customerName || 'مشتری گُردیه',
+        customerPhone: cleanPhone,
+        city,
+        province,
+        address: address || 'نشانی ثبت‌شده',
+        items: requestItems,
+        totalAmount: Number(persistedOrder.totalAmount ?? finalPayable),
+        shippingCost: shippingFee,
+        paymentFee: 0,
+        discountAmount,
+        supplierCost: 0,
+        marketingAllocation: 0,
+        contributionProfit: 0,
+        marginPercent: 0,
+        status: nextStatus,
+        riskScore: Number(persistedOrder.riskScore ?? 10),
+        routingSupplier: 'انبار مرکزی',
+        shippingMethod: 'post',
+        deliveryTimeSlot: 'morning',
+        paymentMethod: 'gateway',
+        trackingNumber: persistedOrder.trackingCode || persistedOrder.orderNumber,
+        createdAt: persistedOrder.createdAt || new Date().toISOString(),
+      };
+
+      if (isValidIranianPhoneStrict(cleanPhone)) {
+        setSavedSupportPhone(cleanPhone);
+        const nextAddr: CustomerAddress = {
+          id: selectedAddressId || `addr_${Date.now()}`,
+          label: savedAddresses.find((a) => a.id === selectedAddressId)?.label || 'آخرین نشانی ارسال',
+          recipientName: customerName.trim(),
+          recipientPhone: cleanPhone,
+          province,
+          city,
+          addressLine: address.trim(),
+          postalCode: cleanPostal,
+          plaque: plaque.trim() || undefined,
+          unit: unit.trim() || undefined,
+          isDefault: true,
+        };
+        const mergedAddresses = [
+          nextAddr,
+          ...savedAddresses
+            .filter((a) => a.id !== nextAddr.id && a.postalCode !== cleanPostal)
+            .map((a) => ({ ...a, isDefault: false })),
+        ];
+        void updateCustomerProfile(cleanPhone, {
+          fullName: customerName.trim(),
+          ...(cleanEmail ? { email: cleanEmail } : {}),
+          ...(cleanNationalId ? { nationalId: cleanNationalId } : {}),
+          ...(isValidIranianPostalCode(cleanPostal) ? { addresses: mergedAddresses } : {}),
+        });
+      }
+
+      try {
+        const existingOrders = JSON.parse(localStorage.getItem('commerce_os_orders') || '[]');
+        localStorage.setItem('commerce_os_orders', JSON.stringify([newOrder, ...existingOrders]));
+        localStorage.setItem(
+          'commerce_os_last_customer',
+          JSON.stringify({
+            name: customerName,
+            phone: cleanPhone,
+            email: cleanEmail || undefined,
+            nationalId: cleanNationalId || undefined,
+            province,
+            city,
+            address,
+            plaque,
+            unit,
+            postalCode: cleanPostal,
+          })
+        );
+      } catch (e) {
+        console.warn('Error saving order to localStorage:', e);
+      }
+
+      setCreatedOrder(newOrder);
+      setIsSandboxReceipt(!isLiveGateway);
+      setGatewayRedirectUrl(isLiveGateway ? payData.session.gatewayUrl : null);
+      setStep('receipt');
+      onOrderCompleted(newOrder);
+      onClearCart();
+
+      if (isLiveGateway && payData.session.gatewayUrl) {
+        window.location.assign(payData.session.gatewayUrl);
+      }
+    } catch (e) {
+      console.error('Error completing checkout:', e);
+      setCheckoutError('خطا در برقراری ارتباط با سرور برای ثبت سفارش و انتقال به درگاه.');
+    } finally {
+      setIsSubmittingOrder(false);
+    }
   };
 
   return (
@@ -848,21 +877,33 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
               </span>
             </div>
 
+            {checkoutError && (
+              <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/35 text-rose-700 dark:text-rose-300 text-xs font-medium">
+                {checkoutError}
+              </div>
+            )}
+
             <div className="flex justify-between pt-4 border-t border-[var(--border-color)]">
               <button
                 onClick={() => setStep('address')}
-                className="px-5 py-2.5 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] text-xs font-bold text-[var(--text-main)] border border-[var(--border-color)] flex items-center gap-1.5 transition-colors cursor-pointer"
+                disabled={isSubmittingOrder}
+                className="px-5 py-2.5 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] text-xs font-bold text-[var(--text-main)] border border-[var(--border-color)] flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
               >
                 <ArrowRight className="w-4 h-4" />
                 <span>ویرایش آدرس</span>
               </button>
 
               <button
-                onClick={handleCompleteOrder}
-                className="px-7 py-3 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-xs font-bold text-[#F7F3EA] shadow-sm flex items-center gap-2 transition-colors cursor-pointer tabular-nums"
+                onClick={() => void handleCompleteOrder()}
+                disabled={isSubmittingOrder}
+                className="px-7 py-3 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] text-xs font-bold text-[#F7F3EA] shadow-sm flex items-center gap-2 transition-colors cursor-pointer tabular-nums disabled:opacity-60"
               >
                 <ShieldCheck className="w-4 h-4" />
-                <span>پرداخت و ثبت نهایی ({formatCurrency(finalPayable, currency)})</span>
+                <span>
+                  {isSubmittingOrder
+                    ? 'در حال ثبت سفارش و اتصال به درگاه...'
+                    : `پرداخت و ثبت نهایی (${formatCurrency(finalPayable, currency)})`}
+                </span>
               </button>
             </div>
           </div>
@@ -876,7 +917,13 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-lg font-bold text-[var(--text-main)]">سفارشتون با موفقیت ثبت شد</h3>
+              <h3 className="text-lg font-bold text-[var(--text-main)]">
+                {gatewayRedirectUrl
+                  ? 'سفارش ثبت شد؛ در حال انتقال به درگاه بانکی'
+                  : isSandboxReceipt
+                  ? 'سفارشتون در حالت آزمایشی ثبت شد'
+                  : 'سفارشتون با موفقیت ثبت شد'}
+              </h3>
               <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">
                 کد پیگیری و اطلاعات سفارش برای شماره <span className="tabular-nums font-bold">{createdOrder.customerPhone}</span> ثبت شد.
               </p>
@@ -892,7 +939,7 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
                 <span className="text-[var(--text-main)] font-bold font-mono">{createdOrder.trackingNumber}</span>
               </div>
               <div className="flex justify-between text-[var(--text-secondary)]">
-                <span>مبلغ پرداخت‌شده:</span>
+                <span>{gatewayRedirectUrl ? 'مبلغ قابل پرداخت:' : 'مبلغ سفارش:'}</span>
                 <span className="text-[var(--accent-primary)] font-bold">{formatCurrency(createdOrder.totalAmount, currency)}</span>
               </div>
             </div>

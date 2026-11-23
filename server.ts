@@ -8,18 +8,27 @@ import { createServer as createViteServer } from "vite";
 import { v1Router } from "./server/routes/v1Router";
 import { getRobotsTxt, getSitemapXml, getSitemapXmlAsync, renderStorefrontSeoPage, renderStorefrontSeoPageAsync, getSiteUrl } from "./server/seoEngine";
 import { cmsRouter } from "./server/cmsApi";
-import { mediaRouter } from "./server/mediaHandler";
+import { mediaRouter, uploadsDir } from "./server/mediaHandler";
 import { initCmsDatabase } from "./server/db/cmsDb";
+import { initAdminAuth, apiAccessGuard, adminPageGuard, clearAdminSession } from "./server/security/adminAuth";
+import { publicRateLimiter } from "./server/security/rateLimit";
+import { processDueScheduledSocialPosts } from "./server/services/socialPublishService";
 
 import { outboxProcessor } from "./server/db";
 
 dotenv.config();
 
 async function startServer() {
+  // Fail fast if administrator credentials are missing or weak (production) before opening any port.
+  initAdminAuth();
+
   // Initialize CMS Database (PostgreSQL / Resilient store)
   await initCmsDatabase();
 
   const app = express();
+  if (process.env.NODE_ENV === "production") {
+    app.set("trust proxy", Number(process.env.TRUST_PROXY_HOPS || 1));
+  }
   const server = http.createServer(app);
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
@@ -58,10 +67,24 @@ async function startServer() {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("X-Frame-Options", "SAMEORIGIN");
     res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    if (process.env.NODE_ENV === "production") {
+      res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    }
     if (/\.(webp|woff2|svg)$/i.test(req.path)) {
       res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
     }
     next();
+  });
+
+  // Uploaded media (persistent disk in production). Falls through to dist/ for build-time assets.
+  app.use("/uploads", express.static(uploadsDir, { maxAge: "30d", index: false }));
+
+  // Deny-by-default API policy + rate limiter for public endpoints
+  app.use("/api", apiAccessGuard);
+  app.use("/api", publicRateLimiter);
+  app.post("/api/admin/logout", (_req, res) => {
+    clearAdminSession(res);
+    res.json({ success: true });
   });
 
   // Commerce OS Modular Monolith Architecture:
@@ -114,44 +137,8 @@ async function startServer() {
     app.use(express.static(distPath, { index: false, maxAge: "365d", immutable: true }));
   }
 
-  // Protected Admin & Tasks Server-Side Route Guard
-  app.use(["/admin", "/tasks"], (req, res, next) => {
-    res.setHeader("X-Robots-Tag", "noindex, nofollow");
-    
-    // Server-side auth check: robots.txt is not security
-    const adminSecret = process.env.ADMIN_SECRET_KEY || "gordiyeh-supervisor-secure";
-    const authHeader = req.headers["authorization"] || req.headers["x-admin-token"];
-    const querySecret = req.query.secret;
-
-    // Check basic auth or token header
-    let isAuthorized = false;
-    if (authHeader) {
-      const token = typeof authHeader === "string" ? authHeader.replace(/^Bearer\s+/i, "") : "";
-      if (token === adminSecret) isAuthorized = true;
-    }
-    if (querySecret === adminSecret || req.headers["cookie"]?.includes("gordiyeh_admin_auth=true")) {
-      isAuthorized = true;
-    }
-
-    // In local development or client iframe, allow if requested with auth cookie or prompt
-    if (!isAuthorized && req.headers["accept"]?.includes("text/html")) {
-      // Basic challenge for direct browser access to protect sensitive routes
-      if (!req.headers["authorization"]) {
-        res.setHeader("WWW-Authenticate", 'Basic realm="Gordiyeh Supervisor Admin"');
-        return res.status(401).send("Authentication required for administrative operations.");
-      }
-      const b64auth = (req.headers["authorization"] || "").split(" ")[1] || "";
-      const [login, password] = Buffer.from(b64auth, "base64").toString().split(":");
-      if (login === "admin" && password === (process.env.ADMIN_PASSWORD || "gordiyeh2026")) {
-        res.cookie("gordiyeh_admin_auth", "true", { httpOnly: true, sameSite: "lax" });
-        return next();
-      }
-      res.setHeader("WWW-Authenticate", 'Basic realm="Gordiyeh Supervisor Admin"');
-      return res.status(401).send("Invalid administrative credentials.");
-    }
-
-    next();
-  });
+  // Protected Admin & Tasks route guard: HTTP Basic login (ADMIN_PASSWORD) -> signed session cookie.
+  app.use(["/admin", "/tasks"], adminPageGuard);
 
   // 11. Server-Side Rendering (SSR) & SEO Meta Injection for Public Storefront
   app.get("*", async (req, res, next) => {
@@ -212,8 +199,13 @@ async function startServer() {
     }
   });
 
-  // Start durable Transactional Outbox processor
+  // Start durable Transactional Outbox processor & Social Post Scheduler
   outboxProcessor.start(3000);
+  const socialSchedulerTimer = setInterval(() => {
+    processDueScheduledSocialPosts().catch((err) => {
+      console.error("[SocialScheduler] Tick error:", err?.message || err);
+    });
+  }, 30000);
 
   server.listen(PORT, "0.0.0.0", () => {
     console.log(`Commerce OS Brain server listening on http://0.0.0.0:${PORT}`);
@@ -222,6 +214,7 @@ async function startServer() {
   // Graceful shutdown handling (Gate 4 & Gate 8)
   const shutdown = () => {
     console.log("Initiating graceful shutdown: stopping outbox worker and closing server...");
+    clearInterval(socialSchedulerTimer);
     outboxProcessor.stop();
     server.close(() => {
       console.log("Server stopped successfully.");

@@ -17,7 +17,7 @@ export interface IProductRepository {
 
 export interface IOrderRepository {
   getOrders(): Promise<any[]>;
-  lookupOrder(query: string): Promise<any | null>;
+  lookupOrder(query: string, opts?: { allowSubstring?: boolean }): Promise<any | null>;
   createOrder(order: any): Promise<any>;
   updateOrderStatus(id: string, status: string): Promise<void>;
 }
