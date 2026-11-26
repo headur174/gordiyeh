@@ -62,6 +62,24 @@
     <link rel="preload" as="image" type="image/webp" href="/assets/gordiyeh-logo-emblem.webp?v=7" />
     <meta name="theme-color" content="#F3EDE0" />
     <style>
+      html, body {
+        margin: 0;
+        background-color: #F3EDE0;
+        color: #182B22;
+      }
+      html[data-theme="forest-dark"],
+      html[data-theme="forest-dark"] body {
+        background-color: #09120E;
+        color: #F2EFE7;
+      }
+      html.gordiyeh-js:not(.gordiyeh-mounted) #root {
+        position: fixed;
+        inset: 0;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        overflow: hidden;
+      }
       #gordiyeh-boot-loader {
         position: fixed;
         inset: 0;
@@ -151,6 +169,7 @@
           } else {
             theme = 'forest-light';
           }
+          document.documentElement.classList.add('gordiyeh-js');
           document.documentElement.setAttribute('data-theme', theme);
           var meta = document.querySelector('meta[name="theme-color"]');
           if (meta) meta.setAttribute('content', theme === 'forest-dark' ? '#09120E' : '#F3EDE0');
@@ -172,7 +191,7 @@
       setTimeout(function() {
         var el = document.getElementById('gordiyeh-boot-loader');
         if (el) el.classList.add('is-ready');
-      }, 2200);
+      }, 15000);
     </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

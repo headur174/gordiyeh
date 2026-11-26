@@ -22,7 +22,7 @@ This repository is hardened to **Release Candidate 1 (RC1)** standards, featurin
 
 ## 📋 System Requirements
 
-- **Node.js**: v18.0.0 or higher (v20+ recommended)
+- **Node.js**: v22.13.0 or higher (`>=22.13.0` synced with `package.json`, `DEPLOYMENT.md`, and `liara.json`)
 - **Package Manager**: `npm` (or `bun` / `pnpm`)
 - **Operating System**: Linux / macOS / Windows WSL2
 

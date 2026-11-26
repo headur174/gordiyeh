@@ -2,8 +2,9 @@
  * test_integrations.ts - Verification Suite for Torob, Emalls, SSR Live Price Sync,
  * Social Auto-Publishing & Scheduling, and Digikala Seller Center Integration.
  */
-import { adminBearerHeaders, getBaseUrl } from './test_support_auth';
+import { adminBearerHeaders, assertSafeTestEnvironment, getBaseUrl } from './test_support_auth';
 
+assertSafeTestEnvironment();
 const baseUrl = getBaseUrl();
 let passed = 0;
 let failed = 0;

@@ -330,7 +330,7 @@ export default function App() {
           if (Array.isArray(d.approvals)) setApprovals(d.approvals);
           if (Array.isArray(d.decisionLogs)) setDecisionLogs(d.decisionLogs);
           if (Array.isArray(d.calendarEvents) && d.calendarEvents.length > 0) setEvents(d.calendarEvents);
-          if (d.financialSummary) setSummary(d.financialSummary);
+          if (d.financialSummary || d.summary) setSummary(d.financialSummary || d.summary);
           if (Array.isArray(d.manualTasks) && d.manualTasks.length > 0) {
             setManualTasks(d.manualTasks);
             try {
@@ -375,13 +375,8 @@ export default function App() {
       return prod;
     }));
 
-    // 2. Update real-time financial metrics (Contribution Profit)
-    setSummary(prev => ({
-      ...prev,
-      todayRevenue: prev.todayRevenue + order.totalAmount,
-      todayContributionProfit: prev.todayContributionProfit + (order.contributionProfit || Math.round(order.totalAmount * 0.28)),
-      todayOrdersCount: prev.todayOrdersCount + 1,
-    }));
+    // 2. Refresh server-authoritative financial metrics (revenue only increments once PAID is confirmed)
+    refreshBootstrapData();
 
     // 3. Rule Engine & Risk Evaluation
     if (order.requireApproval || order.status === 'HIGH_RISK_HOLD') {

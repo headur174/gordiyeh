@@ -31,6 +31,8 @@ if (typeof window !== 'undefined') {
   }
 }
 
+document.documentElement.classList.add('gordiyeh-mounted');
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

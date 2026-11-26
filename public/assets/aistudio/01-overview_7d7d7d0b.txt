@@ -1,0 +1,100 @@
+DIGIKALA FUNCTIONAL EXTRACTION - LOCAL REPORT
+Generated: 2026-11-24 21:00:14
+Source folder: E:\Digikala-Functional-Audit\extraction-20261123-190711
+
+Total files: 704
+JavaScript files: 306
+JSON files: 397
+Request records: 17220
+Response records: 16795
+Total source size (MB): 45.81
+
+IMPORTANT ARTIFACTS
+[FOUND] REPORT.md (4.8 KB)
+[FOUND] manifest.json (0.5 KB)
+[FOUND] logs\requests.json (8,042.5 KB)
+[FOUND] logs\responses.json (4,600.3 KB)
+[not found] logs\api-endpoints.json
+[FOUND] api\endpoint-inventory.json (149.9 KB)
+[FOUND] analysis\function-inventory.json (2,288.5 KB)
+[FOUND] analysis\business-function-candidates.json (16.0 KB)
+[FOUND] analysis\static-api-call-sites.json (0.6 KB)
+[not found] analysis\api-call-sites.json
+[FOUND] analysis\page-inventory.json (768.3 KB)
+
+TOP LEVEL FOLDERS
+analysis\
+api\
+assets\
+logs\
+runtime\
+
+EXISTING COLLECTOR REPORT (first 250 lines)
+------------------------------------------
+# Digikala functional extraction
+
+- Started: 2026-11-23T15:52:55.574Z
+- Pages visited: 120
+- JS assets saved: 306
+- Network requests: 17220
+- Network responses: 16797
+- API-like endpoints: 496
+- Errors: 1
+- Named function candidates: 15097
+- Business-function candidates: 97
+- Static API call-site candidates: 3
+
+## Scope
+This is browser-observed evidence from public pages. It does not reveal private server source code, database logic, secrets, or internal services. API responses are redacted for common personal-data fields. No purchase, checkout, payment, account, or destructive action is automated.
+
+## High-frequency endpoints
+- POST /api/3/envelope/ — 430 observed calls
+- POST /api/v1/messages — 77 observed calls
+- GET /checkout/v1/carts/mini — 71 observed calls
+- GET /discovery/api/v1/top-banners — 68 observed calls
+- GET /digikala-adservice-banners/ab4ac882a664eb088672b188e8682f8af43c5f10_1794916618.jpg — 61 observed calls
+- GET /discovery/api/v1/mega-menu — 49 observed calls
+- GET /digikala-products/59487f257586b7d64b307904289d3901ffab9259_1795268500.jpg — 27 observed calls
+- GET /statics/img/svg/footer/original-products.svg — 16 observed calls
+- GET /amazing/v1/page/0 — 15 observed calls
+- GET /api/features/sdk-1aauD6mWWgx2Deg2 — 14 observed calls
+- GET /incredible-offers/ — 9 observed calls
+- GET /digikala-adservice-promotions/078faa61ad55bc419780f44a1826b2bae17f1e9d_1795283840.svg — 8 observed calls
+- GET /statics/img/svg/productCard/topBadge/SpecialSell.svg — 6 observed calls
+- GET /statics/img/svg/productCard/topBadge/IncredibleOffer.svg — 6 observed calls
+- GET /personalized-category/feed/ — 6 observed calls
+- GET /digikala-products/9d2f1dbce14414b9c17025b20acfcb1abf7f9f99_1651483015.jpg — 4 observed calls
+- GET /digikala-products/bbd607ee3a612dda2baaf12ef62a8ff2dc8a83fa_1602004475.jpg — 4 observed calls
+- GET /digikala-products/c64720f4446aa94b873dab4ae35091bc3f0fcc22_1637680139.jpg — 3 observed calls
+- GET /digikala-products/6e9fc5f500d4cbe714825b963cb0305d291b73c3_1635866190.jpg — 3 observed calls
+- GET /amazing/v1/top-products — 3 observed calls
+- GET /digikala-products/b2d0a98d0c0a42c9af5645136fe0cfc0b47263d9_1731491794.jpg — 3 observed calls
+- GET /digikala-products/136c80ee8c3938e81d5554a95388058fdb399303_1786571886.jpg — 3 observed calls
+- GET /digikala-products/71b6a6ad6ee43714f66fe323a66da353383d8bbf_1722633721.jpg — 3 observed calls
+- GET /digikala-products/9e74e37882b77ddc6219560dd908d74732e794ce_1760365118.jpg — 2 observed calls
+- GET /digikala-products/1583357fe205bfc91950f3c7bc1b3544dcd11f16_1794830987.jpg — 2 observed calls
+- GET /digikala-products/d27ddec9092c0505de94db549975f44a9199ea1f_1786372478.jpg — 2 observed calls
+- GET /digikala-products/5d387cbdfe2669781648d0925c7b2b6dd7765c88_1622368155.jpg — 2 observed calls
+- GET /digikala-products/90c07e84b57002e37cfa85dbab73eee17a3705f0_1782217196.jpg — 2 observed calls
+- GET /digikala-products/aba7d5c96e30c96f68d9c835fd94579f26723cfd_1785337781.jpg — 2 observed calls
+- GET /digikala-products/4de146dba0c3cb85b7459ddecd3773268954002a_1794223527.jpg — 2 observed calls
+- GET /digikala-products/f03e26f7ed06bf6c179f02cb06cc245ad01f2f16_1783844090.jpg — 2 observed calls
+- GET /digikala-products/0089ac177434f2e49e7795af62fc6fa5c1f6cd16_1772032265.jpg — 2 observed calls
+- GET /digikala-products/4eeb83dd806b2f271a091c138b236f825f06d1ac_1772032015.jpg — 2 observed calls
+- GET /digikala-products/c5d325ca5a83db1230ab28b20d8cb957e175f9de_1784706341.jpg — 2 observed calls
+- GET /statics/img/svg/productCard/topBadge/PromotedIncredibleOffer.svg — 2 observed calls
+- GET /amazing/v1/page/8749 — 2 observed calls
+- GET /amazing/v1/page/10688 — 2 observed calls
+- GET /discovery/api/v1/home — 1 observed calls
+- GET /digikala-adservice-banners/9fe115b731263f7f1b3b94aebe12a5983b24ebec_1795436762.jpg — 1 observed calls
+- GET /discovery/api/v1/widget-factory/widget/593 — 1 observed calls
+- GET /discovery/api/v1/widget-factory/widget/13 — 1 observed calls
+- GET /discovery/api/v1/widget-factory/widget/28852 — 1 observed calls
+- GET /digikala-adservice-banners/463379624080e0967aa82cc5cc4ca3e79cb5a75e_1795444392.jpg — 1 observed calls
+- GET /digikala-adservice-banners/2766ca0bcc76138c2118e4f7db8a4a5278303c93_1795291801.jpg — 1 observed calls
+- GET /digikala-products/a17104a8fbab3f0847e78445f0087a5496747e29_1722247424.jpg — 1 observed calls
+- GET /digikala-products/3afcca7af179d16264d6d13b7786319def9355f3_1785337780.jpg — 1 observed calls
+- GET /digikala-adservice-banners/a6f0c6be219ca394733c1deb09d09ec88765e3d0_1795439728.jpg — 1 observed calls
+- GET /digikala-adservice-banners/2739b1b59ee54d518d96047fe293c9a28cacc0fb_1795011946.jpg — 1 observed calls
+- GET /discovery/api/v1/best-selling — 1 observed calls
+- GET /landings/seller-introduction/ — 1 observed calls

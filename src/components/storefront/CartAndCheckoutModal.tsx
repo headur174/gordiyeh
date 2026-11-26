@@ -289,19 +289,18 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
       }
 
       const isLiveGateway = Boolean(payData.session.liveGateway && payData.session.gatewayUrl);
-      const nextStatus: Order['status'] = isLiveGateway ? 'PENDING_PAYMENT' : 'PAID';
+      const nextStatus: Order['status'] =
+        persistedOrder.status === 'HIGH_RISK_HOLD' ? 'HIGH_RISK_HOLD' : 'PENDING_PAYMENT';
 
       const newOrder: Order = {
         id: persistedOrder.id,
         orderNumber: persistedOrder.orderNumber || persistedOrder.id,
         customerName: persistedOrder.customerName || customerName || 'مشتری گُردیه',
-        customerPhone: cleanPhone,
         city,
         province,
-        address: address || 'نشانی ثبت‌شده',
         items: requestItems,
         totalAmount: Number(persistedOrder.totalAmount ?? finalPayable),
-        shippingCost: shippingFee,
+        shippingCost: Number(persistedOrder.shippingCost ?? shippingFee),
         paymentFee: 0,
         discountAmount,
         supplierCost: 0,
@@ -348,25 +347,27 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
       }
 
       try {
+        // Persist ONLY minimal non-PII tracking summaries locally (never address, phone, postalCode, nationalId, or email)
+        const minimalSummary = {
+          id: newOrder.id,
+          orderNumber: newOrder.orderNumber,
+          trackingNumber: newOrder.trackingNumber,
+          status: newOrder.status,
+          totalAmount: newOrder.totalAmount,
+          createdAt: new Date().toISOString(),
+          items: requestItems.map((it) => ({
+            id: it.id,
+            title: it.title,
+            sku: it.sku,
+            quantity: it.quantity,
+            unitPrice: it.unitPrice,
+          })),
+        };
         const existingOrders = JSON.parse(localStorage.getItem('commerce_os_orders') || '[]');
-        localStorage.setItem('commerce_os_orders', JSON.stringify([newOrder, ...existingOrders]));
-        localStorage.setItem(
-          'commerce_os_last_customer',
-          JSON.stringify({
-            name: customerName,
-            phone: cleanPhone,
-            email: cleanEmail || undefined,
-            nationalId: cleanNationalId || undefined,
-            province,
-            city,
-            address,
-            plaque,
-            unit,
-            postalCode: cleanPostal,
-          })
-        );
+        localStorage.setItem('commerce_os_orders', JSON.stringify([minimalSummary, ...(Array.isArray(existingOrders) ? existingOrders : [])].slice(0, 30)));
+        localStorage.removeItem('commerce_os_last_customer');
       } catch (e) {
-        console.warn('Error saving order to localStorage:', e);
+        console.warn('Error saving order summary to localStorage:', e);
       }
 
       setCreatedOrder(newOrder);
@@ -374,9 +375,10 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
       setGatewayRedirectUrl(isLiveGateway ? payData.session.gatewayUrl : null);
       setStep('receipt');
       onOrderCompleted(newOrder);
-      onClearCart();
 
-      if (isLiveGateway && payData.session.gatewayUrl) {
+      if (!isLiveGateway) {
+        onClearCart();
+      } else if (payData.session.gatewayUrl) {
         window.location.assign(payData.session.gatewayUrl);
       }
     } catch (e) {
@@ -921,11 +923,13 @@ export const CartAndCheckoutModal: React.FC<CartAndCheckoutModalProps> = ({
                 {gatewayRedirectUrl
                   ? 'سفارش ثبت شد؛ در حال انتقال به درگاه بانکی'
                   : isSandboxReceipt
-                  ? 'سفارشتون در حالت آزمایشی ثبت شد'
-                  : 'سفارشتون با موفقیت ثبت شد'}
+                  ? 'سفارش ثبت شد (در انتظار تایید پرداخت آزمایشی)'
+                  : 'سفارش ثبت شد (در انتظار تایید پرداخت)'}
               </h3>
               <p className="text-xs text-[var(--text-secondary)] leading-[1.8]">
-                کد پیگیری و اطلاعات سفارش برای شماره <span className="tabular-nums font-bold">{createdOrder.customerPhone}</span> ثبت شد.
+                {createdOrder.status === 'HIGH_RISK_HOLD'
+                  ? 'سفارش جهت بررسی امنیتی ناظر ثبت شد و پس از تایید، لینک پرداخت فعال می‌شود.'
+                  : 'سفارش شما ثبت شده و پس از تایید تراکنش توسط درگاه بانکی به مرحله ارسال وارد می‌شود.'}
               </p>
             </div>
 

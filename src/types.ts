@@ -305,6 +305,17 @@ export interface StoreFinancialSummary {
   todayOrdersCount: number;
   averageOrderValue: number;
   profitMarginPercent: number;
+  grossSales?: number;
+  collectedPayments?: number;
+  refunds?: number;
+  netRevenue?: number;
+  supplierCost?: number;
+  shippingCost?: number;
+  paymentFee?: number;
+  contributionProfit?: number;
+  pendingOrdersCount?: number;
+  paidOrdersCount?: number;
+  refundedOrdersCount?: number;
   winnersCount: number;
   problemsCount: number;
   stockIssuesCount: number;

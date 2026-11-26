@@ -89,23 +89,12 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
     DEFAULT_STORE_FEATURE_SETTINGS
   );
 
-  const [customerProfile] = useState<{
-    name?: string;
-    phone?: string;
-    email?: string;
-    nationalId?: string;
-    address?: string;
-    city?: string;
-    province?: string;
-    postalCode?: string;
-  } | null>(() => {
+  // Clean up any legacy raw PII key from earlier versions
+  useEffect(() => {
     try {
-      const saved = localStorage.getItem('commerce_os_last_customer');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
+      localStorage.removeItem('commerce_os_last_customer');
+    } catch {}
+  }, []);
 
   // Persistent Support Chat & Customer Account State
   const [supportPhone, setSupportPhone] = useState<string>(() => getSavedSupportPhone());
@@ -270,7 +259,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   };
 
   const handleSendOtpForAccount = async () => {
-    const targetPhone = supportPhone || customerProfile?.phone || '';
+    const targetPhone = supportPhone || '';
     if (!isValidIranianPhone(targetPhone)) {
       setOtpFeedback({ ok: false, text: 'ابتدا شماره موبایل معتبر خود را ثبت کنید.' });
       return;
@@ -299,7 +288,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   };
 
   const handleVerifyAccountOtp = async () => {
-    const targetPhone = supportPhone || customerProfile?.phone || '';
+    const targetPhone = supportPhone || '';
     const digits = normalizeDigits(otpCodeInput).replace(/\D/g, '');
     if (!digits || digits.length < 4) {
       setOtpFeedback({ ok: false, text: 'لطفاً کد تایید پیامکی دریافتی را وارد کنید.' });
@@ -324,7 +313,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   };
 
   const handleSaveProfile = async () => {
-    const targetPhone = supportPhone || customerProfile?.phone || '';
+    const targetPhone = supportPhone || '';
     if (!isValidIranianPhone(targetPhone)) {
       showToast('ابتدا شماره موبایل (نام کاربری) خود را ثبت کنید.');
       return;
@@ -389,8 +378,8 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   const openNewAddressForm = () => {
     setEditingAddressId(null);
     setAddrLabel('خانه');
-    setAddrRecipientName(fullNameInput || preferredNameInput || customerProfile?.name || '');
-    setAddrRecipientPhone(supportPhone || customerProfile?.phone || '');
+    setAddrRecipientName(fullNameInput || preferredNameInput || '');
+    setAddrRecipientPhone(supportPhone || '');
     setAddrProvince('تهران');
     setAddrCity('تهران');
     setAddrLine('');
@@ -419,7 +408,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   };
 
   const handleSaveAddress = async () => {
-    const targetPhone = supportPhone || customerProfile?.phone || '';
+    const targetPhone = supportPhone || '';
     if (!isValidIranianPhone(targetPhone)) {
       setAddrFormError('ابتدا شماره موبایل (نام کاربری) خود را در حساب کاربری وارد کنید.');
       return;
@@ -488,7 +477,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   };
 
   const handleDeleteAddress = async (addrId: string) => {
-    const targetPhone = supportPhone || customerProfile?.phone || '';
+    const targetPhone = supportPhone || '';
     if (!isValidIranianPhone(targetPhone)) return;
     let nextList = addresses.filter((a) => a.id !== addrId);
     if (nextList.length > 0 && !nextList.some((a) => a.isDefault)) {
@@ -502,7 +491,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
   };
 
   const handleSetDefaultAddress = async (addrId: string) => {
-    const targetPhone = supportPhone || customerProfile?.phone || '';
+    const targetPhone = supportPhone || '';
     if (!isValidIranianPhone(targetPhone)) return;
     const nextList = addresses.map((a) => ({ ...a, isDefault: a.id === addrId }));
     const res = await updateCustomerProfile(targetPhone, { addresses: nextList });
@@ -613,8 +602,6 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                 <h1 className="text-lg sm:text-xl font-bold text-[var(--text-main)] leading-[1.5]">
                   {customerAccount?.preferredName
                     ? `سلام ${customerAccount.preferredName} عزیز!`
-                    : customerProfile?.name
-                    ? `سلام ${customerProfile.name} عزیز!`
                     : 'حساب کاربری و سفارش‌های شما'}
                 </h1>
                 {supportPhone && (
@@ -1320,11 +1307,7 @@ export const UserDashboardPage: React.FC<UserDashboardPageProps> = ({
                 <div className="p-4 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] space-y-1">
                   <span className="text-[var(--text-muted)]">نام کاربری (شماره موبایل):</span>
                   <div className="text-[var(--text-main)] tabular-nums font-bold" dir="ltr">
-                    {supportPhone
-                      ? toPersianDigits(supportPhone)
-                      : customerProfile?.phone
-                      ? toPersianDigits(customerProfile.phone)
-                      : 'ثبت‌نشده'}
+                    {supportPhone ? toPersianDigits(supportPhone) : 'ثبت‌نشده'}
                   </div>
                 </div>
 

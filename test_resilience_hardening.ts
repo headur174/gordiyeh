@@ -1,5 +1,6 @@
 import { DatabaseSync } from "node:sqlite";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import {
   getDatabaseConfig,
@@ -10,9 +11,12 @@ import {
 import { CryptoVault, DecryptionError, parseAndValidateKey } from "./server/cryptoVault";
 import { OutboxProcessor } from "./server/core/outboxWorker";
 import { PaymentStateMachine } from "./server/core/paymentService";
-import { validateWebhookUrl, validateWebhookUrlAsync, isPrivateOrReservedIp } from "./server/utils/ssrfGuard";
+import { eventBus } from "./server/core/eventBus";
+import { validateWebhookUrl } from "./server/utils/ssrfGuard";
+import { assertSafeTestEnvironment } from "./test_support_auth";
 
 async function runHardeningTests() {
+  assertSafeTestEnvironment();
   console.log(`=================================================================`);
   console.log(`  COMMERCE OS — RELEASE CANDIDATE HARDENING & RESILIENCE TESTS`);
   console.log(`  Phase 14: Fault-Injection, Outbox, Atomicity & Key Migration`);
@@ -37,6 +41,7 @@ async function runHardeningTests() {
   console.log("--- SECTION 1: DATABASE SAFETY, ISOLATION & CONSISTENT BACKUPS ---");
 
   // TEST-1.1: Safety Guard prevents running tests against production/dev DB
+  const prevDbEnv = process.env.COMMERCE_DB_PATH;
   try {
     process.env.NODE_ENV = "test";
     process.env.COMMERCE_DB_PATH = path.join(process.cwd(), "data", "commerce.db");
@@ -52,11 +57,15 @@ async function runHardeningTests() {
   } catch (err: any) {
     assert(false, "SAFE-1.1", "Hard Safety Guard Refusal", err.message);
   } finally {
-    delete process.env.COMMERCE_DB_PATH;
+    if (prevDbEnv !== undefined) {
+      process.env.COMMERCE_DB_PATH = prevDbEnv;
+    } else {
+      delete process.env.COMMERCE_DB_PATH;
+    }
   }
 
-  // Set up disposable test database
-  const testDir = path.join(process.cwd(), "data", "test");
+  // Set up disposable test database strictly inside OS temp directory
+  const testDir = path.join(os.tmpdir(), `gordiyeh_hardening_test_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`);
   if (!fs.existsSync(testDir)) fs.mkdirSync(testDir, { recursive: true });
   const disposableDbPath = path.join(testDir, `isolated_test_${Date.now()}.db`);
   const testDb = new DatabaseSync(disposableDbPath);
@@ -228,45 +237,116 @@ async function runHardeningTests() {
     assert(false, "TX-2.1", "Transaction Atomicity Rollback", err.message);
   }
 
-  // TEST-2.2: Concurrency & Last-Unit Race Condition Prevention
+  // TEST-2.2: Parallel Concurrency & Last-Unit Race Condition Prevention across two WAL connections
   try {
-    // Two buyers try to buy the last 1 item concurrently
-    let buyer1Success = false;
-    let buyer2Success = false;
+    const attemptPurchase = async (buyerIdx: number): Promise<boolean> => {
+      await new Promise((r) => setImmediate(r));
+      const conn = new DatabaseSync(disposableDbPath);
+      conn.exec("PRAGMA busy_timeout = 3000;");
+      try {
+        conn.exec("BEGIN IMMEDIATE;");
+        const upd = conn
+          .prepare("UPDATE products SET stock = stock - 1 WHERE id = 'prod_limited' AND stock >= 1")
+          .run();
+        if (Number(upd.changes) === 1) {
+          conn
+            .prepare("INSERT INTO orders (id, orderNumber, totalAmount, status) VALUES ('ord_buyer1', 'ORD-B1', 100000, 'PAID')")
+            .run();
+          conn.exec("COMMIT;");
+          return true;
+        }
+        conn.exec("ROLLBACK;");
+        return false;
+      } catch (e) {
+        try {
+          conn.exec("ROLLBACK;");
+        } catch {}
+        return false;
+      } finally {
+        conn.close();
+      }
+    };
 
-    // Buyer 1:
-    testDb.exec("BEGIN IMMEDIATE;");
-    const stockRow1 = testDb.prepare("SELECT stock FROM products WHERE id = 'prod_limited'").get() as { stock: number };
-    if (stockRow1.stock >= 1) {
-      testDb.prepare("UPDATE products SET stock = stock - 1 WHERE id = 'prod_limited' AND stock >= 1").run();
-      testDb.prepare("INSERT INTO orders (id, orderNumber, totalAmount, status) VALUES ('ord_buyer1', 'ORD-B1', 100000, 'PAID')").run();
-      testDb.exec("COMMIT;");
-      buyer1Success = true;
-    } else {
-      testDb.exec("ROLLBACK;");
-    }
-
-    // Buyer 2:
-    testDb.exec("BEGIN IMMEDIATE;");
-    const stockRow2 = testDb.prepare("SELECT stock FROM products WHERE id = 'prod_limited'").get() as { stock: number };
-    if (stockRow2.stock >= 1) {
-      testDb.prepare("UPDATE products SET stock = stock - 1 WHERE id = 'prod_limited' AND stock >= 1").run();
-      testDb.prepare("INSERT INTO orders (id, orderNumber, totalAmount, status) VALUES ('ord_buyer2', 'ORD-B2', 100000, 'PAID')").run();
-      testDb.exec("COMMIT;");
-      buyer2Success = true;
-    } else {
-      testDb.exec("ROLLBACK;");
-    }
-
+    const outcomes = await Promise.all([attemptPurchase(1), attemptPurchase(2)]);
+    const winCount = outcomes.filter(Boolean).length;
     const finalStock = testDb.prepare("SELECT stock FROM products WHERE id = 'prod_limited'").get() as { stock: number };
 
     assert(
-      buyer1Success && !buyer2Success && finalStock.stock === 0,
+      winCount === 1 && finalStock.stock === 0,
       "TX-2.2",
-      "Conditional Stock Decrement Prevents Last-Unit Overselling Race Condition"
+      "Parallel Multi-Connection Conditional Decrement Prevents Last-Unit Overselling Race Condition",
+      `winCount=${winCount}, finalStock=${finalStock.stock}`
     );
   } catch (err: any) {
     assert(false, "TX-2.2", "Concurrency Overselling Prevention", err.message);
+  }
+
+  // TEST-2.3: Exact Supplier Offer Stock Decrement & Restock Consistency
+  try {
+    const offerProductData = {
+      id: "prod_multi_offer",
+      selectedOfferId: "off_1",
+      supplierOffers: [
+        { id: "off_1", stock: 2, isActive: true },
+        { id: "off_2", stock: 5, isActive: true },
+      ],
+    };
+    testDb
+      .prepare("INSERT INTO products (id, sku, title, retailPrice, stock, data) VALUES (?, ?, ?, ?, ?, ?)")
+      .run("prod_multi_offer", "SKU-MO", "Multi Offer Product", 250000, 7, JSON.stringify(offerProductData));
+
+    // Decrement 2 units from off_2
+    const decObj = JSON.parse(JSON.stringify(offerProductData));
+    decObj.supplierOffers[1].stock -= 2; // off_2 becomes 3, total 5
+    testDb
+      .prepare("UPDATE products SET stock = 5, data = ? WHERE id = 'prod_multi_offer'")
+      .run(JSON.stringify(decObj));
+
+    const encOrderData = CryptoVault.encryptJson({
+      id: "ord_offer_test",
+      items: [{ id: "prod_multi_offer", offerId: "off_2", quantity: 2 }],
+    });
+    const pm = new PaymentStateMachine(() => testDb);
+    pm.restockOrderItems(testDb, "ord_offer_test", encOrderData);
+
+    const restoredProd = testDb
+      .prepare("SELECT stock, data FROM products WHERE id = 'prod_multi_offer'")
+      .get() as { stock: number; data: string };
+    const restoredObj = JSON.parse(restoredProd.data);
+    const off1 = restoredObj.supplierOffers.find((o: any) => o.id === "off_1");
+    const off2 = restoredObj.supplierOffers.find((o: any) => o.id === "off_2");
+
+    assert(
+      restoredProd.stock === 7 && off1?.stock === 2 && off2?.stock === 5,
+      "TX-2.3",
+      "Restock Restores Exact Targeted supplierOffer Stock and Recomputes Total Stock"
+    );
+  } catch (err: any) {
+    assert(false, "TX-2.3", "Supplier Offer Restock Consistency", err.message);
+  }
+
+  // TEST-2.4: Corrupt Encrypted Order Payload Raises Error & Audits stock_recovery_errors
+  try {
+    const pm = new PaymentStateMachine(() => testDb);
+    const { ensurePaymentSchema } = await import("./server/core/paymentService");
+    ensurePaymentSchema(testDb);
+    let threwOnCorrupt = false;
+    try {
+      pm.restockOrderItems(testDb, "ord_corrupt_1", "enc:v2:k1:badiv:badtag:badcipher");
+    } catch {
+      threwOnCorrupt = true;
+    }
+    const auditRow = testDb
+      .prepare("SELECT order_id, stage FROM stock_recovery_errors WHERE order_id = 'ord_corrupt_1'")
+      .get() as any;
+
+    assert(
+      threwOnCorrupt && auditRow?.order_id === "ord_corrupt_1" && auditRow?.stage === "DECRYPT",
+      "TX-2.4",
+      "Corrupted Order Payload Throws During Restock and Audits stock_recovery_errors"
+    );
+  } catch (err: any) {
+    assert(false, "TX-2.4", "Corrupted Order Restock Audit", err.message);
   }
 
   // -------------------------------------------------------------------------
@@ -332,6 +412,37 @@ async function runHardeningTests() {
     assert(false, "OUTBOX-3.3", "Dead-Letter Transition", err.message);
   }
 
+  // TEST-3.4: Outbox dispatchSync Propagates Listener Errors to Trigger Retry / DEAD_LETTER
+  const failTopic = "test:failing_sync";
+  const failingListener = async () => {
+    throw new Error("Simulated downstream listener failure");
+  };
+  eventBus.on(failTopic, failingListener);
+  try {
+    const nowIso = new Date().toISOString();
+    testDb.prepare(`
+      INSERT INTO outbox_events (id, topic, schema_version, payload, status, attempt_count, max_attempts, next_retry_at, created_at)
+      VALUES ('evt_sync_err', ?, 1, '{"ok":false}', 'PENDING', 0, 1, ?, ?)
+    `).run(failTopic, nowIso, nowIso);
+
+    await outboxProcessor.processBatch(10);
+    const errRow = testDb
+      .prepare("SELECT status, attempt_count, last_error FROM outbox_events WHERE id = 'evt_sync_err'")
+      .get() as any;
+
+    assert(
+      errRow?.status === "DEAD_LETTER" &&
+        errRow?.attempt_count === 1 &&
+        String(errRow?.last_error || "").includes("Simulated downstream listener failure"),
+      "OUTBOX-3.4",
+      "Outbox dispatchSync Awaits Listeners and Marks Failed Deliveries DEAD_LETTER"
+    );
+  } catch (err: any) {
+    assert(false, "OUTBOX-3.4", "Outbox Listener Error Propagation", err.message);
+  } finally {
+    eventBus.off(failTopic, failingListener);
+  }
+
   // -------------------------------------------------------------------------
   // 4. ENCRYPTION HARDENING & KEY MIGRATION
   // -------------------------------------------------------------------------
@@ -356,11 +467,11 @@ async function runHardeningTests() {
   try {
     // Generate v1 style ciphertext
     const legacyPlain = "داده‌های سفارش قدیمی نسخه یک";
-    const legacyV1 = CryptoVault.encryptString(legacyPlain).replace("enc:v2:k1:", "enc:v1:");
+    const legacyV1 = CryptoVault.encryptString(legacyPlain).replace(`enc:v2:${CryptoVault.getActiveKeyId()}:`, "enc:v1:");
     const decryptedV1 = CryptoVault.decryptString(legacyV1);
 
     assert(
-      decryptedV1 === legacyPlain,
+      legacyV1.startsWith("enc:v1:") && decryptedV1 === legacyPlain,
       "ENC-4.2",
       "Backward-Compatible Decryption of Legacy enc:v1 Payloads Verified"
     );
@@ -591,6 +702,240 @@ async function runHardeningTests() {
     assert(false, "PAY-5.5", "Refund Consistency", err.message);
   }
 
+  // TEST-5.6: Payment Initiation Session Reuse, TTL & Terminal Status Guard
+  try {
+    const nowIso = new Date().toISOString();
+    testDb
+      .prepare("INSERT INTO orders (id, orderNumber, totalAmount, status, created_at_iso) VALUES (?, ?, ?, ?, ?)")
+      .run("ord_sess_test", "ORD-SESS-1", 300000, "PENDING_PAYMENT", nowIso);
+
+    const s1 = paymentMachine.initiatePayment({ orderId: "ord_sess_test" });
+    const s2 = paymentMachine.initiatePayment({ orderId: "ord_sess_test" });
+    const expMs = new Date(s1.expiresAt).getTime();
+
+    let blockedPaidInit = false;
+    testDb
+      .prepare("INSERT INTO orders (id, orderNumber, totalAmount, status, created_at_iso) VALUES (?, ?, ?, ?, ?)")
+      .run("ord_paid_blocked", "ORD-PAID-BLK", 150000, "PAID", nowIso);
+    try {
+      paymentMachine.initiatePayment({ orderId: "ord_paid_blocked" });
+    } catch (e: any) {
+      if (e.statusCode === 409) blockedPaidInit = true;
+    }
+
+    assert(
+      !s1.reused &&
+        s2.reused &&
+        s1.transactionId === s2.transactionId &&
+        Number.isFinite(expMs) &&
+        expMs > Date.now() + 20 * 60 * 1000 &&
+        blockedPaidInit,
+      "PAY-5.6",
+      "Payment Initiation Reuses Active Session, Sets 30m TTL, and Rejects PAID Orders (409)"
+    );
+  } catch (err: any) {
+    assert(false, "PAY-5.6", "Payment Initiation Guards", err.message);
+  }
+
+  // TEST-5.7: Duplicate providerRef Replay, Cancelled Order Guard & FAILED Stock Release
+  try {
+    const nowIso = new Date().toISOString();
+    testDb
+      .prepare("INSERT INTO orders (id, orderNumber, totalAmount, status, created_at_iso) VALUES (?, ?, ?, ?, ?)")
+      .run("ord_dup_a", "ORD-DUP-A", 100000, "PENDING_PAYMENT", nowIso);
+    testDb
+      .prepare("INSERT INTO orders (id, orderNumber, totalAmount, status, created_at_iso) VALUES (?, ?, ?, ?, ?)")
+      .run("ord_dup_b", "ORD-DUP-B", 100000, "PENDING_PAYMENT", nowIso);
+
+    paymentMachine.processCallback({
+      orderId: "ord_dup_a",
+      idempotencyKey: "idemp_dup_a",
+      status: "SUCCESS",
+      providerRef: "SHARED_BANK_REF_777",
+      amount: 100000,
+    });
+
+    let dupRefBlocked = false;
+    try {
+      paymentMachine.processCallback({
+        orderId: "ord_dup_b",
+        idempotencyKey: "idemp_dup_b",
+        status: "SUCCESS",
+        providerRef: "SHARED_BANK_REF_777",
+        amount: 100000,
+      });
+    } catch (e: any) {
+      if (e.statusCode === 409) dupRefBlocked = true;
+    }
+
+    // FAILED callback on PENDING_PAYMENT releases stock and transitions to CANCELLED
+    testDb
+      .prepare("UPDATE products SET stock = 0, data = ? WHERE id = 'prod_limited'")
+      .run('{"id":"prod_limited","selectedOfferId":"off_1","supplierOffers":[{"id":"off_1","stock":0}]}');
+    const failEncData = CryptoVault.encryptJson({
+      id: "ord_fail_rel",
+      items: [{ id: "prod_limited", offerId: "off_1", quantity: 1 }],
+    });
+    testDb
+      .prepare(
+        "INSERT INTO orders (id, orderNumber, totalAmount, status, created_at_iso, stock_released, data) VALUES (?, ?, ?, ?, ?, 0, ?)"
+      )
+      .run("ord_fail_rel", "ORD-FAIL-REL", 100000, "PENDING_PAYMENT", nowIso, failEncData);
+
+    const failRes = paymentMachine.processCallback({
+      orderId: "ord_fail_rel",
+      idempotencyKey: "idemp_fail_rel",
+      status: "FAILED",
+      providerRef: "cancelled",
+      amount: 100000,
+    });
+    const relProd = testDb.prepare("SELECT stock FROM products WHERE id = 'prod_limited'").get() as { stock: number };
+    const relOrd = testDb
+      .prepare("SELECT status, stock_released FROM orders WHERE id = 'ord_fail_rel'")
+      .get() as { status: string; stock_released: number };
+
+    // Late SUCCESS on CANCELLED order blocked with 409
+    let lateCancelledBlocked = false;
+    try {
+      paymentMachine.processCallback({
+        orderId: "ord_fail_rel",
+        idempotencyKey: "idemp_late_success_on_cancel",
+        status: "SUCCESS",
+        providerRef: "LATE_REF_999",
+        amount: 100000,
+      });
+    } catch (e: any) {
+      if (e.statusCode === 409) lateCancelledBlocked = true;
+    }
+
+    assert(
+      dupRefBlocked &&
+        failRes.orderStatus === "CANCELLED" &&
+        relOrd.stock_released === 1 &&
+        relProd.stock === 1 &&
+        lateCancelledBlocked,
+      "PAY-5.7",
+      "Duplicate providerRef Blocked, FAILED Callback Releases Stock, Late SUCCESS on CANCELLED Blocked"
+    );
+  } catch (err: any) {
+    assert(false, "PAY-5.7", "Callback Integrity & Stock Release", err.message);
+  }
+
+  // TEST-5.8: Refund Live-Gateway Block, Over-Refund Guard & Financial Ledger Integrity
+  try {
+    // Reset kv_store financial_summary to clean ledger baseline
+    testDb.prepare("DELETE FROM kv_store WHERE key = 'financial_summary'").run();
+
+    const nowIso = new Date().toISOString();
+    const orderPayload = {
+      id: "ord_ledger_1",
+      totalAmount: 400000,
+      supplierCost: 250000,
+      shippingCost: 45000,
+      paymentFee: 5000,
+      contributionProfit: 100000,
+      items: [{ id: "prod_multi_offer", offerId: "off_1", quantity: 1 }],
+    };
+    const encOrderPayload = CryptoVault.encryptJson(orderPayload);
+
+    testDb
+      .prepare(
+        "INSERT INTO orders (id, orderNumber, totalAmount, status, created_at_iso, stock_released, financial_settled, data) VALUES (?, ?, ?, ?, ?, 0, 0, ?)"
+      )
+      .run("ord_ledger_1", "ORD-LDG-1", 400000, "PENDING_PAYMENT", nowIso, encOrderPayload);
+
+    // Confirm live zarinpal payment
+    paymentMachine.processCallback({
+      orderId: "ord_ledger_1",
+      idempotencyKey: "idemp_ldg_pay",
+      status: "SUCCESS",
+      providerRef: "ZP_AUTH_123456",
+      amount: 400000,
+      provider: "zarinpal",
+    });
+
+    const sumPaidRow = testDb.prepare("SELECT value FROM kv_store WHERE key = 'financial_summary'").get() as {
+      value: string;
+    };
+    const sumPaid = JSON.parse(sumPaidRow.value);
+
+    // Refund without manualRefundConfirmed must fail with GATEWAY_REFUND_UNSUPPORTED
+    let blockedLiveRefund = false;
+    try {
+      paymentMachine.processRefund({
+        orderId: "ord_ledger_1",
+        idempotencyKey: "idemp_ldg_ref_fail",
+        amount: 400000,
+        reason: "Unconfirmed live bank refund",
+      });
+    } catch (e: any) {
+      if (String(e.message).includes("GATEWAY_REFUND_UNSUPPORTED")) blockedLiveRefund = true;
+    }
+
+    // Over-refund must fail
+    let blockedOverRefund = false;
+    try {
+      paymentMachine.processRefund({
+        orderId: "ord_ledger_1",
+        idempotencyKey: "idemp_ldg_ref_over",
+        amount: 500000,
+        manualRefundConfirmed: true,
+      });
+    } catch (e: any) {
+      if (e.statusCode === 400) blockedOverRefund = true;
+    }
+
+    // Refund WITH manualRefundConfirmed succeeds using MANUAL_SETTLEMENT and reverses ledger
+    const refOk = paymentMachine.processRefund({
+      orderId: "ord_ledger_1",
+      idempotencyKey: "idemp_ldg_ref_ok",
+      amount: 400000,
+      reason: "Confirmed manual bank settlement",
+      manualRefundConfirmed: true,
+    });
+    const refDup = paymentMachine.processRefund({
+      orderId: "ord_ledger_1",
+      idempotencyKey: "idemp_ldg_ref_ok",
+      amount: 400000,
+      manualRefundConfirmed: true,
+    });
+
+    // Refunding an already REFUNDED order with a new idempotencyKey fails 409
+    let blockedNonPaidRefund = false;
+    try {
+      paymentMachine.processRefund({
+        orderId: "ord_ledger_1",
+        idempotencyKey: "idemp_ldg_ref_second",
+        amount: 400000,
+        manualRefundConfirmed: true,
+      });
+    } catch (e: any) {
+      if (e.statusCode === 409) blockedNonPaidRefund = true;
+    }
+
+    const sumRefundedRow = testDb.prepare("SELECT value FROM kv_store WHERE key = 'financial_summary'").get() as {
+      value: string;
+    };
+    const sumRefunded = JSON.parse(sumRefundedRow.value);
+
+    assert(
+      sumPaid.netRevenue === 400000 &&
+        sumPaid.contributionProfit === 100000 &&
+        blockedLiveRefund &&
+        blockedOverRefund &&
+        refOk.settlementMode === "MANUAL_SETTLEMENT" &&
+        refDup.alreadyProcessed === true &&
+        blockedNonPaidRefund &&
+        sumRefunded.netRevenue === 0 &&
+        sumRefunded.refunds === 400000 &&
+        sumRefunded.paidOrdersCount === 0,
+      "PAY-5.8",
+      "Live Gateway Refund Guard, Idempotency, Non-PAID Block & Double-Entry Ledger Verified"
+    );
+  } catch (err: any) {
+    assert(false, "PAY-5.8", "Refund Guard & Financial Ledger Integrity", err.message);
+  }
+
   // -------------------------------------------------------------------------
   // 6. OUTBOX WORKER LEASE LOCKING & SSRF DEFENSE
   // -------------------------------------------------------------------------
@@ -651,14 +996,10 @@ async function runHardeningTests() {
   }
 
   // -------------------------------------------------------------------------
-  // CLEANUP DISPOSABLE TEST DATABASE
+  // CLEANUP DISPOSABLE TEST DATABASE & TEMP DIR
   // -------------------------------------------------------------------------
   testDb.close();
-  if (fs.existsSync(disposableDbPath)) fs.unlinkSync(disposableDbPath);
-  const walPath = `${disposableDbPath}-wal`;
-  const shmPath = `${disposableDbPath}-shm`;
-  if (fs.existsSync(walPath)) fs.unlinkSync(walPath);
-  if (fs.existsSync(shmPath)) fs.unlinkSync(shmPath);
+  fs.rmSync(testDir, { recursive: true, force: true });
 
   // -------------------------------------------------------------------------
   // SUMMARY

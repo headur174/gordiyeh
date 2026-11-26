@@ -27,11 +27,22 @@ if (databaseUrl && databaseUrl.trim()) {
   }
 }
 
-// In-Memory mirror and isolated fallback store
+// In-Memory mirror and isolated fallback store (non-production only for writes)
 const memoryDocuments = new Map<string, UnifiedDocument>();
 const memorySlugHistory = new Map<string, SlugHistoryEntry>();
 const memoryRevisions: DocumentRevision[] = [];
 let latestMemoryTimestamp = new Date().toISOString();
+
+function requireProductionPostgres(operation: string): void {
+  if (process.env.NODE_ENV === 'production' && (!pool || !isPgConnected)) {
+    const err = new Error(
+      `PostgreSQL is unavailable in production (${operation} aborted to prevent non-durable in-memory data loss).`
+    );
+    (err as any).statusCode = 503;
+    (err as any).code = 'CMS_PG_UNAVAILABLE';
+    throw err;
+  }
+}
 
 /**
  * Health and connection check to PostgreSQL database
@@ -142,7 +153,7 @@ export async function initCmsDatabase(): Promise<void> {
  * Seeds initial 3 articles and 5 static pages into unified document schema (v3.0 content)
  */
 async function seedInitialDocuments(): Promise<void> {
-  const existingDocs = await listAllDocuments('all', true);
+  const existingDocs = await listAllDocuments('all', true, { allowUnconnectedSeed: true });
   const v3CutoffIso = '2026-11-13T00:00:00.000Z';
   const now = '2026-11-13T12:00:00.000Z';
 
@@ -985,7 +996,15 @@ async function seedInitialDocuments(): Promise<void> {
 /**
  * Lists documents with optional kind filter and status visibility guard
  */
-export async function listAllDocuments(kind: 'all' | DocumentKind = 'all', includeDraft = false): Promise<UnifiedDocument[]> {
+export async function listAllDocuments(
+  kind: 'all' | DocumentKind = 'all',
+  includeDraft = false,
+  options: { allowUnconnectedSeed?: boolean } = {}
+): Promise<UnifiedDocument[]> {
+  if (includeDraft && !options.allowUnconnectedSeed) {
+    requireProductionPostgres('list_admin_documents');
+  }
+
   if (pool && isPgConnected) {
     try {
       let query = 'SELECT * FROM documents WHERE 1=1';
@@ -1002,6 +1021,12 @@ export async function listAllDocuments(kind: 'all' | DocumentKind = 'all', inclu
       const res = await pool.query(query, params);
       return res.rows.map(mapRowToDocument);
     } catch (err) {
+      if (process.env.NODE_ENV === 'production') {
+        const pgErr = new Error('PostgreSQL query failed while listing CMS documents.');
+        (pgErr as any).statusCode = 503;
+        (pgErr as any).code = 'CMS_PG_UNAVAILABLE';
+        throw pgErr;
+      }
       console.warn('[CMS:DB] PG listAllDocuments error, falling back to memory:', err);
     }
   }
@@ -1109,17 +1134,19 @@ export async function saveUnifiedDocument(
     throw err;
   }
 
+  requireProductionPostgres('save_document');
+
   const now = new Date().toISOString();
 
   // Find existing document by ID or slug
   let existing: UnifiedDocument | null = null;
   if (doc.id) {
-    existing = memoryDocuments.get(doc.id) || null;
-    if (!existing && pool && isPgConnected) {
-      try {
-        const res = await pool.query('SELECT * FROM documents WHERE id = $1', [doc.id]);
-        if (res.rows.length > 0) existing = mapRowToDocument(res.rows[0]);
-      } catch (err) {}
+    if (pool && isPgConnected) {
+      const res = await pool.query('SELECT * FROM documents WHERE id = $1', [doc.id]);
+      if (res.rows.length > 0) existing = mapRowToDocument(res.rows[0]);
+    }
+    if (!existing) {
+      existing = memoryDocuments.get(doc.id) || null;
     }
   } else if (doc.slug) {
     existing = await getDocumentBySlug(doc.slug.toLowerCase().trim(), doc.kind, true);
@@ -1149,34 +1176,19 @@ export async function saveUnifiedDocument(
   const docId = existing?.id || doc.id || `doc_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
   // Check if cleanSlug is registered as an old_slug for another document
-  const historyOwner = memorySlugHistory.get(cleanSlug);
+  let historyOwner: { documentId: string } | undefined = memorySlugHistory.get(cleanSlug);
+  if (!historyOwner && pool && isPgConnected) {
+    const hRes = await pool.query('SELECT document_id FROM document_slug_history WHERE old_slug = $1', [cleanSlug]);
+    if (hRes.rows.length > 0) {
+      historyOwner = { documentId: hRes.rows[0].document_id };
+    }
+  }
   if (historyOwner && historyOwner.documentId !== docId) {
     const collErr = new Error(`Collision: Slug '${cleanSlug}' is currently reserved in history for another document`);
     (collErr as any).statusCode = 400;
     throw collErr;
   }
 
-  // If slug has changed for an existing published document, add old slug to history
-  if (existing && existing.slug !== cleanSlug) {
-    const oldSlugEntry: SlugHistoryEntry = {
-      oldSlug: existing.slug,
-      documentId: docId,
-      createdAt: now,
-    };
-    memorySlugHistory.set(existing.slug, oldSlugEntry);
-
-    if (pool && isPgConnected) {
-      try {
-        await pool.query(`
-          INSERT INTO document_slug_history (old_slug, document_id, created_at)
-          VALUES ($1, $2, $3)
-          ON CONFLICT (old_slug) DO UPDATE SET document_id = $2;
-        `, [existing.slug, docId, now]);
-      } catch (err) {}
-    }
-  }
-
-  // Derive plain text and normalize Persian
   const normalizedTitle = normalizePersianText(docTitle);
   const blocks = doc.blocks || existing?.blocks || [];
   const derivedText = derivePlainTextFromBlocks(blocks);
@@ -1202,11 +1214,6 @@ export async function saveUnifiedDocument(
     contentModifiedAt: now,
   };
 
-  // Save to Memory
-  memoryDocuments.set(savedDoc.id, savedDoc);
-  latestMemoryTimestamp = now;
-
-  // Save snapshot to revision history (retain max 10 revisions)
   const revisionId = `rev_${docId}_${newVersion}`;
   const rev: DocumentRevision = {
     id: revisionId,
@@ -1216,12 +1223,22 @@ export async function saveUnifiedDocument(
     savedBy: userIdentifier,
     savedAt: now,
   };
-  memoryRevisions.unshift(rev);
 
-  // Save to PostgreSQL
+  // Save to PostgreSQL BEFORE mutating in-memory state so failed writes never diverge
   if (pool && isPgConnected) {
+    const client = await pool.connect();
     try {
-      await pool.query(`
+      await client.query('BEGIN');
+
+      if (existing && existing.slug !== cleanSlug) {
+        await client.query(`
+          INSERT INTO document_slug_history (old_slug, document_id, created_at)
+          VALUES ($1, $2, $3)
+          ON CONFLICT (old_slug) DO UPDATE SET document_id = $2;
+        `, [existing.slug, docId, now]);
+      }
+
+      await client.query(`
         INSERT INTO documents (
           id, kind, slug, title, status, version, blocks_json, derived_plain_text,
           seo_title, seo_description, author, cover_image, canonical_url, noindex,
@@ -1251,23 +1268,43 @@ export async function saveUnifiedDocument(
         savedDoc.contentModifiedAt
       ]);
 
-      await pool.query(`
+      await client.query(`
         INSERT INTO document_revisions (id, document_id, version, snapshot_json, saved_by, saved_at)
         VALUES ($1, $2, $3, $4, $5, $6)
         ON CONFLICT (id) DO NOTHING;
       `, [rev.id, rev.documentId, rev.version, rev.snapshotJson, rev.savedBy, rev.savedAt]);
 
-      // Prune revisions exceeding 10
-      await pool.query(`
+      await client.query(`
         DELETE FROM document_revisions
         WHERE document_id = $1 AND id NOT IN (
           SELECT id FROM document_revisions WHERE document_id = $1 ORDER BY version DESC LIMIT 10
         );
       `, [docId]);
-    } catch (err) {
+
+      await client.query('COMMIT');
+    } catch (err: any) {
+      await client.query('ROLLBACK').catch(() => {});
       console.error('[CMS:DB] PG saveUnifiedDocument error:', err);
+      const pgErr = new Error(err?.message || 'Failed to persist CMS document to PostgreSQL');
+      (pgErr as any).statusCode = 503;
+      (pgErr as any).code = 'CMS_PG_WRITE_FAILED';
+      throw pgErr;
+    } finally {
+      client.release();
     }
   }
+
+  // Update in-memory mirror after durable write succeeds
+  if (existing && existing.slug !== cleanSlug) {
+    memorySlugHistory.set(existing.slug, {
+      oldSlug: existing.slug,
+      documentId: docId,
+      createdAt: now,
+    });
+  }
+  memoryDocuments.set(savedDoc.id, savedDoc);
+  latestMemoryTimestamp = now;
+  memoryRevisions.unshift(rev);
 
   return savedDoc;
 }
@@ -1282,18 +1319,16 @@ export async function rollbackUnifiedDocument(documentId: string, targetVersion:
     throw err;
   }
 
+  requireProductionPostgres('rollback_document');
+
   let snapshotJson: string | null = null;
 
   if (pool && isPgConnected) {
-    try {
-      const res = await pool.query('SELECT snapshot_json FROM document_revisions WHERE document_id = $1 AND version = $2', [documentId, targetVersion]);
-      if (res.rows.length > 0) {
-        snapshotJson = res.rows[0].snapshot_json;
-      }
-    } catch (err) {}
-  }
-
-  if (!snapshotJson) {
+    const res = await pool.query('SELECT snapshot_json FROM document_revisions WHERE document_id = $1 AND version = $2', [documentId, targetVersion]);
+    if (res.rows.length > 0) {
+      snapshotJson = res.rows[0].snapshot_json;
+    }
+  } else {
     const rev = memoryRevisions.find(r => r.documentId === documentId && r.version === targetVersion);
     if (rev) snapshotJson = rev.snapshotJson;
   }
@@ -1319,21 +1354,21 @@ export async function rollbackUnifiedDocument(documentId: string, targetVersion:
  * Returns all saved revisions for a document (up to 10 stored)
  */
 export async function getDocumentRevisions(documentId: string): Promise<DocumentRevision[]> {
+  requireProductionPostgres('get_revisions');
+
   if (pool && isPgConnected) {
-    try {
-      const res = await pool.query(
-        'SELECT * FROM document_revisions WHERE document_id = $1 ORDER BY version DESC',
-        [documentId]
-      );
-      return res.rows.map(r => ({
-        id: r.id,
-        documentId: r.document_id,
-        version: r.version,
-        snapshotJson: r.snapshot_json,
-        savedBy: r.saved_by,
-        savedAt: r.saved_at
-      }));
-    } catch (err) {}
+    const res = await pool.query(
+      'SELECT * FROM document_revisions WHERE document_id = $1 ORDER BY version DESC',
+      [documentId]
+    );
+    return res.rows.map(r => ({
+      id: r.id,
+      documentId: r.document_id,
+      version: r.version,
+      snapshotJson: r.snapshot_json,
+      savedBy: r.saved_by,
+      savedAt: r.saved_at
+    }));
   }
 
   return memoryRevisions

@@ -16,10 +16,20 @@ export interface PaymentGatewayPublicStatus {
   sandbox: boolean;
   enabled: boolean;
   configured: boolean;
+  liveGatewayReady: boolean;
+  supportsRefund: boolean;
   hasMerchantId: boolean;
   maskedMerchantId: string;
   callbackUrl: string;
   source: "env" | "database" | "unconfigured";
+}
+
+/**
+ * Bank refund API integration status per provider.
+ * Returns true only when an automated server-to-server bank refund endpoint is implemented.
+ */
+export function supportsGatewayRefund(_provider?: string): boolean {
+  return false;
 }
 
 function maskMerchantId(id: string): string {
@@ -67,6 +77,7 @@ export function resolvePaymentGatewayConfig(): PaymentGatewayInternalConfig {
 
 export function getPaymentGatewayPublicStatus(): PaymentGatewayPublicStatus {
   const cfg = resolvePaymentGatewayConfig();
+  const liveGatewayReady = cfg.enabled && cfg.provider !== "sandbox" && Boolean(cfg.merchantId);
   const configured = cfg.enabled && (cfg.provider === "sandbox" || Boolean(cfg.merchantId));
 
   return {
@@ -74,6 +85,8 @@ export function getPaymentGatewayPublicStatus(): PaymentGatewayPublicStatus {
     sandbox: cfg.sandbox,
     enabled: cfg.enabled,
     configured,
+    liveGatewayReady,
+    supportsRefund: supportsGatewayRefund(cfg.provider),
     hasMerchantId: Boolean(cfg.merchantId),
     maskedMerchantId: maskMerchantId(cfg.merchantId),
     callbackUrl: cfg.callbackUrl,

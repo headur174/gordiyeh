@@ -2,7 +2,7 @@ import { DatabaseSync } from "node:sqlite";
 import { CryptoVault } from "./cryptoVault";
 import { getDatabaseConfig } from "./dbConfig";
 import { OutboxProcessor } from "./core/outboxWorker";
-import { PaymentStateMachine } from "./core/paymentService";
+import { PaymentStateMachine, ensurePaymentSchema } from "./core/paymentService";
 import {
   INITIAL_PRODUCTS,
   INITIAL_SUPPLIERS,
@@ -109,6 +109,9 @@ function initSchema() {
       status TEXT,
       riskScore INTEGER,
       createdAt TEXT,
+      created_at_iso TEXT,
+      stock_released INTEGER NOT NULL DEFAULT 0,
+      financial_settled INTEGER NOT NULL DEFAULT 0,
       data TEXT
     );
 
@@ -195,8 +198,19 @@ function initSchema() {
       status TEXT NOT NULL,
       provider_ref TEXT,
       error_message TEXT,
+      expires_at TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_payment_tx_order ON payment_transactions(order_id, status, updated_at);
+    CREATE INDEX IF NOT EXISTS idx_payment_tx_ref ON payment_transactions(provider_ref);
+
+    /* Stock restock anomaly log (never fail silently on corrupted order JSON) */
+    CREATE TABLE IF NOT EXISTS stock_recovery_errors (
+      id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      reason TEXT NOT NULL,
+      created_at TEXT NOT NULL
     );
 
     /* Customer Accounts (Phone-Keyed Username & Profile, Zero-Plaintext Encrypted at Rest) */
@@ -279,6 +293,9 @@ function initSchema() {
       // Column already exists
     }
   }
+
+  // Ensure Phase 4 payment & stock recovery schema migrations are present on existing DBs
+  ensurePaymentSchema(db);
 }
 
 initSchema();
@@ -480,7 +497,22 @@ export const CommerceDB = {
     };
 
     const automationMatrix: AutomationMatrix = getKV("automation_matrix") || INITIAL_AUTOMATION_MATRIX;
-    const summary: StoreFinancialSummary = getKV("financial_summary") || INITIAL_FINANCIAL_SUMMARY;
+    const rawSummary = getKV("financial_summary") || {};
+    const summary: StoreFinancialSummary = {
+      ...INITIAL_FINANCIAL_SUMMARY,
+      grossSales: 0,
+      collectedPayments: 0,
+      refunds: 0,
+      netRevenue: 0,
+      supplierCost: 0,
+      shippingCost: 0,
+      paymentFee: 0,
+      contributionProfit: 0,
+      pendingOrdersCount: 0,
+      paidOrdersCount: 0,
+      refundedOrdersCount: 0,
+      ...rawSummary,
+    };
     const siteConfig: SiteConfig = getKV("site_config") || INITIAL_SITE_CONFIG;
 
     const apprRows = db.prepare("SELECT data FROM approvals ORDER BY createdAt DESC").all() as { data: string }[];
@@ -539,6 +571,7 @@ export const CommerceDB = {
       decisionLogs,
       events,
       summary,
+      financialSummary: summary,
       siteConfig,
       blogPosts,
       staticPages,
@@ -706,35 +739,52 @@ export const CommerceDB = {
    * On ANY failure, full ROLLBACK is executed.
    */
   createOrder(order: any): any {
+    const createdIso = order.createdAtIso || new Date().toISOString();
+    order.createdAtIso = createdIso;
     db.exec("BEGIN IMMEDIATE;");
     try {
-      // 1. Verify and decrement stock atomically with concurrency protection
+      // 1. Verify and decrement exact active supplierOffer stock atomically with concurrency protection
       if (Array.isArray(order.items)) {
         for (const item of order.items) {
-          const prodRow = db.prepare("SELECT stock, data FROM products WHERE id = ?").get(item.id || item.productId) as { stock: number; data: string } | undefined;
+          const prodRow = db
+            .prepare("SELECT stock, data FROM products WHERE id = ?")
+            .get(item.id || item.productId) as { stock: number; data: string } | undefined;
           if (!prodRow) {
             throw new Error(`Product '${item.id || item.title}' not found in catalog.`);
           }
 
           const qty = Math.max(1, parseInt(item.quantity, 10) || 1);
-          if (prodRow.stock < qty) {
-            throw new InsufficientStockError(`موجودی کالای «${item.title || item.sku}» کافی نیست (موجودی فعلی: ${prodRow.stock}، تعداد درخواستی: ${qty}).`);
+          const prodObj: CanonicalProduct = JSON.parse(prodRow.data);
+          if (prodObj.status === "UNPUBLISHED" || prodObj.status === "KILL_LIST") {
+            throw new InsufficientStockError(`کالای «${prodObj.title}» در حال حاضر غیرفعال یا ناموجود است.`);
           }
 
-          const prodObj: CanonicalProduct = JSON.parse(prodRow.data);
-          let offerUpdated = false;
+          const targetOfferId = item.offerId || prodObj.selectedOfferId || prodObj.supplierOffers?.[0]?.id;
+          const targetOffer = prodObj.supplierOffers?.find((off) => off.id === targetOfferId);
 
-          prodObj.supplierOffers = prodObj.supplierOffers.map(off => {
-            if (off.id === prodObj.selectedOfferId && off.stock >= qty) {
-              offerUpdated = true;
-              return { ...off, stock: off.stock - qty };
-            }
-            return off;
-          });
+          if (!targetOffer || targetOffer.isActive === false || Number(targetOffer.stock || 0) < qty) {
+            throw new InsufficientStockError(
+              `موجودی تأمین‌کننده منتخب برای کالای «${item.title || prodObj.title}» کافی نیست (موجودی فعلی: ${Number(targetOffer?.stock || 0)}، تعداد درخواستی: ${qty}).`
+            );
+          }
 
-          const newTotalStock = Math.max(0, prodRow.stock - qty);
+          item.offerId = targetOffer.id;
 
-          // Conditional update requiring stock >= qty at execution instant
+          prodObj.supplierOffers = prodObj.supplierOffers.map((off) =>
+            off.id === targetOffer.id ? { ...off, stock: Math.max(0, Number(off.stock || 0) - qty) } : off
+          );
+
+          const newTotalStock = prodObj.supplierOffers.reduce(
+            (sum, off) => sum + Math.max(0, Number(off.stock || 0)),
+            0
+          );
+
+          if (prodRow.stock < qty) {
+            throw new InsufficientStockError(
+              `موجودی کالای «${item.title || item.sku}» کافی نیست (موجودی فعلی: ${prodRow.stock}، تعداد درخواستی: ${qty}).`
+            );
+          }
+
           const updateStmt = db.prepare(`
             UPDATE products
             SET stock = ?, data = ?
@@ -755,8 +805,8 @@ export const CommerceDB = {
 
       const insertOrderStmt = db.prepare(`
         INSERT INTO orders (
-          id, orderNumber, customerName, phone, phone_blind_index, totalAmount, status, riskScore, createdAt, data
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          id, orderNumber, customerName, phone, phone_blind_index, totalAmount, status, riskScore, createdAt, created_at_iso, stock_released, financial_settled, data
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?)
       `);
       insertOrderStmt.run(
         order.id,
@@ -768,15 +818,20 @@ export const CommerceDB = {
         order.status,
         order.riskScore || 0,
         order.createdAt,
+        createdIso,
         encryptedData
       );
 
-      // 3. Update Financial Summary inside the same transaction
-      const sumRow = db.prepare("SELECT value FROM kv_store WHERE key = 'financial_summary'").get() as { value: string } | undefined;
-      const currentSummary: StoreFinancialSummary = sumRow ? JSON.parse(sumRow.value) : INITIAL_FINANCIAL_SUMMARY;
-      currentSummary.todayRevenue += order.totalAmount;
-      currentSummary.todayContributionProfit += (order.contributionProfit || Math.round(order.totalAmount * 0.28));
-      currentSummary.todayOrdersCount += 1;
+      // 3. Do NOT credit revenue on order placement! Only increment pendingOrdersCount until PAID callback/verify.
+      const sumRow = db.prepare("SELECT value FROM kv_store WHERE key = 'financial_summary'").get() as
+        | { value: string }
+        | undefined;
+      const currentSummary: any = {
+        ...INITIAL_FINANCIAL_SUMMARY,
+        pendingOrdersCount: 0,
+        ...(sumRow ? JSON.parse(sumRow.value) : {}),
+      };
+      currentSummary.pendingOrdersCount = Number(currentSummary.pendingOrdersCount || 0) + 1;
       db.prepare(`
         INSERT INTO kv_store (key, value)
         VALUES ('financial_summary', ?)
@@ -785,6 +840,7 @@ export const CommerceDB = {
 
       // 4. Record required approvals and decision logs
       if (order.requireApproval || order.status === "HIGH_RISK_HOLD") {
+        const expectedProfit = Number(order.contributionProfit || 0);
         const approvalItem: ApprovalItem = {
           id: `appr_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
           priority: "HIGH",
@@ -797,7 +853,7 @@ export const CommerceDB = {
             `خریدار: ${order.customerName} (${order.city || "تهران"})`,
             `تعداد اقلام: ${order.items?.length || 1} عدد`,
           ],
-          expectedImpact: `در صورت تأیید: ارسال فوری و سود خالص +${((order.contributionProfit || Math.round(order.totalAmount * 0.28))).toLocaleString()} تومان`,
+          expectedImpact: `در صورت تأیید: ارسال فوری و سود خالص +${expectedProfit.toLocaleString()} تومان`,
           riskScore: order.riskScore || 72,
           currentValue: "وضعیت: در صف تایید ناظر (Hold)",
           proposedValue: "اقدام: تایید نهایی و صدور حواله انبار تأمین‌کننده",
@@ -872,9 +928,101 @@ export const CommerceDB = {
         );
       }
 
-      // Commit entire atomic unit of work
       db.exec("COMMIT;");
       return order;
+    } catch (err) {
+      db.exec("ROLLBACK;");
+      throw err;
+    }
+  },
+
+  updateOrderStatus(id: string, status: string): boolean {
+    db.exec("BEGIN IMMEDIATE;");
+    try {
+      const row = db
+        .prepare("SELECT id, data FROM orders WHERE id = ? OR orderNumber = ? LIMIT 1")
+        .get(id, id) as { id: string; data: string } | undefined;
+      if (!row) {
+        db.exec("ROLLBACK;");
+        return false;
+      }
+      let nextEncrypted = row.data;
+      if (row.data) {
+        const decrypted = CryptoVault.decryptJson<any>(row.data, null);
+        if (decrypted && typeof decrypted === "object") {
+          decrypted.status = status;
+          nextEncrypted = CryptoVault.encryptJson(decrypted);
+        }
+      }
+      db.prepare("UPDATE orders SET status = ?, data = ? WHERE id = ?").run(status, nextEncrypted, row.id);
+      db.exec("COMMIT;");
+      return true;
+    } catch (err) {
+      db.exec("ROLLBACK;");
+      throw err;
+    }
+  },
+
+  expireUnpaidOrders(ttlMinutes: number = 30): { cancelledCount: number } {
+    const cutoffIso = new Date(Date.now() - ttlMinutes * 60 * 1000).toISOString();
+    const expiredRows = db
+      .prepare(`
+        SELECT id, status, stock_released, data
+        FROM orders
+        WHERE status = 'PENDING_PAYMENT'
+          AND created_at_iso IS NOT NULL
+          AND created_at_iso <= ?
+      `)
+      .all(cutoffIso) as Array<{ id: string; status: string; stock_released: number; data: string | null }>;
+
+    if (expiredRows.length === 0) {
+      return { cancelledCount: 0 };
+    }
+
+    let cancelledCount = 0;
+    db.exec("BEGIN IMMEDIATE;");
+    try {
+      for (const row of expiredRows) {
+        if (paymentStateMachine.cancelExpiredOrderInTx(db, row, "Unpaid order TTL expired")) {
+          cancelledCount += 1;
+        }
+      }
+      db.exec("COMMIT;");
+      if (cancelledCount > 0) {
+        console.log(`[OrderExpiry] Released stock & cancelled ${cancelledCount} expired unpaid order(s).`);
+      }
+      return { cancelledCount };
+    } catch (err) {
+      db.exec("ROLLBACK;");
+      throw err;
+    }
+  },
+
+  deleteOrderById(id: string): boolean {
+    db.exec("BEGIN IMMEDIATE;");
+    try {
+      const row = db
+        .prepare("SELECT id, status, stock_released, financial_settled, data, totalAmount FROM orders WHERE id = ? OR orderNumber = ? LIMIT 1")
+        .get(id, id) as any;
+      if (!row) {
+        db.exec("ROLLBACK;");
+        return false;
+      }
+      if ((row.status === "PENDING_PAYMENT" || row.status === "HIGH_RISK_HOLD") && Number(row.stock_released || 0) === 0) {
+        paymentStateMachine.restockOrderItems(db, row.id, row.data);
+        const sumRow = db.prepare("SELECT value FROM kv_store WHERE key = 'financial_summary'").get() as
+          | { value: string }
+          | undefined;
+        if (sumRow) {
+          const current = { ...INITIAL_FINANCIAL_SUMMARY, ...JSON.parse(sumRow.value) };
+          current.pendingOrdersCount = Math.max(0, Number(current.pendingOrdersCount || 0) - 1);
+          db.prepare("UPDATE kv_store SET value = ? WHERE key = 'financial_summary'").run(JSON.stringify(current));
+        }
+      }
+      db.prepare("DELETE FROM payment_transactions WHERE order_id = ?").run(row.id);
+      const res = db.prepare("DELETE FROM orders WHERE id = ?").run(row.id);
+      db.exec("COMMIT;");
+      return Number(res.changes) > 0;
     } catch (err) {
       db.exec("ROLLBACK;");
       throw err;

@@ -1,12 +1,15 @@
 import crypto from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
+import { CommerceDB } from "../db";
 
 /**
  * Central administrator authentication and API access policy.
  *
  * Design:
- *  - ADMIN_SECRET_KEY  : machine credential (Bearer / x-admin-token) and signing key. Required in production.
- *  - ADMIN_PASSWORD    : human credential for the /admin browser login (Basic auth, user "admin"). Required in production.
+ *  - ADMIN_SECRET_KEY  : machine credential (Bearer / x-admin-token) and signing key.
+ *                        When unset, generates an ephemeral 256-bit random key in memory.
+ *  - ADMIN_PASSWORD    : human credential for /admin browser login (Basic auth, user "admin").
+ *                        When unset, supports one-time atomic first-run password claim (scrypt-hashed in DB).
  *  - After a successful /admin login the server issues a signed, HttpOnly, SameSite=Strict session cookie.
  *    The admin SPA calls /api/* same-origin, so the cookie authenticates those calls automatically.
  *  - Every /api route is ADMIN-ONLY unless it is listed in PUBLIC_RULES below (deny by default).
@@ -15,6 +18,7 @@ import type { NextFunction, Request, Response } from "express";
  */
 
 const SESSION_COOKIE = "gordiyeh_admin_session";
+const CLAIMED_ADMIN_KV_KEY = "admin_claimed_password_v1";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const MIN_SECRET_LENGTH = 24;
 const MIN_PASSWORD_LENGTH = 12;
@@ -39,32 +43,103 @@ let initialised = false;
 
 const isProduction = () => process.env.NODE_ENV === "production";
 
-function resolveCredential(name: string, minLength: number, generatedBytes: number): string {
-  const raw = (process.env[name] || "").trim();
+interface ClaimedAdminRecord {
+  salt: string;
+  hash: string;
+  claimedAt: string;
+}
+
+function getClaimedAdminRecord(): ClaimedAdminRecord | null {
+  try {
+    const rec = CommerceDB.getKvJson(CLAIMED_ADMIN_KV_KEY, null) as ClaimedAdminRecord | null;
+    if (rec && typeof rec.salt === "string" && typeof rec.hash === "string") {
+      return rec;
+    }
+  } catch {
+    // DB unavailable
+  }
+  return null;
+}
+
+function hashScryptPassword(password: string, saltHex: string): Buffer {
+  return crypto.scryptSync(password, saltHex, 64);
+}
+
+function verifyClaimedPassword(password: string, record: ClaimedAdminRecord): boolean {
+  try {
+    const expected = Buffer.from(record.hash, "hex");
+    const derived = hashScryptPassword(password, record.salt);
+    if (expected.length !== derived.length) return false;
+    return crypto.timingSafeEqual(expected, derived);
+  } catch {
+    return false;
+  }
+}
+
+function resolveAdminSecret(): string {
+  const raw = (process.env.ADMIN_SECRET_KEY || "").trim();
   if (raw) {
     if (KNOWN_LEAKED_VALUES.has(raw)) {
-      throw new Error(`[Security] ${name} equals a value that was published in the public repository. Generate a new one.`);
+      throw new Error("[Security] ADMIN_SECRET_KEY equals a value that was published in the public repository. Generate a new one.");
     }
-    if (raw.length < minLength) {
-      const msg = `[Security] ${name} must be at least ${minLength} characters long.`;
+    if (raw.length < MIN_SECRET_LENGTH) {
+      const msg = `[Security] ADMIN_SECRET_KEY must be at least ${MIN_SECRET_LENGTH} characters long.`;
       if (isProduction()) throw new Error(msg);
       console.warn(`${msg} (allowed outside production only)`);
     }
     return raw;
   }
   if (isProduction()) {
-    throw new Error(`[Security] ${name} is required when NODE_ENV=production. Generate one with: openssl rand -hex 24`);
+    throw new Error("[Security] ADMIN_SECRET_KEY is required when NODE_ENV=production.");
   }
-  const generated = crypto.randomBytes(generatedBytes).toString("hex");
-  console.warn(`[Security] ${name} is not set. Using a temporary value for this process only: ${generated}`);
-  return generated;
+  console.warn("[Security] ADMIN_SECRET_KEY is not set. Using an ephemeral 256-bit random signing key for this process.");
+  return crypto.randomBytes(32).toString("hex");
+}
+
+function resolveEnvAdminPassword(): string {
+  const raw = (process.env.ADMIN_PASSWORD || "").trim();
+  if (!raw) {
+    if (isProduction()) {
+      throw new Error("[Security] ADMIN_PASSWORD is required when NODE_ENV=production.");
+    }
+    return "";
+  }
+  if (KNOWN_LEAKED_VALUES.has(raw)) {
+    throw new Error("[Security] ADMIN_PASSWORD equals a value that was published in the public repository. Generate a new one.");
+  }
+  if (raw.length < MIN_PASSWORD_LENGTH) {
+    const msg = `[Security] ADMIN_PASSWORD must be at least ${MIN_PASSWORD_LENGTH} characters long.`;
+    if (isProduction()) throw new Error(msg);
+    console.warn(`${msg} (allowed outside production only)`);
+  }
+  return raw;
+}
+
+function validateProductionPaymentSecret(): void {
+  const raw = (process.env.PAYMENT_GATEWAY_SECRET || "").trim();
+  if (raw) {
+    if (KNOWN_LEAKED_VALUES.has(raw)) {
+      throw new Error("[Security] PAYMENT_GATEWAY_SECRET equals a value that was published in the public repository.");
+    }
+    if (raw.length < MIN_SECRET_LENGTH && isProduction()) {
+      throw new Error(`[Security] PAYMENT_GATEWAY_SECRET must be at least ${MIN_SECRET_LENGTH} characters long in production.`);
+    }
+    return;
+  }
+  if (isProduction()) {
+    throw new Error("[Security] PAYMENT_GATEWAY_SECRET is required when NODE_ENV=production.");
+  }
 }
 
 /** Validates credentials and prepares signing keys. Call once at startup so a misconfigured server never starts. */
 export function initAdminAuth(): void {
   if (initialised) return;
-  adminSecret = resolveCredential("ADMIN_SECRET_KEY", MIN_SECRET_LENGTH, 24);
-  adminPassword = resolveCredential("ADMIN_PASSWORD", MIN_PASSWORD_LENGTH, 12);
+  adminSecret = resolveAdminSecret();
+  adminPassword = resolveEnvAdminPassword();
+  validateProductionPaymentSecret();
+  if (!adminPassword && !getClaimedAdminRecord()) {
+    console.warn("[Security] ADMIN_PASSWORD is not set and no admin password has been claimed yet. Visit /admin to claim the initial password or set ADMIN_PASSWORD in environment.");
+  }
   sessionKey = crypto.createHmac("sha256", adminSecret).update("gordiyeh-admin-session-v1").digest();
 
   const configuredPreview = (process.env.DRAFT_PREVIEW_TOKEN || "").trim();
@@ -215,8 +290,119 @@ function basicCredentialsValid(req: Request): boolean {
   const idx = decoded.indexOf(":");
   if (idx < 0) return false;
   const userOk = safeEqual(decoded.slice(0, idx), "admin");
-  const passOk = safeEqual(decoded.slice(idx + 1), adminPassword);
-  return userOk && passOk;
+  const candidatePass = decoded.slice(idx + 1);
+
+  if (adminPassword) {
+    return userOk && safeEqual(candidatePass, adminPassword);
+  }
+  const claimed = getClaimedAdminRecord();
+  if (!claimed) return false;
+  return userOk && verifyClaimedPassword(candidatePass, claimed);
+}
+
+const FIRST_RUN_CLAIM_HTML = `<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>راه‌اندازی اولیه دسترسی مدیریت | گُردیه</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; background: #0f172a; color: #f8fafc; display: flex; min-height: 100vh; align-items: center; justify-content: center; margin: 0; padding: 1rem; }
+    .card { width: 100%; max-width: 420px; background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,.35); }
+    h1 { font-size: 1.15rem; margin: 0 0 8px; }
+    p { font-size: 0.85rem; color: #cbd5e1; line-height: 1.7; margin: 0 0 18px; }
+    label { display: block; font-size: 0.8rem; margin-bottom: 6px; color: #e2e8f0; }
+    input { width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: #fff; margin-bottom: 12px; font-size: 0.9rem; direction: ltr; }
+    button { width: 100%; padding: 11px; border-radius: 10px; border: 0; background: #10b981; color: #06281e; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .err { color: #fda4af; font-size: 0.8rem; margin-bottom: 12px; display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>تنظیم رمز عبور اولیه مدیر</h1>
+    <p>متغیر محیطی <code>ADMIN_PASSWORD</code> تنظیم نشده است. یک رمز عبور قوی (حداقل ۱۲ کاراکتر) انتخاب کنید تا پنل مدیریت قفل و فعال شود.</p>
+    <div id="err" class="err"></div>
+    <form id="f">
+      <label>رمز عبور جدید مدیر (حداقل ۱۲ کاراکتر)</label>
+      <input id="p1" type="password" minlength="12" required autocomplete="new-password" />
+      <label>تکرار رمز عبور</label>
+      <input id="p2" type="password" minlength="12" required autocomplete="new-password" />
+      <button id="btn" type="submit">ثبت رمز و ورود به پنل</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById('f').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById('err');
+      var btn = document.getElementById('btn');
+      var p1 = document.getElementById('p1').value;
+      var p2 = document.getElementById('p2').value;
+      errEl.style.display = 'none';
+      if (p1 !== p2) {
+        errEl.textContent = 'رمز عبور و تکرار آن یکسان نیست.';
+        errEl.style.display = 'block';
+        return;
+      }
+      btn.disabled = true;
+      try {
+        var r = await fetch('/api/admin/bootstrap-claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: p1 })
+        });
+        var j = await r.json().catch(function(){ return {}; });
+        if (!r.ok) {
+          errEl.textContent = j.error || 'خطا در ثبت رمز عبور.';
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          return;
+        }
+        window.location.reload();
+      } catch (ex) {
+        errEl.textContent = 'خطا در برقراری ارتباط با سرور.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>`;
+
+export function handleBootstrapClaim(req: Request, res: Response): void {
+  ensureInit();
+  res.setHeader("Cache-Control", "no-store");
+  if (isProduction() || adminPassword) {
+    res.status(409).json({ error: "ADMIN_PASSWORD is already configured or bootstrap claim is disabled in production." });
+    return;
+  }
+  const password = typeof req.body?.password === "string" ? req.body.password.trim() : "";
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    res.status(400).json({ error: `رمز عبور باید حداقل ${MIN_PASSWORD_LENGTH} کاراکتر باشد.` });
+    return;
+  }
+  if (KNOWN_LEAKED_VALUES.has(password)) {
+    res.status(400).json({ error: "این رمز عبور غیرمجاز است؛ لطفاً رمز دیگری انتخاب کنید." });
+    return;
+  }
+
+  // Atomic one-time claim inside SQLite (INSERT OR IGNORE fails closed on race)
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = hashScryptPassword(password, salt).toString("hex");
+  const record: ClaimedAdminRecord = { salt, hash, claimedAt: new Date().toISOString() };
+  const db = CommerceDB.getRawDb();
+  const insertRes = db.prepare(`
+    INSERT OR IGNORE INTO kv_store (key, value) VALUES (?, ?)
+  `).run(CLAIMED_ADMIN_KV_KEY, JSON.stringify(record));
+
+  if (Number(insertRes.changes) === 0) {
+    res.status(409).json({ error: "رمز عبور مدیر قبلاً ثبت شده است. برای ورود از نام کاربری admin استفاده کنید." });
+    return;
+  }
+
+  setSessionCookie(res);
+  res.status(201).json({ success: true });
 }
 
 export function adminPageGuard(req: Request, res: Response, next: NextFunction): void {
@@ -224,6 +410,12 @@ export function adminPageGuard(req: Request, res: Response, next: NextFunction):
   res.setHeader("X-Robots-Tag", "noindex, nofollow");
   res.setHeader("Cache-Control", "no-store");
   if (isAdminRequest(req)) return next();
+
+  // First-run claim UI ONLY outside production when no env ADMIN_PASSWORD and no claimed DB hash exist yet
+  if (!isProduction() && !adminPassword && !getClaimedAdminRecord()) {
+    res.status(200).type("html; charset=utf-8").send(FIRST_RUN_CLAIM_HTML);
+    return;
+  }
 
   const ip = req.ip || req.socket.remoteAddress || "unknown";
   if (loginLimited(ip)) {
@@ -282,6 +474,7 @@ export const PUBLIC_RULES: readonly Rule[] = [
   rule(["POST"], "/payment/initiate"),
   rule(["POST"], "/payment/verify"),   // verifies bank transaction server-to-server with gateway
   rule(["POST"], "/payment/callback"), // signature enforced inside the handler
+  rule(["POST"], "/admin/bootstrap-claim"), // atomically locks itself after first claim or when ADMIN_PASSWORD is set
 ];
 
 export function normaliseApiPath(rawPath: string): string {

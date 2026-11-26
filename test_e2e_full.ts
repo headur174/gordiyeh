@@ -17,10 +17,13 @@
  *    - USR-6: Static legal & help policy pages availability
  */
 
-import { adminBearerHeaders, getBaseUrl } from './test_support_auth';
+import crypto from 'node:crypto';
+import { adminBearerHeaders, assertSafeTestEnvironment, getBaseUrl } from './test_support_auth';
 
 async function runE2ETests() {
+  assertSafeTestEnvironment();
   const baseUrl = getBaseUrl();
+  const createdOrderIds: string[] = [];
   console.log(`=================================================================`);
   console.log(`  RUNNING COMPREHENSIVE E2E SECURITY & USER JOURNEY TEST SUITE`);
   console.log(`  Target: ${baseUrl}`);
@@ -74,6 +77,7 @@ async function runE2ETests() {
 
     const dataSec1 = await resSec1.json();
     const orderCreated = dataSec1?.order;
+    if (orderCreated?.id) createdOrderIds.push(orderCreated.id);
     // Expected: Server should look up DB price (580,000 Toman) + 45,000 shipping = 625,000 Toman (not attacker's 100 Toman)
     const isPriceEnforced = orderCreated && orderCreated.totalAmount >= 580000;
     const isItemVerified = orderCreated?.items?.[0]?.unitPrice === 580000;
@@ -146,6 +150,7 @@ async function runE2ETests() {
     });
 
     const dataSec3 = await resSec3.json();
+    if (dataSec3?.order?.id) createdOrderIds.push(dataSec3.order.id);
     const qtySanitized = dataSec3?.order?.items?.[0]?.quantity >= 1;
     assert(
       qtySanitized,
@@ -154,6 +159,28 @@ async function runE2ETests() {
     );
   } catch (err: any) {
     assert(false, 'SEC-3', 'Negative Quantity Overflow Blocked', err.message);
+  }
+
+  // Test SEC-7: Client-Supplied Discount Tampering Blocked
+  try {
+    const resSec7 = await fetch(`${baseUrl}/api/v1/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: [{ id: 'prod_ported_shaker', quantity: 1 }],
+        customer: { fullName: 'Discount Tester', phone: '09120001122', address: 'تهران' },
+        discountAmount: 50000,
+      }),
+    });
+    const dataSec7 = await resSec7.json();
+    assert(
+      resSec7.status === 400 && dataSec7?.code === 'INVALID_CLIENT_DISCOUNT',
+      'SEC-7',
+      'Unverified Client-Supplied discountAmount Rejected (HTTP 400 INVALID_CLIENT_DISCOUNT)',
+      `Got ${resSec7.status} (${dataSec7?.code || ''})`
+    );
+  } catch (err: any) {
+    assert(false, 'SEC-7', 'Client Discount Tampering Blocked', err.message);
   }
 
   // Test SEC-4: SQL Injection Vector Immunity
@@ -251,6 +278,7 @@ async function runE2ETests() {
 
     assert(resUsr2.status === 201, 'USR-2.1', 'Order Placed Successfully (HTTP 201 Created)');
     const orderData = await resUsr2.json();
+    if (orderData?.order?.id) createdOrderIds.push(orderData.order.id);
     placedOrderNumber = orderData?.order?.orderNumber;
     assert(!!placedOrderNumber, 'USR-2.2', `Generated Tracking Order Number: ${placedOrderNumber}`);
     assert(orderData?.order?.customerName === 'علیرضا محمدی', 'USR-2.3', 'Customer Recipient Name Accurately Recorded');
@@ -392,6 +420,184 @@ async function runE2ETests() {
     );
   } catch (err: any) {
     assert(false, 'ARCH-3', 'Event Bus Metrics', err.message);
+  }
+
+  // -------------------------------------------------------------
+  // PART 4: PRODUCTION HARDENING HTTP REGRESSION TESTS
+  // -------------------------------------------------------------
+  console.log('\n--- SECTION 4: PAYMENT LEDGER, SESSION REUSE & PARALLEL CONCURRENCY ---');
+
+  // Test PAY-E2E-1: Zero revenue on checkout, settled strictly on PAID callback, reversed on REFUND
+  try {
+    const bootBeforeRes = await fetch(`${baseUrl}/api/v1/bootstrap`, { headers: adminBearerHeaders() });
+    const bootBefore = await bootBeforeRes.json();
+    const revBefore = Number(bootBefore?.data?.financialSummary?.netRevenue ?? bootBefore?.data?.summary?.netRevenue ?? 0);
+
+    const pendingOrderRes = await fetch(`${baseUrl}/api/v1/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: [{ id: 'prod_ported_shaker', quantity: 1 }],
+        customer: { fullName: 'حسابداری تست', phone: '09123334455', province: 'تهران', city: 'تهران', address: 'تهران پلاک ۵' },
+        discountAmount: 0,
+      }),
+    });
+    const pendingOrderJson = await pendingOrderRes.json();
+    const ord = pendingOrderJson?.order;
+    if (ord?.id) createdOrderIds.push(ord.id);
+
+    const bootAfterCreate = await (await fetch(`${baseUrl}/api/v1/bootstrap`, { headers: adminBearerHeaders() })).json();
+    const revAfterCreate = Number(bootAfterCreate?.data?.financialSummary?.netRevenue ?? 0);
+
+    assert(
+      pendingOrderRes.status === 201 && ord?.status === 'PENDING_PAYMENT' && revAfterCreate === revBefore,
+      'PAY-E2E-1A',
+      'Pending Order Checkout Stays PENDING_PAYMENT With Zero Revenue Recognized',
+      `status=${ord?.status}, revBefore=${revBefore}, revAfterCreate=${revAfterCreate}`
+    );
+
+    const init1 = await (await fetch(`${baseUrl}/api/v1/payment/initiate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId: ord.id }),
+    })).json();
+    const init2 = await (await fetch(`${baseUrl}/api/v1/payment/initiate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId: ord.id }),
+    })).json();
+
+    assert(
+      Boolean(init1?.session?.transactionId) &&
+        init2?.session?.reused === true &&
+        init2?.session?.transactionId === init1?.session?.transactionId,
+      'PAY-E2E-1B',
+      'Payment Initiation Reuses Active Non-Expired Session Without Duplicate Pending Rows'
+    );
+
+    const cbIdemp = `cb_e2e_${Date.now()}`;
+    const cbAmount = Number(ord.totalAmount);
+    const cbHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
+    const gwSecret = (process.env.PAYMENT_GATEWAY_SECRET || '').trim();
+    if (gwSecret) {
+      const sigPayload = JSON.stringify({ orderId: ord.id, idempotencyKey: cbIdemp, status: 'SUCCESS', amount: cbAmount });
+      cbHeaders['x-payment-signature'] = crypto.createHmac('sha256', gwSecret).update(sigPayload).digest('hex');
+    }
+
+    const cbRes = await fetch(`${baseUrl}/api/v1/payment/callback`, {
+      method: 'POST',
+      headers: cbHeaders,
+      body: JSON.stringify({
+        orderId: ord.id,
+        idempotencyKey: cbIdemp,
+        status: 'SUCCESS',
+        providerRef: `REF_E2E_${Date.now()}`,
+        amount: cbAmount,
+        provider: 'SANDBOX',
+      }),
+    });
+    const cbJson = await cbRes.json();
+    const bootAfterPaid = await (await fetch(`${baseUrl}/api/v1/bootstrap`, { headers: adminBearerHeaders() })).json();
+    const revAfterPaid = Number(bootAfterPaid?.data?.financialSummary?.netRevenue ?? 0);
+
+    assert(
+      cbRes.status === 200 && cbJson?.orderStatus === 'PAID' && revAfterPaid === revBefore + cbAmount,
+      'PAY-E2E-1C',
+      'Signed Payment Callback Transitions to PAID and Settles Net Revenue Accurately',
+      `status=${cbRes.status}, revAfterPaid=${revAfterPaid}, expected=${revBefore + cbAmount}`
+    );
+
+    const refundRes = await fetch(`${baseUrl}/api/v1/payment/refund`, {
+      method: 'POST',
+      headers: adminBearerHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({
+        orderId: ord.id,
+        idempotencyKey: `ref_e2e_${Date.now()}`,
+        amount: cbAmount,
+        reason: 'E2E refund verification',
+      }),
+    });
+    const refundJson = await refundRes.json();
+    const bootAfterRefund = await (await fetch(`${baseUrl}/api/v1/bootstrap`, { headers: adminBearerHeaders() })).json();
+    const revAfterRefund = Number(bootAfterRefund?.data?.financialSummary?.netRevenue ?? 0);
+
+    assert(
+      refundRes.status === 200 && refundJson?.orderStatus === 'REFUNDED' && revAfterRefund === revBefore,
+      'PAY-E2E-1D',
+      'Refund Reverses Net Revenue Back to Pre-Order Baseline'
+    );
+  } catch (err: any) {
+    assert(false, 'PAY-E2E-1', 'Payment Lifecycle & Financial Accounting E2E', err.message);
+  }
+
+  // Test RACE-E2E-1: Real parallel HTTP last-unit checkout race condition guard
+  let origShaker: any = null;
+  try {
+    const origRes = await fetch(`${baseUrl}/api/v1/products/prod_ported_shaker`, { headers: adminBearerHeaders() });
+    const origJson = await origRes.json();
+    origShaker = origJson?.product;
+
+    if (origShaker) {
+      const activeId = origShaker.selectedOfferId || origShaker.supplierOffers?.[0]?.id;
+      const modifiedOffers = (origShaker.supplierOffers || []).map((o: any) => ({
+        ...o,
+        stock: o.id === activeId ? 1 : 0,
+      }));
+      await fetch(`${baseUrl}/api/v1/products/prod_ported_shaker`, {
+        method: 'PUT',
+        headers: adminBearerHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ ...origShaker, stock: 1, supplierOffers: modifiedOffers }),
+      });
+
+      const makeRaceOrder = (idx: number) =>
+        fetch(`${baseUrl}/api/v1/orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: [{ id: 'prod_ported_shaker', quantity: 1 }],
+            customer: { fullName: `خریدار هم‌زمان ${idx}`, phone: `0912777000${idx}`, address: 'تهران خیابان ولیعصر پلاک ۱۰' },
+            discountAmount: 0,
+          }),
+        }).then(async (r) => ({ status: r.status, json: await r.json().catch(() => ({})) }));
+
+      const raceResults = await Promise.all([makeRaceOrder(1), makeRaceOrder(2), makeRaceOrder(3)]);
+      for (const r of raceResults) {
+        if (r.json?.order?.id) createdOrderIds.push(r.json.order.id);
+      }
+      const okCount = raceResults.filter((r) => r.status === 201).length;
+      const conflictCount = raceResults.filter((r) => r.status === 409).length;
+
+      assert(
+        okCount === 1 && conflictCount === 2,
+        'RACE-E2E-1',
+        'Parallel 3-Way Checkout on Last 1 Unit Allows Exactly 1 Winner and Rejects 2 with 409',
+        `201=${okCount}, 409=${conflictCount}`
+      );
+    } else {
+      assert(false, 'RACE-E2E-1', 'Parallel Checkout Setup', 'prod_ported_shaker not found');
+    }
+  } catch (err: any) {
+    assert(false, 'RACE-E2E-1', 'Parallel Last-Unit HTTP Checkout', err.message);
+  } finally {
+    if (origShaker) {
+      await fetch(`${baseUrl}/api/v1/products/prod_ported_shaker`, {
+        method: 'PUT',
+        headers: adminBearerHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(origShaker),
+      }).catch(() => {});
+    }
+  }
+
+  // Cleanup all test orders created during E2E suite
+  for (const oid of createdOrderIds) {
+    try {
+      await fetch(`${baseUrl}/api/v1/orders/${encodeURIComponent(oid)}`, {
+        method: 'DELETE',
+        headers: adminBearerHeaders(),
+      });
+    } catch {
+      // Ignore cleanup errors
+    }
   }
 
   console.log(`\n=================================================================`);

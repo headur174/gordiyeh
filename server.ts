@@ -10,11 +10,11 @@ import { getRobotsTxt, getSitemapXml, getSitemapXmlAsync, renderStorefrontSeoPag
 import { cmsRouter } from "./server/cmsApi";
 import { mediaRouter, uploadsDir } from "./server/mediaHandler";
 import { initCmsDatabase } from "./server/db/cmsDb";
-import { initAdminAuth, apiAccessGuard, adminPageGuard, clearAdminSession } from "./server/security/adminAuth";
+import { initAdminAuth, apiAccessGuard, adminPageGuard, clearAdminSession, handleBootstrapClaim } from "./server/security/adminAuth";
 import { publicRateLimiter } from "./server/security/rateLimit";
 import { processDueScheduledSocialPosts } from "./server/services/socialPublishService";
 
-import { outboxProcessor } from "./server/db";
+import { outboxProcessor, CommerceDB } from "./server/db";
 
 dotenv.config();
 
@@ -82,6 +82,7 @@ async function startServer() {
   // Deny-by-default API policy + rate limiter for public endpoints
   app.use("/api", apiAccessGuard);
   app.use("/api", publicRateLimiter);
+  app.post("/api/admin/bootstrap-claim", handleBootstrapClaim);
   app.post("/api/admin/logout", (_req, res) => {
     clearAdminSession(res);
     res.json({ success: true });
@@ -199,13 +200,27 @@ async function startServer() {
     }
   });
 
-  // Start durable Transactional Outbox processor & Social Post Scheduler
+  // Start durable Transactional Outbox processor, Social Post Scheduler, and Unpaid Order Expiry Worker
   outboxProcessor.start(3000);
   const socialSchedulerTimer = setInterval(() => {
     processDueScheduledSocialPosts().catch((err) => {
       console.error("[SocialScheduler] Tick error:", err?.message || err);
     });
   }, 30000);
+
+  // Release reserved stock for abandoned PENDING_PAYMENT orders past 30m TTL
+  try {
+    CommerceDB.expireUnpaidOrders(30);
+  } catch (err: any) {
+    console.error("[OrderExpiry] Initial sweep error:", err?.message || err);
+  }
+  const orderExpiryTimer = setInterval(() => {
+    try {
+      CommerceDB.expireUnpaidOrders(30);
+    } catch (err: any) {
+      console.error("[OrderExpiry] Tick error:", err?.message || err);
+    }
+  }, 60_000);
 
   server.listen(PORT, "0.0.0.0", () => {
     console.log(`Commerce OS Brain server listening on http://0.0.0.0:${PORT}`);
@@ -215,7 +230,13 @@ async function startServer() {
   const shutdown = () => {
     console.log("Initiating graceful shutdown: stopping outbox worker and closing server...");
     clearInterval(socialSchedulerTimer);
+    clearInterval(orderExpiryTimer);
     outboxProcessor.stop();
+    const forceExit = setTimeout(() => {
+      console.warn("Graceful shutdown timed out; exiting.");
+      process.exit(0);
+    }, 5000);
+    forceExit.unref();
     server.close(() => {
       console.log("Server stopped successfully.");
       process.exit(0);

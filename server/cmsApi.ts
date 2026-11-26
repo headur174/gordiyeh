@@ -29,7 +29,12 @@ export const requireAdminAuth = requireAdmin;
  */
 cmsRouter.get('/cms/health', async (_req: Request, res: Response) => {
   const health = await checkDbConnection();
-  return res.json({ success: true, ...health });
+  const isProdDown = process.env.NODE_ENV === 'production' && !health.connected;
+  return res.status(isProdDown ? 503 : 200).json({
+    success: !isProdDown,
+    persistent: health.connected,
+    ...health,
+  });
 });
 
 /**
@@ -94,6 +99,9 @@ cmsRouter.get('/admin/documents', requireAdminAuth, async (req: Request, res: Re
     const documents = await listAllDocuments(kind, true);
     return res.json({ success: true, data: documents, documents });
   } catch (err: any) {
+    if (err.statusCode === 503) {
+      return res.status(503).json({ error: err.message, code: err.code || 'CMS_PG_UNAVAILABLE' });
+    }
     return res.status(500).json({ error: 'Internal server error listing admin documents' });
   }
 });
@@ -123,6 +131,9 @@ cmsRouter.post('/admin/documents', requireAdminAuth, async (req: Request, res: R
     }
     return res.status(201).json({ success: true, data: savedDoc, document: savedDoc });
   } catch (err: any) {
+    if (err.statusCode === 503) {
+      return res.status(503).json({ error: err.message, code: err.code || 'CMS_PG_UNAVAILABLE' });
+    }
     if (err.statusCode === 409) {
       return res.status(409).json({ error: err.message, code: 'OCC_CONFLICT' });
     }
@@ -154,6 +165,9 @@ cmsRouter.put('/admin/documents/:id', requireAdminAuth, async (req: Request, res
     }
     return res.status(200).json({ success: true, data: savedDoc, document: savedDoc });
   } catch (err: any) {
+    if (err.statusCode === 503) {
+      return res.status(503).json({ error: err.message, code: err.code || 'CMS_PG_UNAVAILABLE' });
+    }
     if (err.statusCode === 409) {
       return res.status(409).json({ error: err.message, code: 'OCC_CONFLICT' });
     }
@@ -191,6 +205,9 @@ cmsRouter.get('/admin/documents/:id/revisions', requireAdminAuth, async (req: Re
     const revisions = await getDocumentRevisions(req.params.id);
     return res.json({ success: true, data: revisions });
   } catch (err: any) {
+    if (err.statusCode === 503) {
+      return res.status(503).json({ error: err.message, code: err.code || 'CMS_PG_UNAVAILABLE' });
+    }
     return res.status(500).json({ error: 'Failed to retrieve document revisions' });
   }
 });
@@ -211,6 +228,9 @@ cmsRouter.post('/admin/documents/:id/rollback', requireAdminAuth, async (req: Re
     const restoredDoc = await rollbackUnifiedDocument(documentId, targetVersion, 'ADMIN');
     return res.json({ success: true, data: restoredDoc, document: restoredDoc });
   } catch (err: any) {
+    if (err.statusCode === 503) {
+      return res.status(503).json({ error: err.message, code: err.code || 'CMS_PG_UNAVAILABLE' });
+    }
     if (err.statusCode === 404) {
       return res.status(404).json({ error: err.message });
     }
@@ -224,5 +244,10 @@ cmsRouter.post('/admin/documents/:id/rollback', requireAdminAuth, async (req: Re
  */
 cmsRouter.get('/admin/db-health', requireAdminAuth, async (_req: Request, res: Response) => {
   const health = await checkDbConnection();
-  return res.json({ success: true, ...health });
+  const isProdDown = process.env.NODE_ENV === 'production' && !health.connected;
+  return res.status(isProdDown ? 503 : 200).json({
+    success: !isProdDown,
+    persistent: health.connected,
+    ...health,
+  });
 });

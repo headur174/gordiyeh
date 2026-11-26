@@ -239,19 +239,22 @@ export const StorefrontView: React.FC<StorefrontViewProps> = ({
       .then((res) => res.json().catch(() => ({})))
       .then((data) => {
         const targetId = data?.orderNumber || data?.orderId || orderId;
+        const isPaid = Boolean(data?.success === true && data?.orderStatus === 'PAID');
+        const nextStatus = data?.orderStatus || (isPaid ? 'PAID' : 'CANCELLED');
         try {
           const existing = JSON.parse(localStorage.getItem('commerce_os_orders') || '[]');
           if (Array.isArray(existing) && targetId) {
             const next = existing.map((o: any) =>
               o.id === targetId || o.orderNumber === targetId
-                ? { ...o, status: data?.success ? 'PAID' : 'CANCELLED', trackingNumber: data?.refId || o.trackingNumber }
+                ? { ...o, status: nextStatus, trackingNumber: data?.refId || o.trackingNumber }
                 : o
             );
             localStorage.setItem('commerce_os_orders', JSON.stringify(next));
           }
         } catch {}
 
-        if (data?.success) {
+        if (isPaid) {
+          setCart([]);
           setPaymentReturnBanner({
             status: 'success',
             orderNumber: targetId,

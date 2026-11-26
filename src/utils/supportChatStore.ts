@@ -204,23 +204,16 @@ export function isValidIranianPhone(raw: string): boolean {
   return /^09\d{9}$/.test(normalized);
 }
 
+const sessionAccountsMemory = new Map<string, CustomerAccount>();
+
 export function getKnownCustomerInfo(): { name?: string; phone?: string } | null {
   try {
-    const raw = localStorage.getItem('commerce_os_last_customer');
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    const normalized = parsed?.phone ? normalizeIranianPhone(parsed.phone) : '';
-    const cachedAccount = isValidIranianPhone(normalized)
-      ? getCachedCustomerAccount(normalized)
-      : null;
+    const savedPhone = getSavedSupportPhone();
+    if (!savedPhone || !isValidIranianPhone(savedPhone)) return null;
+    const cachedAccount = getCachedCustomerAccount(savedPhone);
     return {
-      name:
-        cachedAccount?.preferredName ||
-        parsed?.preferredName ||
-        parsed?.fullName ||
-        parsed?.name ||
-        undefined,
-      phone: isValidIranianPhone(normalized) ? normalized : undefined,
+      name: cachedAccount?.preferredName || cachedAccount?.fullName || undefined,
+      phone: savedPhone,
     };
   } catch {
     return null;
@@ -241,6 +234,8 @@ function readAccountsMap(): Record<string, CustomerAccount> {
 export function getCachedCustomerAccount(rawPhone: string): CustomerAccount | null {
   const phone = normalizeIranianPhone(rawPhone);
   if (!isValidIranianPhone(phone)) return null;
+  const inMem = sessionAccountsMemory.get(phone);
+  if (inMem) return inMem;
   const map = readAccountsMap();
   return map[phone] || null;
 }
@@ -266,37 +261,26 @@ export function saveCachedCustomerAccount(account: CustomerAccount): CustomerAcc
     createdAt: account.createdAt,
     updatedAt: account.updatedAt,
   };
-  try {
-    const map = readAccountsMap();
-    map[phone] = cleanAccount;
-    localStorage.setItem(CUSTOMER_ACCOUNTS_STORAGE_KEY, JSON.stringify(map));
 
-    // Keep commerce_os_last_customer synchronized safely without wiping address fields
-    const existingRaw = localStorage.getItem('commerce_os_last_customer');
-    const existingParsed = existingRaw ? JSON.parse(existingRaw) : {};
-    const nextName =
-      cleanAccount.preferredName || cleanAccount.fullName || existingParsed?.name || undefined;
-    const defaultAddr =
-      cleanAccount.addresses?.find((a) => a.isDefault) || cleanAccount.addresses?.[0];
-    localStorage.setItem(
-      'commerce_os_last_customer',
-      JSON.stringify({
-        ...(existingParsed && typeof existingParsed === 'object' ? existingParsed : {}),
-        phone,
-        preferredName: cleanAccount.preferredName || existingParsed?.preferredName || undefined,
-        name: nextName,
-        email: cleanAccount.email || existingParsed?.email || undefined,
-        nationalId: cleanAccount.nationalId || existingParsed?.nationalId || undefined,
-        ...(defaultAddr
-          ? {
-              province: defaultAddr.province,
-              city: defaultAddr.city,
-              address: defaultAddr.addressLine,
-              postalCode: defaultAddr.postalCode,
-            }
-          : {}),
-      })
-    );
+  sessionAccountsMemory.set(phone, cleanAccount);
+
+  try {
+    // Store only minimal non-PII account metadata in localStorage (zero email/nationalId/addresses/fullName)
+    const minimalPersisted: CustomerAccount = {
+      phone: cleanAccount.phone,
+      username: cleanAccount.username,
+      preferredName: cleanAccount.preferredName,
+      accountType: cleanAccount.accountType,
+      isVerified: cleanAccount.isVerified,
+      verifiedAt: cleanAccount.verifiedAt,
+      expiresAt: cleanAccount.expiresAt,
+      createdAt: cleanAccount.createdAt,
+      updatedAt: cleanAccount.updatedAt,
+    };
+    const map = readAccountsMap();
+    map[phone] = minimalPersisted;
+    localStorage.setItem(CUSTOMER_ACCOUNTS_STORAGE_KEY, JSON.stringify(map));
+    localStorage.removeItem('commerce_os_last_customer');
   } catch {}
   return cleanAccount;
 }

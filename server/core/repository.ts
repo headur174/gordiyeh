@@ -48,11 +48,7 @@ class SqliteOrderRepository implements IOrderRepository {
     return CommerceDB.createOrder(order);
   }
   async updateOrderStatus(id: string, status: string): Promise<void> {
-    const existing = await this.lookupOrder(id);
-    if (existing) {
-      existing.status = status;
-      await this.createOrder(existing);
-    }
+    CommerceDB.updateOrderStatus(id, status);
   }
 }
 

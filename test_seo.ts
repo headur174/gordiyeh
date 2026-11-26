@@ -2,9 +2,10 @@
  * test_seo.ts - Comprehensive SEO, 301 Redirects & Architecture Verification
  */
 
-import { getBaseUrl } from './test_support_auth';
+import { assertSafeTestEnvironment, getBaseUrl } from './test_support_auth';
 
 async function runSeoTests() {
+  assertSafeTestEnvironment();
   const baseUrl = getBaseUrl();
   console.log(`Starting SEO & Architecture Test Suite against ${baseUrl}...\n`);
 

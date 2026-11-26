@@ -195,23 +195,23 @@ export class OutboxProcessor {
 
     switch (row.topic) {
       case "order:created": {
-        eventBus.publish("order:created", payload);
+        await eventBus.dispatchSync("order:created", payload);
         break;
       }
 
       case "order:high_risk": {
-        eventBus.publish("order:high_risk", payload);
+        await eventBus.dispatchSync("order:high_risk", payload);
         break;
       }
 
       case "order:paid":
       case "payment:success": {
-        eventBus.publish("order:paid" as any, payload);
+        await eventBus.dispatchSync("order:paid", payload);
         break;
       }
 
       case "customer:memory_updated": {
-        eventBus.publish("customer:memory_updated", payload);
+        await eventBus.dispatchSync("customer:memory_updated", payload);
         break;
       }
 
@@ -244,7 +244,7 @@ export class OutboxProcessor {
       }
 
       default: {
-        eventBus.publish(row.topic as any, payload);
+        await eventBus.dispatchSync(row.topic, payload);
         break;
       }
     }

@@ -14,15 +14,18 @@ import crypto from "node:crypto";
 import {
   adminBasicHeader,
   adminBearerHeaders,
+  assertSafeTestEnvironment,
   getAdminPassword,
   getAdminSecretKey,
   getBaseUrl,
 } from "./test_support_auth";
 
 async function runSecurityTests() {
+  assertSafeTestEnvironment();
   const baseUrl = getBaseUrl();
   const adminSecret = getAdminSecretKey();
   const adminPassword = getAdminPassword();
+  const createdOrderIds: string[] = [];
 
   console.log("=================================================================");
   console.log("  GORDIYEH SECURITY HARDENING VERIFICATION SUITE");
@@ -284,6 +287,7 @@ async function runSecurityTests() {
     });
     const createJson = await createRes.json();
     const orderNo = createJson?.order?.orderNumber;
+    if (createJson?.order?.id) createdOrderIds.push(createJson.order.id);
     check(createRes.status === 201 && Boolean(orderNo), "ORD-1", "Public checkout creates order");
 
     if (orderNo) {
@@ -376,6 +380,57 @@ async function runSecurityTests() {
     );
   } catch (err: any) {
     check(false, "PAY", "Payment verification security checks", err?.message);
+  }
+
+  // 7. Customer Memory IDOR & Unauthenticated Account Identify PII Stripping
+  try {
+    const [memGet, memPost, memDel] = await Promise.all([
+      fetch(`${baseUrl}/api/customer/memory/cust_guest_me`),
+      fetch(`${baseUrl}/api/customer/memory/cust_guest_me`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preferences: ["test"] }),
+      }),
+      fetch(`${baseUrl}/api/customer/memory/cust_guest_me`, { method: "DELETE" }),
+    ]);
+    check(
+      memGet.status === 401 && memPost.status === 401 && memDel.status === 401,
+      "MEM-1",
+      "Unauthenticated GET/POST/DELETE on /api/customer/memory/cust_guest_me rejected with 401",
+      `Got ${memGet.status}/${memPost.status}/${memDel.status}`
+    );
+
+    const identifyRes = await fetch(`${baseUrl}/api/v1/customer/account/identify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: "09125554433" }),
+    });
+    const identifyJson = await identifyRes.json();
+    const acc = identifyJson?.account;
+    check(
+      identifyRes.status === 200 &&
+        Boolean(acc?.phone) &&
+        acc?.email === undefined &&
+        acc?.nationalId === undefined &&
+        acc?.addresses === undefined &&
+        acc?.fullName === undefined,
+      "ACC-1",
+      "Unauthenticated /api/v1/customer/account/identify strips email, nationalId, addresses, and fullName"
+    );
+  } catch (err: any) {
+    check(false, "PRIV", "Customer privacy regression checks", err?.message);
+  }
+
+  // Cleanup test orders created during security suite
+  for (const oid of createdOrderIds) {
+    try {
+      await fetch(`${baseUrl}/api/v1/orders/${encodeURIComponent(oid)}`, {
+        method: "DELETE",
+        headers: adminBearerHeaders(),
+      });
+    } catch {
+      // Ignore cleanup errors
+    }
   }
 
   console.log("\n=================================================================");

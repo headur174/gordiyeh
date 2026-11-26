@@ -6,8 +6,9 @@ import assert from 'node:assert';
 import http from 'node:http';
 import { sanitizeInlineHtml, normalizePersianText, ContentBlock } from './src/types/cms';
 
-import { getAdminSecretKey, getBaseUrl } from './test_support_auth';
+import { assertSafeTestEnvironment, getAdminSecretKey, getBaseUrl } from './test_support_auth';
 
+assertSafeTestEnvironment();
 const BASE_URL = getBaseUrl();
 const ADMIN_TOKEN = getAdminSecretKey();
 if (!ADMIN_TOKEN) {
@@ -307,6 +308,8 @@ async function runAllTests() {
     assert.strictEqual(upJson.data?.width, 1, 'Width must be auto-extracted');
     assert.strictEqual(upJson.data?.height, 1, 'Height must be auto-extracted');
     assert.ok(upJson.data?.url?.endsWith('.webp'), 'Uploaded URL must end in .webp');
+    const serveRes = await fetch(`${BASE_URL}${upJson.data.url}`);
+    assert.strictEqual(serveRes.status, 200, 'Uploaded WebP media must be served with HTTP 200');
   });
 
   // 10. SSR HTML & JSON-LD Verification

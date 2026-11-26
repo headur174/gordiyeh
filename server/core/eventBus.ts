@@ -92,6 +92,20 @@ class CommerceEventBus extends EventEmitter {
     });
   }
 
+  public async dispatchSync(event: string, payload: any): Promise<void> {
+    const listeners = this.listeners(event) as Array<(arg: any) => any>;
+    this.totalDispatched++;
+    try {
+      for (const listener of listeners) {
+        await Promise.resolve(listener.call(this, payload));
+      }
+      this.recordMetric(event, "dispatched", { id: payload?.orderId || payload?.productId });
+    } catch (err: any) {
+      this.recordMetric(event, "failed", { error: err?.message || String(err) });
+      throw err;
+    }
+  }
+
   private recordMetric(eventType: string, status: "dispatched" | "failed", details?: any) {
     this.recentEvents.unshift({
       eventType,

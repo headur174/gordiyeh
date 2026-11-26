@@ -1,9 +1,48 @@
+import path from "node:path";
+
 /**
  * Shared test authentication and base-URL helper.
  * Reads credentials strictly from environment variables (never hardcoded fallbacks).
  */
 
+export function assertSafeTestEnvironment(): void {
+  if (process.env.NODE_ENV !== "test") {
+    throw new Error(
+      `SAFETY GUARD: Test suites must run with NODE_ENV=test (current: '${process.env.NODE_ENV || "unset"}').`
+    );
+  }
+
+  const rawBaseUrl = (process.env.BASE_URL || "").trim();
+  if (rawBaseUrl) {
+    let parsed: URL;
+    try {
+      parsed = new URL(rawBaseUrl);
+    } catch {
+      throw new Error(`SAFETY GUARD: Invalid BASE_URL '${rawBaseUrl}'.`);
+    }
+    const host = parsed.hostname.toLowerCase();
+    if (host !== "127.0.0.1" && host !== "localhost" && host !== "::1") {
+      throw new Error(
+        `SAFETY GUARD: Refusing to run destructive/integration tests against non-local BASE_URL '${rawBaseUrl}'.`
+      );
+    }
+  }
+
+  const rawDbPath = (process.env.COMMERCE_DB_PATH || "").trim();
+  if (rawDbPath) {
+    const resolved = path.resolve(rawDbPath);
+    const devDbPath = path.resolve(path.join(process.cwd(), "data", "commerce.db"));
+    const prodDiskDbPath = "/data/commerce.db";
+    if (resolved === devDbPath || resolved === prodDiskDbPath) {
+      throw new Error(
+        `SAFETY GUARD: Refusing to run tests with COMMERCE_DB_PATH pointing to '${resolved}'. Use an isolated /tmp database path.`
+      );
+    }
+  }
+}
+
 export function getBaseUrl(): string {
+  assertSafeTestEnvironment();
   if (process.env.BASE_URL) {
     return process.env.BASE_URL.replace(/\/+$/, "");
   }

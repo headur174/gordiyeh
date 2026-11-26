@@ -22,39 +22,19 @@ export const CustomerMemoryHubTile: React.FC<Props> = ({ customerId = 'cust_gues
       const res = await fetch(`/api/customer/memory/${encodeURIComponent(customerId)}`, {
         headers: getCustomerAuthHeaders(),
       });
+      if (res.status === 401 || res.status === 403) {
+        setFeedbackMsg('برای مشاهده و مدیریت حافظه شخصی خرید، ابتدا با شماره موبایل و کد پیامکی وارد شوید.');
+        setMemory(null);
+        return;
+      }
       const json = await res.json();
       if (json.success && json.memory) {
         setMemory(json.memory);
       } else {
-        // Default initialized state
-        setMemory({
-          customerId,
-          isPersonalizationEnabled: true,
-          preferences: {
-            colorPreferences: ['مشکی', 'طوسی خنثی'],
-            dislikedAttributes: ['رنگ‌های جیغ', 'جنس پلاستیکی براق'],
-            priceCeilingToman: 4500000,
-            preferredCategories: ['لوازم جانبی صوتی', 'استایل مینیمال'],
-          },
-          giftProfiles: [
-            {
-              id: 'gp_1',
-              recipientName: 'مادر',
-              relationship: 'مادر',
-              occasion: 'روز مادر',
-              budget: 2500000,
-              notes: 'طرفدار وسایل کاربردی و باکیفیت، بدون زرق‌وبرق',
-            },
-          ],
-          encryptionBadge: {
-            algorithm: 'AES-256-GCM (Authenticated Encryption)',
-            isZeroPlaintext: true,
-            storageMode: 'Zero-Plaintext at Rest (Envelope Protected)',
-          },
-        });
+        setMemory(null);
       }
     } catch {
-      // Fallback
+      setFeedbackMsg('خطا در دریافت اطلاعات حافظه مشتری از سرور.');
     } finally {
       setLoading(false);
     }
@@ -65,10 +45,6 @@ export const CustomerMemoryHubTile: React.FC<Props> = ({ customerId = 'cust_gues
   }, [customerId]);
 
   const handleClearMemory = async () => {
-    if (!confirm('آیا از پاک‌سازی کامل حافظه و ترجیحات هوش مصنوعی اطمینان دارید؟ تمامی ترجیحات و یادداشت‌های هدیه به صورت بازگشت‌ناپذیر پاک می‌شوند.')) {
-      return;
-    }
-
     setClearing(true);
     try {
       const delRes = await fetch(`/api/customer/memory/${encodeURIComponent(customerId)}`, {
@@ -96,7 +72,7 @@ export const CustomerMemoryHubTile: React.FC<Props> = ({ customerId = 'cust_gues
       setFeedbackMsg('تمامی ترجیحات و اطلاعات ثبت‌شده با موفقیت پاک شد.');
       setTimeout(() => setFeedbackMsg(null), 4000);
     } catch (e: any) {
-      alert('خطا در پاک‌سازی: ' + e?.message);
+      setFeedbackMsg('خطا در پاک‌سازی: ' + (e?.message || 'خطای شبکه'));
     } finally {
       setClearing(false);
     }

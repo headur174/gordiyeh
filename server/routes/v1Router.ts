@@ -29,9 +29,11 @@ import {
 import { isAdminRequest } from "../security/adminAuth";
 import {
   checkPhoneAccess,
+  checkCustomerMemoryAccess,
   isVerifiedCustomerAuthorized,
   signCustomerToken,
 } from "../security/customerAuth";
+import { checkDbConnection } from "../db/cmsDb";
 import { getSiteUrl } from "../seoEngine";
 import { CryptoVault } from "../cryptoVault";
 import { PRODUCT_BY_ID } from "../../src/data/seoCatalog";
@@ -79,16 +81,38 @@ v1Router.get("/architecture", (_req, res) => {
   });
 });
 
-v1Router.get("/health", (_req, res) => {
+v1Router.get("/health", async (_req, res) => {
   const dbConfig = getDatabaseConfig();
   const integrity = verifyDatabaseIntegrity(dbConfig.dbPath);
-  res.json({
-    status: integrity.ok ? "ok" : "degraded",
+  const cmsHealth = await checkDbConnection();
+  const paymentGateway = getPaymentGatewayPublicStatus();
+  const webhookSecretConfigured = Boolean((process.env.PAYMENT_GATEWAY_SECRET || "").trim());
+
+  const isProd = process.env.NODE_ENV === "production";
+  const cmsDegradedInProd = isProd && !cmsHealth.connected;
+  const ok = integrity.ok && !cmsDegradedInProd;
+
+  res.status(ok ? 200 : 503).json({
+    status: ok ? "ok" : "degraded",
     service: "Commerce OS Hardened Modular Monolith",
     version: "v1-rc1",
     database: {
       driver: "SQLite WAL",
       integrity: integrity.ok ? "healthy" : integrity.result,
+    },
+    cmsDatabase: {
+      driver: cmsHealth.driver,
+      connected: cmsHealth.connected,
+      persistent: cmsHealth.connected,
+      latencyMs: cmsHealth.latencyMs,
+    },
+    paymentGateway: {
+      provider: paymentGateway.provider,
+      configured: paymentGateway.configured,
+      sandbox: paymentGateway.sandbox,
+      liveGatewayReady: paymentGateway.liveGatewayReady,
+      supportsRefund: paymentGateway.supportsRefund,
+      webhookSecretConfigured,
     },
     outbox: outboxProcessor.getOutboxStats(),
     timestamp: new Date().toISOString()
@@ -238,7 +262,7 @@ v1Router.get("/security/vault-status", (_req, res) => {
     encryption: {
       algorithm: "AES-256-GCM (Authenticated Encryption)",
       format: "enc:v2:<kid>:<iv>:<tag>:<ciphertext>",
-      keyId: "k1",
+      keyId: CryptoVault.getActiveKeyId(),
       keyLength: 256,
       blindIndexing: "HMAC-SHA256 Salted Blind Indexing",
       zeroPlaintextGuaranteed: true,
@@ -491,6 +515,14 @@ v1Router.post("/orders", async (req, res) => {
       return res.status(400).json({ error: "کد پستی باید ۱۰ رقم معتبر بدون خط تیره باشد." });
     }
 
+    const rawDiscount = discountAmount === undefined || discountAmount === null ? 0 : Number(discountAmount);
+    if (!Number.isFinite(rawDiscount) || rawDiscount !== 0) {
+      return res.status(400).json({
+        error: "کد یا مبلغ تخفیف ارسالی از سمت کلاینت معتبر نیست؛ تخفیف باید توسط سرور تایید شود.",
+        code: "INVALID_CLIENT_DISCOUNT",
+      });
+    }
+
     // Authoritative Server-side Price Verification (Prevents Price Tampering SEC-1)
     const dbProducts = await commerceRepo.products.getProducts();
     let totalItemsPrice = 0;
@@ -503,13 +535,18 @@ v1Router.post("/orders", async (req, res) => {
           error: `کالای درخواستی (${clientItem.id || clientItem.title || 'نامشخص'}) در پایگاه داده فروشگاه یافت نشد.` 
         });
       }
+      if (clientItem.quantity !== undefined && !Number.isFinite(Number(clientItem.quantity))) {
+        return res.status(400).json({ error: "تعداد کالای انتخابی معتبر نیست." });
+      }
+      const parsedQty = Math.trunc(Number(clientItem.quantity ?? 1));
+      const qty = Math.min(100, Math.max(1, Number.isFinite(parsedQty) ? parsedQty : 1));
       const unitPrice = dbProd.retailPrice;
-      const qty = Math.max(1, parseInt(clientItem.quantity, 10) || 1);
       totalItemsPrice += unitPrice * qty;
       verifiedItems.push({
         id: dbProd.id,
         title: dbProd.title,
         sku: dbProd.sku,
+        offerId: typeof clientItem.offerId === "string" && clientItem.offerId.trim() ? clientItem.offerId.trim() : undefined,
         quantity: qty,
         unitPrice,
         unitCost: dbProd.baseCost || Math.round(unitPrice * 0.75),
@@ -518,7 +555,8 @@ v1Router.post("/orders", async (req, res) => {
 
     const shippingCost = totalItemsPrice > 2000000 ? 0 : 45000;
     const paymentFee = 0;
-    const totalAmount = Math.max(0, totalItemsPrice + shippingCost - discountAmount);
+    const verifiedDiscount = 0;
+    const totalAmount = Math.max(0, totalItemsPrice + shippingCost - verifiedDiscount);
     const supplierCost = verifiedItems.reduce(
       (sum: number, item: any) => sum + (item.unitCost * item.quantity),
       0
@@ -535,7 +573,7 @@ v1Router.post("/orders", async (req, res) => {
     // Gate 3: Initial order status. An order NEVER becomes PAID from client-side success claim alone!
     const initialStatus = isHighRisk ? "HIGH_RISK_HOLD" : "PENDING_PAYMENT";
     const orderData = {
-      id: `ord_${Date.now()}`,
+      id: `ord_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
       orderNumber,
       trackingCode,
       customerName: customer.fullName.slice(0, 100),
@@ -552,7 +590,7 @@ v1Router.post("/orders", async (req, res) => {
       totalAmount,
       shippingCost,
       paymentFee,
-      discountAmount,
+      discountAmount: verifiedDiscount,
       supplierCost,
       contributionProfit,
       marginPercent: totalAmount > 0 ? (contributionProfit / totalAmount) * 100 : 0,
@@ -567,7 +605,7 @@ v1Router.post("/orders", async (req, res) => {
     };
 
       // 1. ATOMIC PERSISTENT TRANSACTION:
-      // Order + Conditional Stock Decrement + KV Financial Summary + Approvals + Outbox Event
+      // Order + Conditional Stock Decrement + Pending Order Counter + Approvals + Outbox Event
       await commerceRepo.orders.createOrder(orderData);
 
       // Non-blocking best-seller inventory depletion check after checkout
@@ -616,20 +654,46 @@ v1Router.post("/orders", async (req, res) => {
         // Never fail checkout response on alert broadcast error
       }
 
+      const responseOrder = isAdminRequest(req)
+        ? orderData
+        : (() => {
+            const { supplierCost: _sc, contributionProfit: _cp, marginPercent: _mp, ...rest } = orderData;
+            return {
+              ...rest,
+              items: rest.items.map(({ unitCost: _uc, ...safeItem }: any) => safeItem),
+            };
+          })();
+
       return res.status(201).json({
         success: true,
-        order: orderData,
+        order: responseOrder,
         message: isHighRisk
           ? "سفارش ثبت شد و به دلیل مبلغ بالا جهت بررسی امنیتی به صف تأیید ناظر ارسال شد."
           : "سفارش با موفقیت ثبت شد و در انتظار پرداخت یا تایید درگاه بانکی قرار دارد.",
       });
   } catch (err: any) {
     console.error("Order creation error:", err);
-    const isStockError = err?.name === "InsufficientStockError";
+    const isStockError = err?.name === "InsufficientStockError" || err?.statusCode === 409;
     return res.status(isStockError ? 409 : 500).json({ 
       error: err?.message || "خطا در پردازش سفارش",
       code: isStockError ? "INSUFFICIENT_STOCK" : "ORDER_CREATION_FAILED"
     });
+  }
+});
+
+// Admin-only order deletion (for test cleanup / order hygiene)
+v1Router.delete("/orders/:id", (req, res) => {
+  if (!isAdminRequest(req)) {
+    return res.status(403).json({ error: "دسترسی غیرمجاز" });
+  }
+  try {
+    const deleted = CommerceDB.deleteOrderById(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: "سفارش یافت نشد." });
+    }
+    return res.json({ success: true });
+  } catch (err: any) {
+    return res.status(500).json({ error: "خطا در حذف سفارش" });
   }
 });
 
@@ -682,7 +746,8 @@ v1Router.post("/payment/initiate", async (req, res) => {
       },
     });
   } catch (err: any) {
-    res.status(400).json({ error: err?.message || "Payment initiation failed" });
+    const status = Number(err?.statusCode) || 400;
+    res.status(status).json({ error: err?.message || "Payment initiation failed", code: err?.code });
   }
 });
 
@@ -794,7 +859,12 @@ v1Router.post("/payment/verify", async (req, res) => {
     });
   } catch (err: any) {
     console.error("Live payment verify error:", err);
-    return res.status(500).json({ success: false, error: err?.message || "خطا در تایید نهایی پرداخت" });
+    const status = Number(err?.statusCode) || 500;
+    return res.status(status).json({
+      success: false,
+      error: err?.message || "خطا در تایید نهایی پرداخت",
+      code: err?.code,
+    });
   }
 });
 
@@ -843,13 +913,14 @@ v1Router.post("/payment/callback", (req, res) => {
     });
   } catch (err: any) {
     console.error("Payment callback error:", err);
-    res.status(400).json({ error: err?.message || "Payment callback processing error" });
+    const status = Number(err?.statusCode) || 400;
+    res.status(status).json({ error: err?.message || "Payment callback processing error", code: err?.code });
   }
 });
 
 v1Router.post("/payment/refund", (req, res) => {
   try {
-    const { orderId, idempotencyKey, amount, reason } = req.body;
+    const { orderId, idempotencyKey, amount, reason, manualRefundConfirmed } = req.body;
     if (!orderId || !idempotencyKey) {
       return res.status(400).json({ error: "Missing orderId or idempotencyKey for refund" });
     }
@@ -858,12 +929,14 @@ v1Router.post("/payment/refund", (req, res) => {
       orderId,
       idempotencyKey,
       amount: parseInt(amount, 10) || 0,
-      reason
+      reason,
+      manualRefundConfirmed: Boolean(manualRefundConfirmed),
     });
 
     res.json({ success: true, ...result });
   } catch (err: any) {
-    res.status(400).json({ error: err?.message || "Refund processing failed" });
+    const status = Number(err?.statusCode) || 400;
+    res.status(status).json({ error: err?.message || "Refund processing failed", code: err?.code });
   }
 });
 
@@ -912,12 +985,10 @@ v1Router.put("/approvals/:id", async (req, res) => {
 // ============================================================================
 v1Router.get("/customer/memory/:customerId", async (req, res) => {
   try {
-    const phoneInId = normalizeSupportPhone(req.params.customerId.replace(/^cust_/, ""));
-    if (phoneInId) {
-      const access = checkPhoneAccess(req, phoneInId);
-      if (!access.allowed) {
-        return res.status(401).json({ error: "احراز هویت برای دسترسی به حافظه مشتری تاییدشده الزامی است.", code: "CUSTOMER_AUTH_REQUIRED" });
-      }
+    const phoneInId = normalizeSupportPhone(req.params.customerId.replace(/^cust_/, "")) || "";
+    const access = checkCustomerMemoryAccess(req, req.params.customerId, phoneInId);
+    if (!access.allowed) {
+      return res.status(401).json({ error: "احراز هویت برای دسترسی به حافظه مشتری الزامی است.", code: "CUSTOMER_AUTH_REQUIRED" });
     }
     const memory = await commerceRepo.customerMemory.getCustomerMemory(req.params.customerId);
     res.json({ success: true, memory });
@@ -928,12 +999,10 @@ v1Router.get("/customer/memory/:customerId", async (req, res) => {
 
 v1Router.post("/customer/memory/:customerId", async (req, res) => {
   try {
-    const phoneInId = normalizeSupportPhone(req.params.customerId.replace(/^cust_/, ""));
-    if (phoneInId) {
-      const access = checkPhoneAccess(req, phoneInId);
-      if (!access.allowed) {
-        return res.status(401).json({ error: "احراز هویت برای ویرایش حافظه مشتری تاییدشده الزامی است.", code: "CUSTOMER_AUTH_REQUIRED" });
-      }
+    const phoneInId = normalizeSupportPhone(req.params.customerId.replace(/^cust_/, "")) || "";
+    const access = checkCustomerMemoryAccess(req, req.params.customerId, phoneInId);
+    if (!access.allowed) {
+      return res.status(401).json({ error: "احراز هویت برای ویرایش حافظه مشتری الزامی است.", code: "CUSTOMER_AUTH_REQUIRED" });
     }
     const memory = await commerceRepo.customerMemory.saveCustomerMemory(req.params.customerId, req.body);
     eventBus.publish("customer:memory_updated", {
@@ -948,12 +1017,10 @@ v1Router.post("/customer/memory/:customerId", async (req, res) => {
 
 v1Router.delete("/customer/memory/:customerId", async (req, res) => {
   try {
-    const phoneInId = normalizeSupportPhone(req.params.customerId.replace(/^cust_/, ""));
-    if (phoneInId) {
-      const access = checkPhoneAccess(req, phoneInId);
-      if (!access.allowed) {
-        return res.status(401).json({ error: "احراز هویت برای پاکسازی حافظه مشتری تاییدشده الزامی است.", code: "CUSTOMER_AUTH_REQUIRED" });
-      }
+    const phoneInId = normalizeSupportPhone(req.params.customerId.replace(/^cust_/, "")) || "";
+    const access = checkCustomerMemoryAccess(req, req.params.customerId, phoneInId);
+    if (!access.allowed) {
+      return res.status(401).json({ error: "احراز هویت برای پاکسازی حافظه مشتری الزامی است.", code: "CUSTOMER_AUTH_REQUIRED" });
     }
     const result = await commerceRepo.customerMemory.resetCustomerMemory(req.params.customerId);
     eventBus.publish("customer:memory_updated", {
@@ -2231,18 +2298,19 @@ v1Router.post("/customer/account/identify", (req, res) => {
       return res.status(400).json({ error: "شماره موبایل معتبر (مانند 09123456789) الزامی است." });
     }
     const result = CommerceDB.identifyOrCreateCustomerAccount(phone);
-    if (result.account.isVerified && !isVerifiedCustomerAuthorized(req, phone) && !isAdminRequest(req)) {
+    const isAuthorized = isVerifiedCustomerAuthorized(req, phone) || isAdminRequest(req);
+    if (!isAuthorized) {
       return res.json({
         success: true,
-        isNew: false,
-        requiresOtpReauth: true,
+        isNew: result.isNew,
+        requiresOtpReauth: Boolean(result.account.isVerified),
         account: {
           username: result.account.username,
           phone: result.account.phone,
           preferredName: result.account.preferredName || "",
-          accountType: "VERIFIED",
-          isVerified: true,
-          requiresOtpReauth: true,
+          accountType: result.account.accountType,
+          isVerified: Boolean(result.account.isVerified),
+          requiresOtpReauth: Boolean(result.account.isVerified),
         },
       });
     }
@@ -2603,7 +2671,7 @@ v1Router.post("/support/chat", async (req, res) => {
     const safeNameCheck = rawCandidateName ? validateSafePreferredName(rawCandidateName) : null;
     const customerPreferredName = safeNameCheck?.ok ? safeNameCheck.cleaned : "";
 
-    // 1. Live SQLite Order Lookup (from message order ID / tracking code / customer phone)
+    // 1. Live SQLite Order Lookup (enforce phone authorization before phone-based lookups)
     let foundOrder: any = null;
     const orderMatch =
       normalizedText.match(/ORD-?\d+/i) ||
@@ -2613,7 +2681,15 @@ v1Router.post("/support/chat", async (req, res) => {
     const queryKey = orderMatch ? orderMatch[0].toUpperCase() : activeOrderId || normalizedPhone || "";
 
     if (queryKey) {
-      foundOrder = await commerceRepo.orders.lookupOrder(queryKey);
+      const phoneInQuery = normalizeSupportPhone(queryKey);
+      if (phoneInQuery) {
+        const phoneAccess = checkPhoneAccess(req, phoneInQuery);
+        if (isAdminRequest(req) || phoneAccess.allowed) {
+          foundOrder = await commerceRepo.orders.lookupOrder(queryKey);
+        }
+      } else {
+        foundOrder = await commerceRepo.orders.lookupOrder(queryKey);
+      }
     }
 
     // 2. Live SQLite Catalog Grounding
@@ -2638,11 +2714,16 @@ v1Router.post("/support/chat", async (req, res) => {
 
     // 3. Require real Gemini API key & invoke gemini-4-hydrogen naturally (NO hardcoded scripted answers)
     const client = getGenAI();
+    const isOrderOwner = foundOrder
+      ? isAdminRequest(req) || Boolean(foundOrder.phone && isVerifiedCustomerAuthorized(req, foundOrder.phone))
+      : false;
+    const safeOrderForChatPre = foundOrder ? sanitizeOrderForPublic(foundOrder, isOrderOwner) : undefined;
+
     if (!client) {
       return res.status(503).json({
         error: "کلید هوش مصنوعی (GEMINI_API_KEY) روی سرور تنظیم نشده است. لطفاً آن را در متغیرهای محیطی سرور قرار دهید.",
         code: "GEMINI_API_KEY_MISSING",
-        order: foundOrder || undefined,
+        order: safeOrderForChatPre,
       });
     }
 
@@ -2656,10 +2737,16 @@ v1Router.post("/support/chat", async (req, res) => {
           }))
       : [];
 
+    const maskedOrderRecipient = foundOrder
+      ? isOrderOwner
+        ? foundOrder.customerName || customerPreferredName || "ثبت‌شده"
+        : safeOrderForChatPre?.customerName || "مشتری گرامی"
+      : "مشتری گرامی";
+
     const orderFactBlock = foundOrder
       ? `سفارش واقعی یافت‌شده در دیتابیس برای این گفتگو:
 - شماره سفارش: ${foundOrder.orderNumber}
-- نام گیرنده: ${foundOrder.customerName || customerPreferredName || "ثبت‌شده"}
+- نام گیرنده: ${maskedOrderRecipient}
 - وضعیت فعلی: ${foundOrder.status}
 - کد رهگیری پستی: ${foundOrder.trackingCode || "در حال آماده‌سازی و ارسال"}
 - مبلغ کل: ${Number(foundOrder.totalAmount || 0).toLocaleString("fa-IR")} تومان

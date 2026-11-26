@@ -97,19 +97,14 @@ function initKeyStore(): KeyStore {
     }
   }
 
-  // Fail closed in production when neither DB_ENCRYPTION_KEY nor DB_ENCRYPTION_KEYRING is set.
-  if (!envKey && keys.size === 0 && process.env.NODE_ENV === "production") {
-    throw new Error(
-      "[CryptoVault] DB_ENCRYPTION_KEY is required when NODE_ENV=production. Generate a 64-char hex key via 'openssl rand -hex 32' and configure it in your environment."
-    );
-  }
+  const isProduction = process.env.NODE_ENV === "production";
 
-  // 2. Load file-based master key in non-production environments if present
+  // 2. Ensure directory exists and load persisted random vault key if present
   if (!fs.existsSync(KEY_DIR)) {
     try {
       fs.mkdirSync(KEY_DIR, { recursive: true });
     } catch {
-      // Ignore if exists or read-only
+      // Ignore if read-only
     }
   }
 
@@ -118,9 +113,14 @@ function initKeyStore(): KeyStore {
     try {
       const raw = fs.readFileSync(KEY_FILE, "utf-8").trim();
       if (raw.length === 64 && /^[0-9a-fA-F]{64}$/.test(raw) && !BANNED_PRODUCTION_KEYS.has(raw.toLowerCase())) {
-        fileKey = Buffer.from(raw, "hex");
-        if (!keys.has("k1")) {
-          keys.set("k1", fileKey);
+        const candidate = Buffer.from(raw, "hex");
+        const legacyFallback = crypto.scryptSync(DEFAULT_LEGACY_SEED, "commerce_os_master_salt_2026", 32);
+        // Never treat static legacy dev seed as valid in production
+        if (!isProduction || !crypto.timingSafeEqual(candidate, legacyFallback)) {
+          fileKey = candidate;
+          if (!keys.has("k1")) {
+            keys.set("k1", fileKey);
+          }
         }
       }
     } catch {
@@ -130,7 +130,7 @@ function initKeyStore(): KeyStore {
 
   const persistKeyFile = (hexKey: string) => {
     try {
-      fs.writeFileSync(KEY_FILE, hexKey, { mode: 0o640 });
+      fs.writeFileSync(KEY_FILE, hexKey, { mode: 0o600 });
       try {
         const rootStat = fs.statSync(process.cwd());
         if (typeof process.getuid === "function" && process.getuid() === 0 && rootStat.uid !== 0) {
@@ -144,15 +144,30 @@ function initKeyStore(): KeyStore {
     }
   };
 
-  // 3. Provision development/test fallback key when DB_ENCRYPTION_KEY is not supplied outside production
-  if (!envKey) {
+  // 3. Enforce fail-closed key requirement in production & guard existing DBs from silent key regeneration
+  const resolvedDbPath = process.env.COMMERCE_DB_PATH
+    ? path.resolve(process.env.COMMERCE_DB_PATH)
+    : path.join(process.cwd(), "data", "commerce.db");
+  const existingDbExists = fs.existsSync(resolvedDbPath);
+
+  if (!envKey && keys.size === 0) {
+    if (isProduction) {
+      throw new Error(
+        "[CryptoVault] DB_ENCRYPTION_KEY is required when NODE_ENV=production. Configure a persistent 64-char hex key ('openssl rand -hex 32') in your environment."
+      );
+    }
+    if (existingDbExists && process.env.NODE_ENV !== "test") {
+      console.warn(
+        "[CryptoVault] Existing database detected without DB_ENCRYPTION_KEY; refusing to auto-generate a random replacement key."
+      );
+    }
+    // Preserve development/test key behavior for local dev DB compatibility only
     const fallbackKey = crypto.scryptSync(DEFAULT_LEGACY_SEED, "commerce_os_master_salt_2026", 32);
     keys.set("k_fallback", fallbackKey);
     if (!keys.has("k1")) {
       keys.set("k1", fallbackKey);
     }
-
-    if (!fileKey) {
+    if (!fileKey && !existingDbExists) {
       persistKeyFile(fallbackKey.toString("hex"));
     }
   }

@@ -90,3 +90,32 @@ export function checkPhoneAccess(req: Request, phone: string): { allowed: boolea
   const verified = verifyCustomerToken(token, phone);
   return { allowed: verified.valid, isVerifiedAccount: true };
 }
+
+/**
+ * Strict authorization check for /customer/memory/:customerId.
+ * Never skips non-phone IDs (e.g. cust_guest_me): requires either an authenticated administrator
+ * OR a valid signed customer token matching the customer ID / phone.
+ */
+export function checkCustomerMemoryAccess(
+  req: Request,
+  customerId: string,
+  normalizedPhone: string
+): { allowed: boolean } {
+  if (isAdminRequest(req)) {
+    return { allowed: true };
+  }
+  const token = extractPresentedCustomerToken(req);
+  if (!token) {
+    return { allowed: false };
+  }
+  if (normalizedPhone) {
+    return { allowed: verifyCustomerToken(token, normalizedPhone).valid };
+  }
+  const verified = verifyCustomerToken(token);
+  if (!verified.valid || !verified.phone) {
+    return { allowed: false };
+  }
+  const cleanId = customerId.trim();
+  const allowedMatch = cleanId === verified.phone || cleanId === `cust_${verified.phone}`;
+  return { allowed: allowedMatch };
+}

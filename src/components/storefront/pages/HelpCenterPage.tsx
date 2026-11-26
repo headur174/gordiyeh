@@ -21,6 +21,7 @@ import {
   Check
 } from 'lucide-react';
 import { BEHZAD_ECOM_FAQ_PLAYBOOK, BEHZAD_ECOM_PRINCIPLES } from '../../../data/negotiationPlaybook';
+import { getCustomerAuthHeaders } from '../../../utils/supportChatStore';
 
 interface HelpCenterPageProps {
   onBackToHome: () => void;
@@ -40,34 +41,65 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ onBackToHome }) 
   const [ticketMessage, setTicketMessage] = useState('');
   const [ticketSuccess, setTicketSuccess] = useState(false);
 
-  const handleTrackSubmit = (e: React.FormEvent) => {
+  const handleTrackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanCode = trackingCode.trim();
     if (!cleanCode) return;
 
     let matchedOrder: any = null;
     try {
-      const orders = JSON.parse(localStorage.getItem('commerce_os_orders') || '[]');
-      matchedOrder = orders.find((o: any) => 
-        (o.orderNumber && o.orderNumber.toLowerCase() === cleanCode.toLowerCase()) || 
-        (o.trackingNumber && o.trackingNumber.toLowerCase() === cleanCode.toLowerCase()) ||
-        (o.id && o.id.toLowerCase() === cleanCode.toLowerCase())
-      );
+      const res = await fetch(`/api/v1/orders/track/${encodeURIComponent(cleanCode)}`, {
+        headers: getCustomerAuthHeaders(),
+      });
+      if (res.ok) {
+        const data = await res.json().catch(() => null);
+        if (data?.order) matchedOrder = data.order;
+      }
     } catch {}
 
+    if (!matchedOrder) {
+      try {
+        const orders = JSON.parse(localStorage.getItem('commerce_os_orders') || '[]');
+        matchedOrder = orders.find((o: any) =>
+          (o.orderNumber && o.orderNumber.toLowerCase() === cleanCode.toLowerCase()) ||
+          (o.trackingNumber && o.trackingNumber.toLowerCase() === cleanCode.toLowerCase()) ||
+          (o.id && o.id.toLowerCase() === cleanCode.toLowerCase())
+        );
+      } catch {}
+    }
+
     if (matchedOrder) {
+      const isPaidOrFurther = ['PAID', 'FULFILLING', 'SHIPPED', 'DELIVERED'].includes(matchedOrder.status);
+      const statusTextMap: Record<string, string> = {
+        PENDING_PAYMENT: 'در انتظار تایید پرداخت درگاه',
+        HIGH_RISK_HOLD: 'در صف تایید امنیتی ناظر',
+        PAID: 'پرداخت تایید شد؛ در حال آماده‌سازی انبار',
+        FULFILLING: 'در حال بسته‌بندی و تحویل به پست',
+        SHIPPED: 'تحویل پست شده و در مسیر ارسال',
+        DELIVERED: 'تحویل داده شده به مشتری',
+        CANCELLED: 'لغو شده / پرداخت ناموفق',
+        REFUNDED: 'مستردشده به خریدار',
+      };
       setTrackingResult({
-        code: matchedOrder.trackingNumber || cleanCode,
+        code: matchedOrder.trackingNumber || matchedOrder.trackingCode || cleanCode,
         orderId: matchedOrder.orderNumber || matchedOrder.id,
         recipient: matchedOrder.customerName,
-        destination: `${matchedOrder.province || ''} - ${matchedOrder.city || ''}`,
-        status: matchedOrder.status === 'DELIVERED' ? 'تحویل داده شده به مشتری' : 'در حال پردازش و آماده‌سازی ارسال پستی',
+        destination: [matchedOrder.province, matchedOrder.city].filter(Boolean).join(' - ') || 'ثبت‌شده',
+        status: statusTextMap[matchedOrder.status] || 'در حال پردازش',
         carrier: 'شرکت ملی پست جمهوری اسلامی ایران (پیشتاز)',
-        estimatedDelivery: '۲ الی ۳ روز کاری',
+        estimatedDelivery: '۲ الی ۳ روز کاری پس از تایید پرداخت',
         steps: [
-          { title: 'ثبت سفارش و تأیید پرداخت اینترنتی', done: true, time: matchedOrder.createdAt ? new Date(matchedOrder.createdAt).toLocaleDateString('fa-IR') : 'امروز' },
-          { title: 'کنترل کیفی اصالت و صدور بارنامه پستی', done: true, time: 'انبار مرکزی' },
-          { title: 'تحویل به باجه پستی و ثبت در سامانه رهگیری', done: matchedOrder.status === 'SHIPPED' || matchedOrder.status === 'DELIVERED', time: 'در فرآیند ارسال' },
+          {
+            title: 'ثبت سفارش و تأیید پرداخت اینترنتی',
+            done: isPaidOrFurther,
+            time: matchedOrder.status === 'PENDING_PAYMENT' ? 'در انتظار پرداخت' : 'ثبت‌شده',
+          },
+          { title: 'کنترل کیفی اصالت و صدور بارنامه پستی', done: isPaidOrFurther, time: 'انبار مرکزی' },
+          {
+            title: 'تحویل به باجه پستی و ثبت در سامانه رهگیری',
+            done: matchedOrder.status === 'SHIPPED' || matchedOrder.status === 'DELIVERED',
+            time: 'در فرآیند ارسال',
+          },
           { title: 'تحویل به خریدار در نشانی مقصد', done: matchedOrder.status === 'DELIVERED', time: 'پیش‌بینی: ۳ روز کاری' },
         ]
       });

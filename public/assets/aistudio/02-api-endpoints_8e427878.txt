@@ -1,0 +1,1445 @@
+API ENDPOINT INVENTORY - VALUES REMOVED
+Unique method + host + path: 1137
+Query values and request/response bodies are intentionally omitted.
+
+COUNT | METHOD | HOST | PATH | RESOURCE TYPES | QUERY KEYS | POST FIELD NAMES | STATUSES
+----- | ------ | ---- | ---- | -------------- | ---------- | ---------------- | --------
+  430 | POST | sentry.digikala.com | /api/3/envelope/ | fetch | sentry_version,sentry_key,sentry_client |  | 200
+  198 | POST | tracker.digikala.com | /com.snowplowanalytics.snowplow/tp2 | xhr |  | schema,data | 200
+  116 | GET | api.digikala.com | /account/v1/user/profile/info/ | xhr,fetch |  |  | 200
+  116 | GET | www.digikala.com | /_next/static/media/digikala-variable.26clo6kef3v8o.woff2 | font |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/24q0j9_93fw9y.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/2booakc_xglbb.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3-5wogov-juxg.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3cp1ab671n3qh.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/2m9c8iixlo7ey.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/40g7775mbk_bh.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/32lzp1r5dcesm.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/1xr45tq3l0g6_.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/turbopack-3poerul84qnqh.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/1_8xfd5uejqna.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3lmhjx0u0jb4y.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/265l54qi0q6-j.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/0s2itvb9nw20s.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/211coce934mmw.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/2fgrptjo2t6sn.js | script |  |  | 200
+  115 | GET | api.digikala.com | /v1/context/ | xhr |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/1bcznsvnj01ow.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3ed0uzd819zh7.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/02m7fomx87gjx.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3kcbwlj9w4rjf.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/07i97ppwaruq9.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/01ryem5ju_4jj.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/1dc3ypz0zf0c4.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3qpno6p9lsln9.js | script |  |  | 200
+  115 | GET | www.digikala.com | /manifest.json | manifest |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3rb6lsj1b8lxk.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/2zcvmx6rpzvc9.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/1od2cmnc2ctw3.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/1f8qp-lny92zi.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/24ajtiwffc32x.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/13790nr-uli1r.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/0ph2w82jn9rwp.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/29zb0wj4ufv3x.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/23iqxhuqpccne.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3f2fjz44gqlhf.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/HaWIO9Q2dCvB0NYg0LbE1/_clientMiddlewareManifest.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/0xtrbj50kzhy9.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/1t00tlgv3i6r6.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/HaWIO9Q2dCvB0NYg0LbE1/_ssgManifest.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/00j6st5jxz9oz.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3w4yof50z_ys1.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/1yg92qx4_n81b.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/1u8vv-x6e4yk2.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/20huf-uuc56-d.js | script |  |  | 200
+  115 | GET | www.digikala.com | /pwa-icon-180.png | other |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/13jirj4l_r7zu.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/088bkum3-w125.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/3m6d6zmvwpr8x.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/35stdinkgmmmj.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/33-zxjy9_1nh4.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/2hs3stp29i7r1.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/375ziea5cohcu.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/0t74zw6esdbbb.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/43a3mn4_jwxsg.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/112n_3q6sj3v-.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/42e9dwcc--6so.css | stylesheet |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/HaWIO9Q2dCvB0NYg0LbE1/_buildManifest.js | script |  |  | 200
+  115 | GET | www.digikala.com | /_next/static/chunks/0i7gte6nd8g7_.js | script |  |  | 200
+  113 | GET | auth.digikala.com | /realms/dk-group/protocol/openid-connect/3p-cookies/step1.html | document |  |  | 200
+  113 | GET | www.digikala.com | /_next/static/chunks/0ln1rygosfn7w.js | script |  |  | 200
+  113 | GET | auth.digikala.com | /realms/dk-group/protocol/openid-connect/3p-cookies/step2.html | document |  |  | 200
+  106 | GET | www.digikala.com | /brand/full-horizontal.svg | image |  |  | 200
+  106 | GET | www.digikala.com | /_next/static/chunks/3m0kkgw77e607.js | script |  |  | 200
+  105 | GET | www.digikala.com | /_next/static/chunks/2m2ns5z_-x_e5.js | script |  |  | 200
+  105 | GET | www.digikala.com | /_next/static/chunks/3y64k_h0s8jxa.js | script |  |  | 200
+  105 | GET | www.digikala.com | /_next/static/chunks/3wttbny3zjmb7.js | script |  |  | 200
+  105 | GET | www.digikala.com | /_next/static/chunks/1mk81e3l3px27.js | script |  |  | 200
+  105 | GET | www.digikala.com | /_next/static/chunks/0puj9lmb8nooe.js | script |  |  | 200
+   97 | GET | www.digikala.com | /_next/static/chunks/43v-_l_rqa665.js | script |  |  | 200
+   97 | GET | www.digikala.com | /_next/static/chunks/1qayg_f7qkpp9.js | script |  |  | 200
+   97 | GET | www.digikala.com | /_next/static/chunks/3s07wd7uax4n_.js | script |  |  | 200
+   96 | GET | www.digikala.com | /statics/img/svg/digiplus/digiplus-text-logo-desktop.svg | image |  |  | 200
+   96 | GET | www.digikala.com | /_next/static/chunks/0qmkk7cy8neu2.js | script |  |  | 200
+   96 | GET | auth.digikala.com | /realms/dk-group/protocol/openid-connect/login-status-iframe.html | document |  |  | 200
+   96 | GET | www.digikala.com | /_next/static/chunks/0p1hioffxhgh0.js | script |  |  | 200
+   93 | GET | www.digikala.com | /_next/static/chunks/01nphd65fuj5i.js | other,script |  |  | 200
+   92 | GET | www.digikala.com | /_next/static/chunks/turbopack-1ar8_4l_9rxq1.js | script |  |  | 200
+   92 | GET | www.digikala.com | /_next/static/chunks/2feb5v_l-t2oi.js | script |  |  | 200
+   91 | GET | www.digikala.com | /_next/static/chunks/32s533js-qmht.js | other,script |  |  | 200
+   90 | GET | www.digikala.com | /_next/static/chunks/0e_3-acnh2wet.js | other,script |  |  | 200
+   90 | GET | www.digikala.com | /_next/static/chunks/1ktof1o8z35av.js | script |  |  | 200
+   89 | GET | www.digikala.com | /_next/static/chunks/1w_0vfjsxm-mm.js | other,script |  |  | 200
+   87 | GET | www.digikala.com | /_next/static/chunks/0pxw5lsxuwsdc.js | other,script |  |  | 200
+   85 | GET | www.digikala.com | /_next/static/chunks/3lsl6tmcov9ug.js | other,script |  |  | 200
+   84 | GET | www.digikala.com | /_next/static/chunks/0o-0r_05kx072.js | other,script |  |  | 200
+   84 | GET | www.digikala.com | /_next/static/chunks/2jvxeoao03twz.js | other,script |  |  | 200
+   84 | GET | www.digikala.com | /_next/static/chunks/1osdj4at1dsap.js | script |  |  | 200
+   83 | GET | www.digikala.com | /_next/static/chunks/31tb0ypmfh7ih.js | script |  |  | 200
+   83 | GET | www.digikala.com | /_next/static/chunks/20l_7f-rkoph9.js | script |  |  | 200
+   83 | GET | www.digikala.com | /_next/static/chunks/3jbvmivb8pbts.js | script |  |  | 200
+   82 | GET | www.digikala.com | /_next/static/chunks/3ujuj3_xqjsn1.js | script |  |  | 200
+   82 | GET | www.digikala.com | /_next/static/chunks/1q6vpftx6lxc9.js | script |  |  | 200
+   82 | GET | www.digikala.com | /_next/static/chunks/1yqk52jfb2u6r.js | script |  |  | 200
+   82 | GET | www.digikala.com | /_next/static/chunks/1suyqrp68hd9u.js | script |  |  | 200
+   80 | GET | www.digikala.com | /_next/static/chunks/1z4j09_9h054w.js | script |  |  | 200
+   77 | POST | black-friday.digikala.com | /api/v1/messages | fetch |  | path,platform,ctx,trail,seen,health,keep,show | 200
+   75 | GET | www.digikala.com | /_next/static/chunks/2-tve16kjlev1.js | script |  |  | 200
+   75 | GET | www.digikala.com | /_next/static/chunks/221tq6t_jk46d.js | script |  |  | 200
+   71 | GET | auth.digikala.com | /realms/dk-group/protocol/openid-connect/login-status-iframe.html/init | fetch | client_id,origin |  | 204
+   71 | GET | api.digikala.com | /checkout/v1/carts/mini | xhr,fetch | bCode,camCode,promo_creative,promo_name,promo_position,utm_source,utm_campaign,utm_medium,product_id,token,category_id |  | 200
+   71 | GET | www.digikala.com | /_next/static/chunks/0ao_r76bdmtc9.js | other,script |  |  | 200
+   70 | GET | www.digikala.com | /_next/static/chunks/114gh_hh_z2gp.js | script |  |  | 200
+   70 | GET | api.digikala.com | /address/v2/addresses/default | xhr |  |  | 204
+   70 | GET | www.digikala.com | /_next/static/chunks/44ksv-ro9s437.js | script |  |  | 200
+   70 | GET | www.digikala.com | /_next/static/chunks/01kkar0vgf382.js | script |  |  | 200
+   70 | GET | www.digikala.com | /_next/static/chunks/053u6us2oj4u1.js | script |  |  | 200
+   70 | GET | api.digikala.com | /v1/user/google-tag-manager/ | xhr |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/1zn5dpcp2m2n3.js | script |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/turbopack-2o2kdr8g9sg18.js | script |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/3ykhhwx2pcq8a.js | script |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/0s6ukxk8waejw.js | script |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/13lg53qs8yfps.js | script |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/1b78bbndu42_z.js | script |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/3q2mpmaqslbyu.js | script |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/2uln8nl0wsi8m.js | script |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/1u5ljiigg6uez.js | script |  |  | 200
+   69 | GET | www.digikala.com | /_next/static/chunks/1lq18h0ry-_lg.js | script |  |  | 200
+   68 | GET | api.digikala.com | /discovery/api/v1/top-banners | xhr |  |  | 200
+   67 | GET | www.digikala.com | /_next/static/chunks/2hkeztqq68evu.js | script |  |  | 200
+   61 | GET | dkstatics-public.digikala.com | /digikala-adservice-banners/ab4ac882a664eb088672b188e8682f8af43c5f10_1794916618.jpg | image | x-oss-process |  | 200
+   56 | GET | www.digikala.com | /_next/static/chunks/23fh6332cu8px.css | stylesheet |  |  | 200
+   49 | GET | api.digikala.com | /discovery/api/v1/mega-menu | xhr |  |  | 200
+   48 | GET | www.digikala.com | /_next/static/chunks/1uzlfdztkv6ek.js | script |  |  | 200
+   48 | GET | www.digikala.com | /_next/static/chunks/23p75w8szfqwk.css | stylesheet |  |  | 200
+   48 | GET | www.digikala.com | /_next/static/chunks/2452dim0w87ti.js | script |  |  | 200
+   48 | GET | www.digikala.com | /_next/static/chunks/11qh6liv_1-l9.css | stylesheet |  |  | 200
+   46 | GET | www.digikala.com | /_next/static/chunks/2qo913svgpalt.js | script |  |  | 200
+   46 | GET | www.digikala.com | /_next/static/chunks/3u248lxbkhlr9.css | stylesheet |  |  | 200
+   46 | GET | www.digikala.com | /_next/static/chunks/3r2fuhtxtffrt.js | script |  |  | 200
+   46 | GET | www.digikala.com | /_next/static/chunks/11-q6y3mcda6w.js | script |  |  | 200
+   46 | GET | www.digikala.com | /_next/static/chunks/2ketly9r6_2s0.css | stylesheet |  |  | 200
+   46 | GET | www.digikala.com | /_next/static/chunks/1qwggvii5e-zn.js | script |  |  | 200
+   46 | GET | www.digikala.com | /_next/static/chunks/43kv6n3r6gj2d.js | script |  |  | 200
+   46 | GET | www.digikala.com | /_next/static/chunks/1rkoz7lddxr1v.js | script |  |  | 200
+   44 | GET | www.digikala.com | /_next/static/chunks/0btyciwy8t6bt.js | script |  |  | 200
+   44 | GET | www.digikala.com | /_next/static/chunks/0h-ubq3lcu5j2.js | script |  |  | 200
+   39 | GET | www.digikala.com | /_next/static/chunks/16numr1lm30zb.js | other,script |  |  | 200
+   38 | GET | www.digikala.com | /_next/static/chunks/31iqzpsymalm-.js | script |  |  | 200
+   35 | GET | www.digikala.com | /_next/static/chunks/32ejjgee11x7z.js | other,script |  |  | 200
+   34 | GET | www.digikala.com | /_next/static/chunks/3s6c7wp1uymrz.js | script |  |  | 200
+   34 | GET | www.digikala.com | /_next/static/chunks/0lmwowo3b9v58.js | script |  |  | 200
+   34 | GET | www.digikala.com | /_next/static/chunks/2y3grydls1-y7.js | script |  |  | 200
+   34 | GET | www.digikala.com | /brand/full-vertical.svg | image |  |  | 200
+   34 | GET | www.digikala.com | /_next/static/chunks/0qrfwt1hhsal6.js | script |  |  | 200
+   33 | GET | www.digikala.com | /_next/static/chunks/1rv1lrknpx63x.js | other,script |  |  | 200
+   33 | GET | www.digikala.com | /_next/static/chunks/1ly_865cvxmoj.js | script |  |  | 200
+   33 | GET | www.digikala.com | /_next/static/chunks/3l8le7svyayx_.js | script |  |  | 200
+   33 | GET | www.digikala.com | /_next/static/chunks/2vod0h_2vme3j.js | other,script |  |  | 200
+   33 | GET | www.digikala.com | /_next/static/chunks/turbopack-33yd_7xa2wlzq.js | script |  |  | 200
+   33 | GET | www.digikala.com | /_next/static/chunks/18_d--ugwhggb.js | other,script |  |  | 200
+   33 | GET | www.digikala.com | /_next/static/chunks/2tuueztu1crs2.js | script |  |  | 200
+   33 | GET | www.digikala.com | /_next/static/chunks/3s_27jcr5wy8y.js | script |  |  | 200
+   33 | GET | www.digikala.com | /_next/static/chunks/17f7acsy2owx9.js | other,script |  |  | 200
+   31 | GET | www.digikala.com | /_next/static/chunks/2ukqcodgdmnuy.js | script |  |  | 200
+   31 | GET | www.digikala.com | /_next/static/chunks/0pqa-bsp-zcqq.js | script |  |  | 200
+   31 | GET | www.digikala.com | /_next/static/chunks/22yx2aowmdf2k.js | script |  |  | 200
+   30 | GET | www.digikala.com | /_next/static/chunks/0pv6bquhqgxt1.js | other,script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/turbopack-3oiu_2fm7ayft.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/081fa50vbpeuu.css | stylesheet |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/078oa5pdmj4wt.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/3n_93hl1rtawf.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/1dgp3x94o5w67.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/2w2-wmmrp4gw9.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/3h0q6swx9k8z7.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/1ya12kb1f34qu.css | stylesheet |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/34wg3e-c8azwd.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/1ou770nh14ny6.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/1mijvqlvh7jy8.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/3qmgvb38xianb.js | script |  |  | 200
+   28 | GET | www.digikala.com | /_next/static/chunks/1pygw0k0-e43f.js | script |  |  | 200
+   27 | GET | dkstatics-public.digikala.com | /digikala-products/59487f257586b7d64b307904289d3901ffab9259_1795268500.jpg | image | x-oss-process |  | 200
+   27 | GET | www.digikala.com | /statics/img/png/star-yellow.webp | image |  |  | 200
+   26 | GET | www.digikala.com | /_next/static/chunks/2r-jccwweq91k.js | script |  |  | 200
+   26 | GET | www.digikala.com | /_next/static/chunks/0qbnaucg0zf21.js | script |  |  | 200
+   26 | GET | www.digikala.com | /_next/static/chunks/1iw45caykuhcc.css | stylesheet |  |  | 200
+   26 | GET | www.digikala.com | /_next/static/chunks/1kdgyrb22285_.js | script |  |  | 200
+   25 | GET | www.digikala.com | /_next/static/chunks/25fv79t-_nv1w.js | script |  |  | 200
+   25 | GET | www.digikala.com | /_next/static/chunks/1uqxw5f8gc832.js | script |  |  | 200
+   25 | GET | www.digikala.com | /_next/static/chunks/2k_6l9e72mhmj.js | script |  |  | 200
+   25 | GET | www.digikala.com | /_next/static/chunks/27o7sotsceje1.js | script |  |  | 200
+   25 | GET | www.digikala.com | /_next/static/chunks/2td2ztr4gak65.js | script |  |  | 200
+   25 | GET | www.digikala.com | /_next/static/chunks/023be1g2b2gov.js | script |  |  | 200
+   25 | GET | www.digikala.com | /_next/static/chunks/turbopack-00ss8-3npv_jv.js | script |  |  | 200
+   25 | GET | www.digikala.com | /_next/static/chunks/2gvlxnuqkqf5n.js | script |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/0tgfovq8qrgzh.css | stylesheet |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/3cyy9-3qkgtsk.js | script |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/43ub_v_bnsohz.js | script |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/27a6ytod6t7sn.js | script |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/1nveev52kg2kt.js | script |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/3nf7rykel2xrx.js | script |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/turbopack-2wc84yzjrjh58.js | script |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/2dx3eu-baox26.js | script |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/31-57zxqfej49.js | script |  |  | 200
+   24 | GET | www.digikala.com | /_next/static/chunks/15dsjp2n58lmh.js | script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/14zkr4gdwtt4i.js | script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/0ke_yhlytuej2.js | other,script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/3dxjm8tn_4ie1.js | script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/turbopack-41x3v9qdysakc.js | script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/31z5penhr066z.js | script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/42m6r6fyyqdv3.js | other,script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/426xj61uj28uj.js | script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/2auey82d0bdlh.js | other,script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/2gzego2lce1_6.js | script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/turbopack-3g02m7g74jtvs.js | script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/17rn7j866xwww.js | script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/0qua0yt-utldq.js | other,script |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/0yrvbzf_4mi2s.css | stylesheet |  |  | 200
+   21 | GET | www.digikala.com | /_next/static/chunks/2nhpemjah2eu0.js | script |  |  | 200
+   20 | GET | www.digikala.com | /_next/static/chunks/0983wj32qx811.js | script |  |  | 200
+   20 | GET | www.digikala.com | /_next/static/chunks/0pfdqxjikq9t1.css | stylesheet |  |  | 200
+   20 | GET | www.digikala.com | /_next/static/chunks/turbopack-3bqj0io-qw_s7.js | script |  |  | 200
+   19 | GET | www.digikala.com | /_next/static/chunks/2l6anyvy8c59j.js | script |  |  | 200
+   19 | GET | www.digikala.com | /_next/static/chunks/3k26nf5hlxchb.js | script |  |  | 200
+   19 | GET | www.digikala.com | /_next/static/chunks/turbopack-3usaeg_mstmp5.js | script |  |  | 200
+   19 | GET | www.digikala.com | /_next/static/chunks/1qk728gagoh2m.js | script |  |  | 200
+   17 | GET | api.digikala.com | /amazing/v1/page/0 | xhr | carousel,no_widgets,page,sort,category_ids |  | 200
+   17 | GET | www.digikala.com | /wealth/_next/image/ | image | url,w,q |  | 200
+   16 | GET | www.digikala.com | /statics/img/svg/footer/original-products.svg | image |  |  | 200
+   16 | GET | www.digikala.com | /_next/static/chunks/3rbacoo7mmmo6.js | script |  |  | 200
+   16 | GET | www.digikala.com | /statics/img/svg/footer/express-delivery.svg | image |  |  | 200
+   16 | GET | www.digikala.com | /statics/img/svg/footer/days-return.svg | image |  |  | 200
+   16 | GET | www.digikala.com | /statics/img/svg/footer/cash-on-delivery.svg | image |  |  | 200
+   16 | GET | www.digikala.com | /statics/img/svg/footer/support.svg | image |  |  | 200
+   15 | GET | www.digikala.com | /_next/static/chunks/33bzqjhssogya.js | script |  |  | 200
+   15 | GET | www.digikala.com | /_next/static/chunks/turbopack-1_zt39fem430u.js | script |  |  | 200
+   15 | GET | www.digikala.com | /_next/static/chunks/3acwni3_j80rq.js | script |  |  | 200
+   15 | GET | www.digikala.com | /_next/static/chunks/3iug9yffm7e13.js | script |  |  | 200
+   15 | GET | www.digikala.com | /_next/static/chunks/1elaftbf8o82b.js | script |  |  | 200
+   15 | GET | www.digikala.com | /_next/static/chunks/0sp-mdv15yv8v.css | stylesheet |  |  | 200
+   14 | GET | api-zakaria.digikala.com | /api/features/sdk-1aauD6mWWgx2Deg2 | fetch |  |  | 200
+   14 | GET | dkstatics-public.digikala.com | /digikala-static/d38f4e94dd1ed5ba676fb166634dd8c4b6c572cb_1716833826.svg | image |  |  | 200
+   13 | GET | www.digikala.com | /_next/static/chunks/3_23yj01gnog4.js | script |  |  | 200
+   11 | GET | www.digikala.com | /_next/static/chunks/1kkmwmfnrg49t.js | other,script |  |  | 200
+   10 | GET | www.digikala.com | /_next/static/chunks/turbopack-3lxpi0hba9vtg.js | script |  |  | 200
+   10 | GET | www.digikala.com | /_next/static/chunks/3mymsrc0qodtj.js | script |  |  | 200
+   10 | GET | www.digikala.com | /_next/static/chunks/1w482q3lp95xa.js | script |  |  | 200
+   10 | GET | www.digikala.com | /_next/static/chunks/40ku60qzd6uqb.css | stylesheet |  |  | 200
+   10 | GET | www.digikala.com | /incredible-offers/ | document | category_id |  | 200
+    8 | GET | www.digikala.com | /_next/static/chunks/turbopack-0mxk3eecnvnhn.js | script |  |  | 200
+    8 | GET | www.digikala.com | /_next/static/chunks/1_uc7c7w31ypf.js | other,script |  |  | 200
+    8 | GET | www.digikala.com | /_next/static/chunks/1tt5w9qj9o46q.js | script |  |  | 200
+    8 | GET | dkstatics-public.digikala.com | /digikala-adservice-promotions/078faa61ad55bc419780f44a1826b2bae17f1e9d_1795283840.svg | image |  |  | 200
+    8 | GET | www.digikala.com | /_next/static/chunks/3tgjam8eeuz49.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/41tbpicmzz_ik.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/30levgrrmp2lq.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/3taia9wvkqcxv.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/turbopack-1o6d_onlpu0sf.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/3aamhgw354zxc.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/2bvkerautvxt_.css | stylesheet |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/3xm85nlk5292a.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/turbopack-0uaz1-p1nhs_c.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/turbopack-3dvbla8aot3bg.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/turbopack-0kvm5xf325x4v.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/1tg6wecmeskmz.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/14q5aa-a4sgpe.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/3q90p8unxz33t.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/turbopack-3wwqxjp99hehr.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/34-slm2ir_70_.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/0onk2i0x2cz3i.js | script |  |  | 200
+    7 | GET | www.digikala.com | /_next/static/chunks/3obmtsa89zn87.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/2h5hpxbmwe5ty.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/1fjpf-oe7g27a.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/1usn-kqjgk_gf.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/turbopack-0y2zy5rabu2fs.js | script |  |  | 200
+    6 | GET | www.digikala.com | /statics/img/svg/productCard/topBadge/IncredibleOffer.svg | image |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/3j18ne4o83bd_.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/3u7zqv7_o-viw.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/1ybo_t36c83ww.js | script |  |  | 200
+    6 | GET | www.digikala.com | /personalized-category/feed/ | document | token |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/2angylqv6br81.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/0uqwg4ppk3hy4.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/turbopack-3rj4bnwduzihg.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/063efq69crz7w.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/0xf8axbmr-yoq.js | script |  |  | 200
+    6 | GET | www.digikala.com | /statics/img/svg/productCard/topBadge/SpecialSell.svg | image |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/turbopack-0fnkbkaejgrja.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/0jwov_ccy7ihe.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/0uma780hmgkcd.js | script |  |  | 200
+    6 | GET | www.digikala.com | /_next/static/chunks/turbopack-2lief_igec09x.js | script |  |  | 200
+    5 | GET | www.digikala.com | /statics/img/svg/faq/faq-pattern.svg | image |  |  | 200
+    5 | GET | www.digikala.com | /_next/static/chunks/turbopack-11mdhl9xrwc00.js | script |  |  | 200
+    5 | GET | www.digikala.com | /_next/static/chunks/418svd6sbta-2.js | other,script |  |  | 200
+    5 | GET | www.digikala.com | /_next/static/chunks/0hmm0xb9-gjda.js | script |  |  | 200
+    4 | GET | api.digikala.com | /amazing/v1/page/8749 | xhr | carousel,no_widgets,page,sort |  | 200
+    4 | GET | www.digikala.com | /statics/img/png/delivery-badge/nearby.webp | image |  |  | 200
+    4 | GET | www.digikala.com | /statics/img/svg/typography/incrediblePattern.svg | image |  |  | 200
+    4 | GET | api.digikala.com | /amazing/v1/page/10688 | xhr | carousel,no_widgets,page,sort |  | 200
+    4 | GET | dkstatics-public.digikala.com | /digikala-products/bbd607ee3a612dda2baaf12ef62a8ff2dc8a83fa_1602004475.jpg | image | x-oss-process |  | 200
+    4 | GET | dkstatics-public.digikala.com | /digikala-products/9d2f1dbce14414b9c17025b20acfcb1abf7f9f99_1651483015.jpg | image | x-oss-process |  | 200
+    3 | GET | www.digikala.com | /statics/img/svg/amazing/deal-pattern.svg | image |  |  | 200
+    3 | GET | api.digikala.com | /v1/incredible-offers/ | xhr | carousels[0] |  | 200
+    3 | GET | www.digikala.com | /statics/img/svg/amazing/header.svg | image |  |  | 200
+    3 | GET | www.digikala.com | /_next/static/chunks/0u4f4pyffi894.js | script |  |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/8a042388b93c5116604f35092a1fb35f8f0756be_1740821985.jpg | image | x-oss-process |  | 200
+    3 | GET | www.digikala.com | /statics/img/svg/typography/freshPattern.svg | image |  |  | 200
+    3 | GET | api.digikala.com | /amazing/v1/categories | xhr |  |  | 200
+    3 | GET | api.digikala.com | /amazing/v1/top-products | xhr |  |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-brands/be77d65027eddfc17ecbab3e07ab260c141ff537_1792311742.jpg | image | x-oss-process |  | 200
+    3 | GET | www.digikala.com | /_next/static/chunks/1_ewlvqzwlmhm.js | script |  |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/b196bbdea97f57bfac02dc1666d7401b16ee4bcb_1740821984.jpg | image | x-oss-process |  | 200
+    3 | GET | www.digikala.com | /_next/static/chunks/446936mwal9--.js | other,script |  |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-products/b2d0a98d0c0a42c9af5645136fe0cfc0b47263d9_1731491794.jpg | image | x-oss-process |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/151ec29bae111afd3b6a0e71cec5c4c26f1c3014_1740821986.jpg | image | x-oss-process |  | 200
+    3 | GET | www.digikala.com | /statics/img/svg/typography/earlyAccessPatternPlusMobile.svg | image |  |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/09a98a13c782e12a245930b4515d243b17734a33_1740821989.jpg | image | x-oss-process |  | 200
+    3 | GET | www.digikala.com | /_next/static/chunks/0a9phf9-r8cbz.js | script |  |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-products/71b6a6ad6ee43714f66fe323a66da353383d8bbf_1722633721.jpg | image | x-oss-process |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/d825f64f509cd5067a9022528c465e8ca705f60d_1740821988.jpg | image | x-oss-process |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-products/136c80ee8c3938e81d5554a95388058fdb399303_1786571886.jpg | image | x-oss-process |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/b3d4eaefebe67ab8d849296ea2e7e113cde8094c_1740821988.jpg | image | x-oss-process |  | 200
+    3 | GET | www.digikala.com | /statics/img/svg/typography/earlyAccessPatternPlus.svg | image |  |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-products/6e9fc5f500d4cbe714825b963cb0305d291b73c3_1635866190.jpg | image | x-oss-process |  | 200
+    3 | GET | www.digikala.com | /_next/static/chunks/turbopack-3aso90658m90_.js | script |  |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-static/ca295514617381312953d0dd1176a4e67b66a337_1683024994.png | image | x-oss-process |  | 200
+    3 | GET | dkstatics-public.digikala.com | /digikala-products/c64720f4446aa94b873dab4ae35091bc3f0fcc22_1637680139.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /product/dkp-15195605/%D8%A7%D8%B3%20%D8%A7%D8%B3%20%D8%AF%DB%8C%20%D8%A7%DB%8C%D9%86%D8%AA%D8%B1%D9%86%D8%A7%D9%84%20SATA%20III%20%D8%A7%D9%85%20%D8%A7%D8%B3%20%D8%A2%DB%8C%20%D9%85%D8%AF%D9%84%20SPATIUM%20S270%20%D8%B8%D8%B1%D9%81%DB%8C%D8%AA%20960%20%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /product/dkp-18226792/%D8%AF%D8%B3%D8%AA%DA%AF%D8%A7%D9%87%20%D8%AA%D8%B5%D9%81%DB%8C%D9%87%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D8%A2%D8%A8%20%D8%B2%DB%8C%D9%86%D9%88%D8%AF%20%D9%85%D8%AF%D9%84%20%DA%A9%DB%8C%D8%B3%DB%8C%20CX107-WTDSM%20%D8%A8%D9%87%20%D9%87%D9%85%D8%B1%D8%A7%D9%87%20%D8%B3%D8%AE%D8%AA%DB%8C%20%D8%B3%D9%86%D8%AC%20TDS-3/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /product/dkp-7158804/%D9%82%D8%B1%D8%B5%20%D9%88%DB%8C%D8%AA%D8%A7%D9%85%DB%8C%D9%86%20D3-1000%20%D9%88%D8%A7%D8%AD%D8%AF%DB%8C%20%20%D8%A8%D8%B3%D8%AA%D9%87%2060%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/1y77lxse_znf4.js | script |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/4de146dba0c3cb85b7459ddecd3773268954002a_1794223527.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /product/dkp-2726511/%DA%A9%D9%88%D9%84%D8%B1%DA%AF%D8%A7%D8%B2%DB%8C%2024%20%D9%87%D8%B2%D8%A7%D8%B1%20%D8%A7%DB%8C%D9%86%D9%88%D8%B1%D8%AA%D8%B1%20%DA%AF%D8%B1%DB%8C%D9%86%20%D9%85%D8%AF%D9%84%20GWS-H24P1T1A%20/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /product/dkp-20832844/%D9%85%D8%A7%D9%86%DB%8C%D8%AA%D9%88%D8%B1%2027%20%D8%A7%DB%8C%D9%86%DA%86%20%D8%A7%D9%84%20%D8%AC%DB%8C%20%D9%85%D8%AF%D9%84%2027U411A-B%20%D8%A8%D8%A7%20%D9%88%D8%B6%D9%88%D8%AD%20Full%20HD%20%D9%BE%D9%86%D9%84%20IPS%20%D9%88%20%D9%86%D8%B1%D8%AE%20%D8%A8%D9%87%20%D8%B1%D9%88%D8%B2%D8%B1%D8%B3%D8%A7%D9%86%DB%8C%20120%20%D9%87%D8%B1%D8%AA%D8%B2/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /statics/img/svg/productCard/topBadge/PromotedIncredibleOffer.svg | image |  |  | 200
+    2 | GET | www.digikala.com | /_next/static/chunks/0bysub7fdmb0q.js | other,script |  |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/2e2183y-ut9lb.js | script |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-18987848/%DB%8C%D8%AE%20%D8%B3%D8%A7%D8%B2%20%D9%86%D9%88%D8%AA%D8%B1%DB%8C%DA%A9%D9%88%DA%A9%20%D9%85%D8%AF%D9%84%20NC-ICY510S/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/turbopack-03j516918jilg.js | script |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-14170380/%D8%A7%D8%B3%20%D8%A7%D8%B3%20%D8%AF%DB%8C%20%D8%A7%DB%8C%D9%86%D8%AA%D8%B1%D9%86%D8%A7%D9%84%20PCIe%20Gen3%20x4%20%D8%B3%DB%8C%D9%84%DB%8C%DA%A9%D9%88%D9%86%20%D9%BE%D8%A7%D9%88%D8%B1%20%D9%85%D8%AF%D9%84%20P34A60%20%D8%B8%D8%B1%D9%81%DB%8C%D8%AA%20512%20%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/14wkk7k9n-35f.js | script |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-19336870/%DA%98%D9%84%20%D8%A2%D8%A8%D8%B1%D8%B3%D8%A7%D9%86%20%D8%B5%D9%88%D8%B1%D8%AA%20%D8%AA%DB%8C%D9%84%D8%B3%DB%8C%D9%85%20%D9%85%D8%AF%D9%84%20Hydrating%20%D9%85%D9%86%D8%A7%D8%B3%D8%A8%20%D8%A8%D8%B1%D8%A7%DB%8C%20%D8%A7%D9%86%D9%88%D8%A7%D8%B9%20%D9%BE%D9%88%D8%B3%D8%AA%20%D8%AD%D8%AC%D9%85%2050%20%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1/ | document | variant_id,product_id |  | 301
+    2 | GET | api.digikala.com | /v1/dynamic-landing/mashhad-leather/ | xhr |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-16392433/%D9%BE%D8%AE%D8%B4%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D8%AE%D8%A7%D9%86%DA%AF%DB%8C%20%DA%AF%D8%B1%DB%8C%D9%86%20%D9%BE%DB%8C%20%D8%AC%DB%8C%20%D8%AF%D8%A8%D9%84%DB%8C%D9%88%20%D9%85%D8%AF%D9%84%20GSP-10280/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /product/dkp-16200986/%D9%87%D8%AF%D9%81%D9%88%D9%86%20%D8%A8%D9%84%D9%88%D8%AA%D9%88%D8%AB%DB%8C%20%D8%A7%D9%86%DA%A9%D8%B1%20%D9%85%D8%AF%D9%84%20R50i%20NC%20%D8%A8%D8%A7%20%D8%AD%D8%B0%D9%81%20%D9%86%D9%88%DB%8C%D8%B2%20%D9%81%D8%B9%D8%A7%D9%84%20(ANC)%D8%8C%20%D8%AF%D8%B1%DA%AF%D8%A7%D9%87%20%D8%B4%D8%A7%D8%B1%DA%98%20USB%20Type-C%D8%8C%20%D8%A8%D8%A7%D8%AA%D8%B1%DB%8C%20%D9%82%D8%A7%D8%A8%D9%84%20%D8%B4%D8%A7%D8%B1%DA%98%20%D8%AA%D8%A7%2045%20%D8%B3%D8%A7%D8%B9%D8%AA%D8%8C%20%D9%85%D9%82%D8%A7%D9%88%D9%85%20%D8%AF%D8%B1%20%D8%A8%D8%B1%D8%A7%D8%A8%D8%B1%20%D9%BE%D8%A7%D8%B4%D8%B4%20%D8%A2%D8%A8%20%D9%88%20%DA%AF%D8%B1%D8%AF%20%D9%88%20%D8%BA%D8%A8%D8%A7%D8%B1/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /product/dkp-21739662/%D8%AF%D9%88%DA%86%D8%B1%D8%AE%D9%87%20%DA%A9%D9%88%D9%87%D8%B3%D8%AA%D8%A7%D9%86%20%D8%A2%D8%B3%D8%A7%DA%A9%20%D9%85%D8%AF%D9%84%20%D8%A7%DB%8C%D9%86%D8%AA%D9%86%D8%B3%20%DA%A9%D8%AF%20E-515-21739662%20%D8%B3%D8%A7%DB%8C%D8%B2%20%D8%B7%D9%88%D9%82%D9%87%2027.5%20%D8%A7%DB%8C%D9%86%DA%86%20(650B) | document | variant_id,product_id |  | 301,200
+    2 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/a7d6f41104b34400c4433ea218586158df00eaaf_1795291004.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/0u__kdk5nuzqm.js | script |  |  | 200
+    2 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/1122-1.mp4 | media |  |  | 206
+    2 | GET | www.digikala.com | /product/dkp-22872152/%D9%85%D8%A7%D9%86%DB%8C%D8%AA%D9%88%D8%B1%20%DA%AF%DB%8C%D9%85%DB%8C%D9%86%DA%AF%2024%20%D8%A7%DB%8C%D9%86%DA%86%20%D8%A7%D9%84%20%D8%AC%DB%8C%20%D9%85%D8%AF%D9%84%2024G411A-B%20%D8%A8%D8%A7%20%D9%88%D8%B6%D9%88%D8%AD%20FHD%20%D9%BE%DB%8C%DA%A9%D8%B3%D9%84%D8%8C%20%D9%BE%D9%86%D9%84%20IPS%20%D9%88%20%D9%86%D8%B1%D8%AE%20%D8%A8%D9%87%E2%80%8C%D8%B1%D9%88%D8%B2%D8%B1%D8%B3%D8%A7%D9%86%DB%8C%20144%20%D9%87%D8%B1%D8%AA%D8%B2/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /product/dkp-17909796/%D9%85%D8%A7%DB%8C%DA%A9%D8%B1%D9%88%D9%88%DB%8C%D9%88%201450-1550%20%D9%88%D8%A7%D8%AA%2032%20%D9%84%DB%8C%D8%AA%D8%B1%20%D9%87%D8%A7%DB%8C%D8%A8%D9%88%D8%B1%DA%AF%20%D9%85%D8%AF%D9%84%20MW-6060%20%D8%AF%D8%A7%D8%B1%D8%A7%DB%8C%2010%20%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D9%87%20%D9%BE%D8%AE%D8%AA/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/1123.mp4 | media |  |  | 206
+    2 | GET | www.digikala.com | /_next/static/chunks/3c1kd_l7v019o.js | other,script |  |  | 200
+    2 | GET | api.digikala.com | /v1/dynamic-landing/widget/27969/ | xhr |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-brands/94590868a99f79ef22485ffa75ea852060ff1b07_1792315620.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /product/dkp-581829/%D8%B1%DB%8C%D9%85%D9%84%20%D8%AD%D8%AC%D9%85%20%D8%AF%D9%87%D9%86%D8%AF%D9%87%20%DA%A9%D8%A7%D9%84%DB%8C%D8%B3%D8%AA%D8%A7%20%D9%85%D8%AF%D9%84%20Extend%20Volume/ | document | variant_id,product_id |  | 301
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/c5d325ca5a83db1230ab28b20d8cb957e175f9de_1784706341.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /_next/static/chunks/3qs0xid0crqkg.js | script |  |  | 200
+    2 | GET | www.digikala.com | /_next/static/chunks/1kcqppis2yxml.js | script |  |  | 200
+    2 | GET | www.digikala.com | /wealth/fonts/iranyekan/woff/iranyekanwebregular.woff | font |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/9e74e37882b77ddc6219560dd908d74732e794ce_1760365118.jpg | image | x-oss-process |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/1583357fe205bfc91950f3c7bc1b3544dcd11f16_1794830987.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /statics/img/svg/typography/bestSellingPattern.svg | image |  |  | 200
+    2 | GET | www.digikala.com | /_next/static/chunks/1kirz83dkuk6b.js | script |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-15294553/%D8%B3%D8%B1%D9%85%20%D8%AA%D9%82%D9%88%DB%8C%D8%AA%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D8%A7%D8%A8%D8%B1%D9%88%20%D8%B3%D8%B1%DB%8C%D8%AA%D8%A7%20%D9%85%D8%AF%D9%84%20VITALIZE%20%D8%AD%D8%AC%D9%85%208%20%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /landing/mashhad-leather/ | document | utm_source,promo_name,promo_position,promo_creative,camCode,bCode |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/1vs7uomravowo.css | stylesheet |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-11204176/%D9%87%D8%A7%D8%B1%D8%AF%20%D8%A7%DA%A9%D8%B3%D8%AA%D8%B1%D9%86%D8%A7%D9%84%20%D8%AA%D9%88%D8%B4%DB%8C%D8%A8%D8%A7%20%D9%85%D8%AF%D9%84%20Canvio%20Basics%20%D8%B8%D8%B1%D9%81%DB%8C%D8%AA%20%D8%AF%D9%88%20%D8%AA%D8%B1%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA%20%D8%AF%D8%A7%D8%B1%D8%A7%DB%8C%20%D8%B1%D8%A7%D8%A8%D8%B7%20USB%20Type-A%203.2 | document | variant_id,product_id |  | 301,200
+    2 | GET | www.digikala.com | /product/dkp-21870108/%DA%AF%D9%88%D8%B4%DB%8C%20%D9%85%D9%88%D8%A8%D8%A7%DB%8C%D9%84%20%D8%B4%DB%8C%D8%A7%D8%A6%D9%88%D9%85%DB%8C%20%D9%85%D8%AF%D9%84%20Redmi%20A7%20Pro%204G%20%D8%B8%D8%B1%D9%81%DB%8C%D8%AA%20128%20%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA%20%D9%88%20%D8%B1%D9%85%204%20%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA/ | document | variant_id,product_id |  | 301
+    2 | GET | dkstatics-public.digikala.com | /digikala-brands/e2556cf21866e0f94c7286b843937e0dc513aa6f_1792318899.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /product/dkp-3536523/%D9%82%D8%B1%D8%B5%20%D9%88%DB%8C%D8%AA%D8%A7%D9%85%DB%8C%D9%86%20%D8%AF%203%20Health%20%D8%A7%DB%8C%D8%AF%20%D8%A8%D8%B3%D8%AA%D9%87%2030%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /product/dkp-21253088/%D9%85%D8%A7%DB%8C%DA%A9%D8%B1%D9%88%D9%88%DB%8C%D9%88%2032%20%D9%84%DB%8C%D8%AA%D8%B1%20%D9%87%D8%A7%DB%8C%D8%A8%D9%88%D8%B1%DA%AF%20%D9%85%D8%AF%D9%84%20MW-6020/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/20rtz8v5103q5.js | script |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-3839909/%D8%A8%D8%AE%D8%A7%D8%B1%DB%8C%20%D8%A8%D8%B1%D9%82%DB%8C%20%D9%BE%D8%A7%D8%B1%D8%B3%20%D8%AE%D8%B2%D8%B1%20%D9%85%D8%AF%D9%84%20FH2000P/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /_next/static/chunks/31md2kokbbygl.js | other,script |  |  | 200
+    2 | GET | www.digikala.com | /_next/static/chunks/1m2goz6xleczf.js | script |  |  | 200
+    2 | GET | api.digikala.com | /v1/digipay/bnpl/credit/ | xhr | bCode,promo_creative,promo_name,promo_position |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/d27ddec9092c0505de94db549975f44a9199ea1f_1786372478.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/00a-xyfeho_ha.js | script |  |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/26efr1fz488n9.js | script |  |  | 200
+    2 | GET | api.digikala.com | /v1/dynamic-landing/widget/28326/ | xhr |  |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/358t6p6vkwa0e.js | script |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/f03e26f7ed06bf6c179f02cb06cc245ad01f2f16_1783844090.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/3xvgg7pa6ppo6.js | script |  |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/3mk1ti2dtwza4.js | script |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-16222823/%D8%B3%DA%A9%D9%87%20%DA%AF%D8%B1%D9%85%DB%8C%20%D8%B7%D9%84%D8%A7%2018%20%D8%B9%DB%8C%D8%A7%D8%B1%20%D9%BE%D8%A7%D8%B1%D8%B3%DB%8C%D8%A7%D9%86%20%D9%BE%D8%A7%DB%8C%D8%AA%D8%AE%D8%AA%20%D9%85%D8%AF%D9%84%20%D9%BE%D8%A7%D8%B1%D8%B3%DB%8C%D8%A7%D9%86%20%DA%A9%D8%AF%20T110/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/fonts/iranyekan/woff/iranyekanwebmedium.woff | font |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-20073130/%D8%B3%D8%B1%D9%85%20%D8%A2%D8%A8%D8%B1%D8%B3%D8%A7%D9%86%20%D9%BE%D9%88%D8%B3%D8%AA%20%D8%AA%DB%8C%D9%84%D8%B3%DB%8C%D9%85%20%D9%85%D8%AF%D9%84%20%D9%87%DB%8C%D8%A7%D9%84%D9%88%D8%B1%D9%88%D9%86%DB%8C%DA%A9%20%D8%A7%D8%B3%DB%8C%D8%AF%20%D9%88%20%D8%B1%D9%88%D9%86%DB%8C%DA%A9%20%D8%A7%D8%B3%DB%8C%D8%AF%20%DA%A9%D8%AF%20B5%20%D9%85%D9%86%D8%A7%D8%B3%D8%A8%20%D8%A8%D8%B1%D8%A7%DB%8C%20%D8%A7%D9%86%D9%88%D8%A7%D8%B9%20%D9%BE%D9%88%D8%B3%D8%AA%20%D8%AD%D8%AC%D9%85%2030%20%D9%85%DB%8C%D9%84%DB%8C%E2%80%8C%D9%84%DB%8C%D8%AA%D8%B1/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /_next/static/chunks/turbopack-0yx2ec70irn00.js | script |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-23125782/%D8%B3%D8%AA%20%D9%BE%D9%86%D8%AC%20%D8%B9%D8%AF%D8%AF%DB%8C%20%DA%86%D9%85%D8%AF%D8%A7%D9%86%20%DA%A9%D8%A7%D8%B1%DB%8C%D9%86%D8%A7%20%D9%85%D8%AF%D9%84%20CRN%206969%20VIP%20SERIES/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /product/dkp-14673714/%D9%85%D8%AD%D9%84%D9%88%D9%84%20%D8%AA%D9%82%D9%88%DB%8C%D8%AA%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D9%85%DA%98%D9%87%20%D8%B3%D8%B1%DB%8C%D8%AA%D8%A7%20%D9%85%D8%AF%D9%84%20Eyelash%20lotion%20%D8%AD%D8%AC%D9%85%208%20%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/3e1py2n27862z.js | script |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/5d387cbdfe2669781648d0925c7b2b6dd7765c88_1622368155.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /dk-superweb-tabs-sdk.umd.min.js | script |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/aba7d5c96e30c96f68d9c835fd94579f26723cfd_1785337781.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /product/dkp-4403090/%D8%B3%D8%A7%D9%86%D8%AF%D8%A8%D8%A7%D8%B1%20%D8%B3%D9%88%D9%86%DB%8C%20%D9%85%D8%AF%D9%84%20HT-S100F/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/10tbhsezdh-56.js | script |  |  | 200
+    2 | GET | www.digikala.com | /_next/static/chunks/turbopack-3ntegtbvvn0g6.js | script |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-17751866/%DA%A9%D9%BE%D8%B3%D9%88%D9%84%20%D8%B1%D9%88%D8%BA%D9%86%20%D9%85%D8%A7%D9%87%DB%8C%20%D8%AD%D8%A7%D9%88%DB%8C%20EPA%20%D8%A8%D8%A7%D9%84%D8%A7%20%D8%A2%DA%A9%D9%88%D8%A7%D8%AA%DB%8C%DA%A9%20%DA%A9%D8%A7%D8%B1%D9%86%20%D8%A8%D8%B3%D8%AA%D9%87%2030%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/05ncz9f-nj0hp.js | script |  |  | 200
+    2 | GET | www.digikala.com | /wealth/fonts/iranyekan/woff/iranyekanwebbold.woff | font |  |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/3-srr-5itig4m.js | script |  |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/2xcp7w2ian37d.js | script |  |  | 200
+    2 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/1122.mp4 | media |  |  | 206
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/0yppqspeg9c_t.js | script |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/90c07e84b57002e37cfa85dbab73eee17a3705f0_1782217196.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /product/dkp-21329866/%D9%81%D9%88%D9%85%20%D8%B4%D8%B3%D8%AA%E2%80%8C%D9%88%D8%B4%D9%88%DB%8C%20%D8%B5%D9%88%D8%B1%D8%AA%20%D9%88%DB%8C%D8%AA%D8%A7%D9%84%DB%8C%D8%B1%20%D9%85%D8%AF%D9%84%20Activit%20%D9%85%D9%86%D8%A7%D8%B3%D8%A8%20%D8%A8%D8%B1%D8%A7%DB%8C%20%D9%BE%D9%88%D8%B3%D8%AA%20%DA%86%D8%B1%D8%A8%20%D9%88%20%D9%85%D8%AE%D8%AA%D9%84%D8%B7%20%D8%AD%D8%AC%D9%85%20200%20%D9%85%DB%8C%D9%84%DB%8C%E2%80%8C%D9%84%DB%8C%D8%AA%D8%B1/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /product/dkp-3392989/%D8%B3%D8%A7%D9%86%D8%AF%20%D8%A8%D8%A7%D8%B1%20%D8%B3%D9%88%D9%86%DB%8C%20%D9%85%D8%AF%D9%84%20HT-S20R/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/3wz5b1tcy7xhu.js | script |  |  | 200
+    2 | GET | www.digikala.com | /_next/static/chunks/turbopack-217di5q4neoqk.js | script |  |  | 200
+    2 | GET | www.digikala.com | /wealth/static/img/png/enamad.png | image |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/0089ac177434f2e49e7795af62fc6fa5c1f6cd16_1772032265.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /product/dkp-18657865/%D8%AC%D8%A7%D8%B1%D9%88%D8%A8%D8%B1%D9%82%DB%8C%202100%20%D9%88%D8%A7%D8%AA%20%D8%AF%D9%88%D9%88%20%D9%85%D8%AF%D9%84%20DVC-LH22R/ | document | variant_id,product_id |  | 301
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/0qj3shxlht7x0.js | script |  |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/09swd9ffkxkc8.js | script |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/84428c314aea3714054ab0fb1a5677acd3ae40e8_1794828401.jpg | image | x-oss-process |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-static/54419b9303246cde131fcb5b251b86f2ab4aeb71_1716833765.svg | image |  |  | 200
+    2 | GET | dkstatics-public.digikala.com | /digikala-products/4eeb83dd806b2f271a091c138b236f825f06d1ac_1772032015.jpg | image | x-oss-process |  | 200
+    2 | GET | www.digikala.com | /wealth/_next/static/chunks/3birtavvyysc3.js | script |  |  | 200
+    2 | GET | www.digikala.com | /product/dkp-16726390/%D9%85%D8%AC%D9%85%D9%88%D8%B9%D9%87%20%D8%B3%D9%87%20%D8%B9%D8%AF%D8%AF%DB%8C%20%DA%86%D9%85%D8%AF%D8%A7%D9%86%20%D8%AF%D9%84%D8%B3%DB%8C%20%D9%85%D8%AF%D9%84%20BONNEVILLE%20%DA%A9%D8%AF%202355985/ | document | variant_id,product_id |  | 301
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/common/font/digikala/variable/digikala.woff2 | font | v |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-adservice-banners/9fe115b731263f7f1b3b94aebe12a5983b24ebec_1795436762.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-adservice-banners/2766ca0bcc76138c2118e4f7db8a4a5278303c93_1795291801.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/product/15047607/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/15195605/ | xhr | product_id,variant_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-21253088/%D9%85%D8%A7%DB%8C%DA%A9%D8%B1%D9%88%D9%88%DB%8C%D9%88%2032%20%D9%84%DB%8C%D8%AA%D8%B1%20%D9%87%D8%A7%DB%8C%D8%A8%D9%88%D8%B1%DA%AF%20%D9%85%D8%AF%D9%84%20mw-6020 | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21739662/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/21329866/section/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /product/v1/products/5141204/cpc/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/11204176/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/15294553/section/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /product/v1/recommendations/581829/section/ | xhr | categoryId |  | 
+    1 | GET | www.digikala.com | /landing/lafarrerrcampaign05/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | www.digikala.com | /product/dkp-12109647 | document | variant_id |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/1536X195.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /wealth/static/img/png/landing/physical-gold.png | image |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-23125782/%D8%B3%D8%AA%20%D9%BE%D9%86%D8%AC%20%D8%B9%D8%AF%D8%AF%DB%8C%20%DA%86%D9%85%D8%AF%D8%A7%D9%86%20%DA%A9%D8%A7%D8%B1%DB%8C%D9%86%D8%A7%20%D9%85%D8%AF%D9%84%20crn%206969%20vip%20series | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-5331752/%D8%B3%D8%A7%D9%81%D8%AA%20%DA%98%D9%84%20%D8%A7%D9%85%DA%AF%D8%A7%20%DB%B3%20%DB%B1%DB%B0%DB%B0%DB%B0%20%D9%85%DB%8C%D9%84%DB%8C%20%DA%AF%D8%B1%D9%85%DB%8C%20%D9%86%DA%A9%D8%B3%D8%AA%D8%A7%DB%8C%D9%84%20%D9%88%DB%8C%D8%AA%D8%A7%D9%85%DB%8C%D9%86%D8%B2%20%D8%A8%D8%B3%D8%AA%D9%87%2060%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /wealth/static/img/svg/logoGold.svg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/bd9edd3a004081db573705c6713c374dbdd02b85_1606160220.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/Black-Friday-Template-Version-1-284x180.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/pin-location.svg | image |  |  | 
+    1 | GET | www.digikala.com | /product-list/plp_434902460/ | document | has_selling_stock,seller_types[0],seller_types[1],sort,camCode,bCode |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/1e3f9117006ea858f64f089c42adacdc2bd079e8_1795345687.jpg | image | x-oss-process |  | 
+    1 | GET | www.digikala.com | /statics/img/svg/appStores/sib-app.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/21139779/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21253088/cpc/ | xhr | categoryId |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-static/e0c05f5d67bf71be7605ec22cb3ee6be57d43e94_1746354561.svg | image |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/Best-Telescope-Offers-Digikala-Black-Friday-1405.webp | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-faq/71164c07b707f808fa5b40b24bfc3a6f733eda86_1642849113.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /landing/bf405-hb/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/21739662/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/480760b649c4692cce827976f02d5e8cd012733b_1771261689.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/0s71l2_zd_8o8.js | script |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/14170380/ | xhr | product_id,variant_id |  | 
+    1 | GET | www.digikala.com | /_next/static/chunks/turbopack-0sm29kb1ycyfd.js | script |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/digi.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/18226792/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /v1/product/21253088/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/Grand-theft-auto-vi-review-roundup-v2-284x180.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21253088/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21870108/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /product/dkp-16392433/%D9%BE%D8%AE%D8%B4%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D8%AE%D8%A7%D9%86%DA%AF%DB%8C%20%DA%AF%D8%B1%DB%8C%D9%86%20%D9%BE%DB%8C%20%D8%AC%DB%8C%20%D8%AF%D8%A8%D9%84%DB%8C%D9%88%20%D9%85%D8%AF%D9%84%20gsp-10280 | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/56a61e968b6ae0d4846af701d7cd7f4b823bc021_1789212437.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/98125e1a33212edcf1bf9455ec410b4c644f7519_1792312784.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/3i401_gqj09bt.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/1ab3e9522197a2942009852f98b2880cc9ba6ff9_1791104926.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/3xs82_ne9n6hv.js | script |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/plugins/captcha-bws/css/desktop_style.css | stylesheet | ver |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/05/%D8%AD%D8%B3%DB%8C%D9%86-%D8%A8%D8%B4%D8%A7%DA%AF%D8%B1%D8%AF%DB%8C-Hossein-Bashagerdi-60x60.png | image |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-includes/js/jquery/jquery.min.js | script | ver |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/15195605/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/8423381/ | xhr | product_id,variant_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-7995636/ | document | variant_id |  | 301
+    1 | POST | api.digikala.com | /v1/short-url/qdev4r/ | xhr |  | code | 200
+    1 | GET | www.digikala.com | /wealth/_next/static/chunks/1pj3psrdpnnc2.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a8772b9aaa7c2e0814ab2312b0282aef9169c242_1768213268.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/liverpool-1-1-60x60.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22286921/%D8%B3%D8%B1%D9%88%DB%8C%D8%B3%20%D8%AE%D9%88%D8%A7%D8%A8%20%D8%A7%D9%85%20%D8%AF%DB%8C%20%D8%A7%D9%81%20%D8%AF%D9%88%20%D9%86%D9%81%D8%B1%D9%87%20%D9%85%D8%AF%D9%84%20%D9%85%DB%8C%D9%86%D8%A7%20%D8%B3%D8%A7%DB%8C%D8%B2%20160%20*%20200%20%D8%B3%D8%A7%D9%86%D8%AA%DB%8C%E2%80%8C%D9%85%D8%AA%D8%B1%20%D9%85%D8%AC%D9%85%D9%88%D8%B9%D9%87%20%DB%B5%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/254039c89b6805e1ccf681ab615e5046279ae2af_1795110750.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-adservice-banners/463379624080e0967aa82cc5cc4ca3e79cb5a75e_1795444392.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/product/3839909/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/T&C.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/15294553/digipay-credit/ | xhr |  |  | 
+    1 | GET | www.digikala.com | /s/qdev4r/ | document |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/liverpool-1-1.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/7158804/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-21690804 | document | variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/581829/digipay-credit/ | xhr |  |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/983d54af38ba6b9da135604cb3558db28033108b_1600068665.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-3763005/%D8%B3%D8%B1%D9%88%DB%8C%D8%B3%20%D9%BE%D8%AE%D8%AA%20%D9%88%20%D9%BE%D8%B2%2012%20%D9%BE%D8%A7%D8%B1%DA%86%D9%87%20%D8%B9%D8%B1%D9%88%D8%B3%20%D9%85%D8%AF%D9%84%20%D9%88%DB%8C%DA%A9%D8%AA%D9%88%D8%B1%DB%8C%D8%A7 | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /wealth/landing/digital-gold/ | document |  |  | 200
+    1 | GET | api.digikala.com | /v1/faq/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/common/font/icon/icon-new.ttf | font | sdsd12f |  | 200
+    1 | GET | www.digikala.com | /wealth/_next/static/chunks/21lze5-g913n8.js | script |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-undefined | document |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/322c05444444122391bbf76e48ad152c498e03f9_1793191522.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3763005/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /product-list/plp_434918455/ | document | has_selling_stock,seller_types[0],seller_types[1],sort,camCode,bCode |  | 200
+    1 | GET | api.digikala.com | /v1/tab-widgets/4301/ | xhr | utm_campaign,utm_medium,utm_source |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/9de5424eaa92d27f76813937231b3d3437bb2074_1714378031.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/f1ee9977864ef405884b6129bfe00e8163c34c1a_1777875802.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/0uunw6abdk0lv.js | script |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/7438107/section/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /v1/product/16392433/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/b9a5c22616d4070b5b9849fb9e2dfe9d777b81a6_1794936681.jpg | image | x-oss-process |  | 
+    1 | GET | www.digikala.com | /product/dkp-16407611/%D8%B4%D8%B1%D8%A8%D8%AA%20%D9%BE%D8%AF%DB%8C%D8%A7%D8%A7%D8%B3%D9%84%DB%8C%D9%BE%20%D9%BE%D8%AF%DB%8C%D8%A7%D8%A8%D8%B3%D8%AA%20-%20150%C2%A0%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1 | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3536523/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/reza-amirkhani-death-biography.jpg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/c2a75f58fef1f83b35a1fe5c7f497dcb25baebe6_1754239977.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/026np3t0n45tg.js | script |  |  | 200
+    1 | GET | api.digikala.com | /v1/digiplus/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-16726390/%D9%85%D8%AC%D9%85%D9%88%D8%B9%D9%87%20%D8%B3%D9%87%20%D8%B9%D8%AF%D8%AF%DB%8C%20%DA%86%D9%85%D8%AF%D8%A7%D9%86%20%D8%AF%D9%84%D8%B3%DB%8C%20%D9%85%D8%AF%D9%84%20bonneville%20%DA%A9%D8%AF%202355985 | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /landings/prize-catcher/ | document |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/2cb4046c7004a964315ca4d1f4e660fa673c07f2_1602596050.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/bf92d738c81cded8430067b4f51b8d1e7f03fad7_1793452489.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /plus/landing/faqs/ | document |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3763005/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2015/08/Default_Profile_Picture1.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /wealth/static/img/svg/nav-chevron-down.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/2726511/ | xhr | product_id,variant_id |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2025/12/game-280-230-copy-1.jpg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/d931dd541df7c60712b21b40f7e2e66b1af68605_1786910205.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-static/a50b429b91d1d1ebbc025f97288d559faa847295_1795252191.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/21870108/section/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /statics/img/png/bug-report/Background.jpg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-adservice-banners/a6f0c6be219ca394733c1deb09d09ec88765e3d0_1795439728.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-23248636/ | document | variant_id |  | 301
+    1 | GET | api.digikala.com | /product/v1/products/18657865/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/53bb80510816ffea9a95b442c088c956a656e089_1792324157.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/desktop/landing-template-builder/landing-template-builder.min.css | stylesheet | ver |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/b92dc9a24a5bb825b350fb37c52da727690830fe_1746261039.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/bbd607ee3a612dda2baaf12ef62a8ff2dc8a83fa_1601999716.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/33673/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | / | document |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/21870108/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/18657865/cpc/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /v1/user/init/ | fetch | skip_keys[] |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/3029729ebd1daf8f95d88385e76c98a10be1e913_1713687573.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/f0cc2b8d3d94b3256c2fd82437900fbe7461fc0d_1786571878.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/15195605/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/18236685/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/3763005/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/c2db653cfabe404e1d0225ac31ffb68853ff7d31_1602596054.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/faq/questions/649/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/15047607/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/11204176/section/ | xhr | categoryId |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/67ca367ec0c496bb6f21061f710e102f7e58f2bb_1794936682.jpg | image | x-oss-process |  | 
+    1 | GET | www.digikala.com | /landing/bf405-gold/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/5188998/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/2kikxxhp2yzzd.js | script |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/Digikala-Logo-white-fa.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/17909796/digipay-credit/ | xhr |  |  | 
+    1 | GET | www.digikala.com | /wealth/_next/static/chunks/2a-1vatp7o514.js | script |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/common/libs/player/vjs/videojs-contrib-quality-levels.min.js | script | ver |  | 200
+    1 | GET | api.digikala.com | /discovery/api/v1/best-selling | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/15dbfb29a08ed9f26980594432c5b333a7a07a09_1790022630.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/af3e53c79ff92fe311e87d9fdbf1f9ad17f61231_1768213268.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-16407611/%D8%B4%D8%B1%D8%A8%D8%AA%20%D9%BE%D8%AF%DB%8C%D8%A7%D8%A7%D8%B3%D9%84%DB%8C%D9%BE%20%D9%BE%D8%AF%DB%8C%D8%A7%D8%A8%D8%B3%D8%AA%20-%20150%C2%A0%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1/ | document | variant_id,product_id |  | 301
+    1 | GET | api.digikala.com | /product/v1/products/21139779/ | xhr | product_id,variant_id |  | 200
+    1 | GET | www.digikala.com | /statics/img/png/landings/new-app//mobile-obj-l-1.webp | image |  |  | 200
+    1 | GET | www.digikala.com | /android-icon-192x192.png | other |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/09454dade1fd8631b621270cb29a5ab9ea7b9fee_1754486989.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/plugins/dkmag-tracker/assets/js/master.min.js | script | ver |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-reviews/ab4711a008e19ebe61e3855390a38297b6bb6dc7_1667804301.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /landing/bf405-international-day/ | document |  |  | 200
+    1 | GET | www.digikala.com | /page/contact-us/ | document |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/3392989/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/bc595a88f9d61a94aeb1dbe7c41a502020a2733d_1779544270.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-8092428/%DA%A9%D8%B1%D9%85%20%D9%85%D8%B1%D8%B7%D9%88%D8%A8%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D8%AB%D9%85%DB%8C%D9%86%20%D9%85%D8%AF%D9%84%20010%20%D8%AD%D8%AC%D9%85%20100%20%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1%20%D9%85%D8%AC%D9%85%D9%88%D8%B9%D9%87%203%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /v1/product/7438107/seller-vouchers/ | xhr |  |  | 
+    1 | GET | api.digikala.com | /product/v1/products/21139779/cpc/ | xhr | categoryId |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-static/75edc3abc7efbe28b327662b9c0234c7d04bb8a1_1794844406.png | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/18236685/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-16200986/%D9%87%D8%AF%D9%81%D9%88%D9%86%20%D8%A8%D9%84%D9%88%D8%AA%D9%88%D8%AB%DB%8C%20%D8%A7%D9%86%DA%A9%D8%B1%20%D9%85%D8%AF%D9%84%20r50i%20nc%20%D8%A8%D8%A7%20%D8%AD%D8%B0%D9%81%20%D9%86%D9%88%DB%8C%D8%B2%20%D9%81%D8%B9%D8%A7%D9%84%20(anc)%D8%8C%20%D8%AF%D8%B1%DA%AF%D8%A7%D9%87%20%D8%B4%D8%A7%D8%B1%DA%98%20usb%20type-c%D8%8C%20%D8%A8%D8%A7%D8%AA%D8%B1%DB%8C%20%D9%82%D8%A7%D8%A8%D9%84%20%D8%B4%D8%A7%D8%B1%DA%98%20%D8%AA%D8%A7%2045%20%D8%B3%D8%A7%D8%B9%D8%AA%D8%8C%20%D9%85%D9%82%D8%A7%D9%88%D9%85%20%D8%AF%D8%B1%20%D8%A8%D8%B1%D8%A7%D8%A8%D8%B1%20%D9%BE%D8%A7%D8%B4%D8%B4%20%D8%A2%D8%A8%20%D9%88%20%DA%AF%D8%B1%D8%AF%20%D9%88%20%D8%BA%D8%A8%D8%A7%D8%B1 | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /discovery/api/v1/recommendation/feed | xhr | page,token |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/b049a0488591e811aad4b122249fd8cb38c98c4f_1787419911.jpg | image | x-oss-process |  | 
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/21942857/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-static/0d072059918d0c22b88320554ce4b3e07d0472f2_1746354551.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/2726511/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/f146392a5f5bbc1e10b4d09754da8559c52b354b_1771935335.jpg | image | x-oss-process |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a417b2a92eb4c7b0f2b6a45e94d071090c156cc3_1788951102.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/696ee9b65a44bc5983053cc358545620169531d2_1788953358.jpg | image | x-oss-process |  | 
+    1 | GET | api.digikala.com | /product/v1/recommendations/16392433/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/33732/ | xhr | lazy_tabs |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/bd0e3fb3a9e5627326d4e5446078604d93b2064a_1789991166.jpg | image | x-oss-process |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/bc7d8ca7d91b0e7ecb97361669cf6f85470a46cb_1789219647.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/bb7f87b3557ed899e7e97d56663a5143fd01441f_1778071649.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/charger-mobile-black-friday-digikala.webp | image |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22409833/ | document | variant_id |  | 301
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/18657865/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /wealth/static/img/png/pwa.png | other |  |  | 
+    1 | GET | www.digikala.com | /product/dkp-4403090/%D8%B3%D8%A7%D9%86%D8%AF%D8%A8%D8%A7%D8%B1%20%D8%B3%D9%88%D9%86%DB%8C%20%D9%85%D8%AF%D9%84%20ht-s100f | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/16392433/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /faq/question/81/ | document |  |  | 200
+    1 | GET | www.digikala.com | /faq/ | document |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/png/landings/new-app//mobile-obj-r-2.webp | image |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/1uvm_hmrir49o.js | script |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21329866/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-content-creation-requests/f89562c103b56106fcb6003da47aa360e53a09ba_1781434235.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/product/5188998/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/avandfar05/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/29257/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/49f562bdb53f4a90f293eff47070e581fba82e74_1794999526.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-13272480/ | document | variant_id |  | 301
+    1 | GET | www.digikala.com | /plus/landing/ | document |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/666643d956b325215b690e9d467b158fb74f4ff6_1754242755.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/b084b0a619f50d5568841b24a00d23724aba8653_1795345449.jpg | image | x-oss-process |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/395d4e023d39d030ba6a135a655524a7fb80e2a4_1788622262.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22382183/ | document | variant_id |  | 301
+    1 | GET | api.digikala.com | /product/v1/products/8423381/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /product/dkp-8423381/%DA%A9%D9%BE%D8%B3%D9%88%D9%84%20%DA%98%D9%84%D8%A7%D8%AA%DB%8C%D9%86%DB%8C%20%D8%A7%D9%85%DA%AF%D8%A7%203%20%DB%8C%D9%88%D8%B1%D9%88%D9%88%DB%8C%D8%AA%D8%A7%D9%84%20%D8%A8%D8%B3%D8%AA%D9%87%2030%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    1 | GET | www.digikala.com | /product/dkp-20300292/ | document | variant_id |  | 301
+    1 | GET | www.digikala.com | /product/dkp-15572856/ | document | variant_id |  | 301
+    1 | GET | www.digikala.com | /_next/static/chunks/29h91ebu_bvw2.js | script |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/20832844/cpc/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /v1/dynamic-landing/bf405-hb/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-17751866/%DA%A9%D9%BE%D8%B3%D9%88%D9%84%20%D8%B1%D9%88%D8%BA%D9%86%20%D9%85%D8%A7%D9%87%DB%8C%20%D8%AD%D8%A7%D9%88%DB%8C%20epa%20%D8%A8%D8%A7%D9%84%D8%A7%20%D8%A2%DA%A9%D9%88%D8%A7%D8%AA%DB%8C%DA%A9%20%DA%A9%D8%A7%D8%B1%D9%86%20%D8%A8%D8%B3%D8%AA%D9%87%2030%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/18236685/section/ | xhr | categoryId |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/cd0feaf2d348e933aa1024baf3dee6205a596198_1788862919.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/b1a865b99bdabb78302d90ef6e450fa2f55f4986_1736574971.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/product/15294553/seller-vouchers/ | xhr |  |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/1fda08318ee5bea327cd8e91bc3186fe4f24bdaf_1792313777.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3516245/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/4f266625f02420b73f916208695268b9bf4d1e03_1769590533.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /landings/prize-catcher/_assets/index.astro_astro_type_script_index_0_lang.BbNbwMEd.js | script |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/10k_ri9f-rxoi.css | stylesheet |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/common/libs/player/vjs/video-js.min.css | stylesheet | ver |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21942857/digipay-credit/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/1ce4f49ee94c94d6e8c0623fcf6c37c419b35226_1779514830.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/iran-wallet-subsidy-284x180.jpg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-bellatrix/130a00e78033584293d622d93a5932d03304b125_1795359516.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /landing/musicapolo/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/desktop/js/theia-sticky-sidebar.min.js | script | ver |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/18657865/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/1121.mp4 | media |  |  | 206
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/37ea375a398a0b4c080e860959dc6a218793bef8_1792307773.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /wealth/_next/static/chunks/2af6p_tac1mql.js | script |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/18226792/cpc/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /v1/product/23125782/seller-vouchers/ | xhr |  |  | 
+    1 | GET | www.digikala.com | /product/dkp-5188998/%D9%82%D8%B1%D8%B5%20%D9%85%D9%86%DB%8C%D8%B2%DB%8C%D9%85%20%D9%BE%D9%84%D8%A7%D8%B3%20%D8%A2%DB%8C%D8%B2%D9%86%20%D9%88%20%D8%A86%20%20%D8%A8%D8%B3%D8%AA%D9%87%2060%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/1c8583372a510137c033c23f51d93d79bb1e3531_1785496394.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/3e7ywkykbx-1q.js | script |  |  | 200
+    1 | GET | www.digikala.com | /wealth/_next/static/chunks/2yj077wsi83wb.js | script |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-17361639 | document | variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-faq/9568ade64f04347f26b23565692d7575907981b3_1642849061.png | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/c2fd9c5f85fe8ffcba508c04f655263220d44e89_1624110848.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21253088/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/5141204/ | xhr | product_id,variant_id |  | 200
+    1 | GET | www.digikala.com | /product-list/plp_434918607/ | document | has_selling_stock,seller_types[0],seller_types[1],sort,camCode,bCode |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/23125782/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-bellatrix/b3371fb26bc0c3939995f7a0e08822e8aaa56fc5_1795292772.png | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/20832844/section/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /discovery/api/v1/journeys/nearby | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2016/12/Amir-Mirzaee-500x500-60x60.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21739662/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /landing/migelbf05/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/5188998/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-7995636 | document | variant_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-undefined/ | document |  |  | 301
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/common/libs/jquery-popupmanager/jquery.popupmanager.min.js | script | ver |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/1fab8u5wy-e3q.css | stylesheet |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/6aeef460f15378d6444042f82ccee3e839429175_1779544286.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/0_pl88kbphokz.js | script |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-15294553/%D8%B3%D8%B1%D9%85%20%D8%AA%D9%82%D9%88%DB%8C%D8%AA%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D8%A7%D8%A8%D8%B1%D9%88%20%D8%B3%D8%B1%DB%8C%D8%AA%D8%A7%20%D9%85%D8%AF%D9%84%20vitalize%20%D8%AD%D8%AC%D9%85%208%20%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1 | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/19336870/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /landings/prize-catcher/_assets/index.Bu2hP364.css | stylesheet |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/18226792/seller-vouchers/ | xhr |  |  | 
+    1 | GET | www.digikala.com | /product/dkp-3839909/%D8%A8%D8%AE%D8%A7%D8%B1%DB%8C%20%D8%A8%D8%B1%D9%82%DB%8C%20%D9%BE%D8%A7%D8%B1%D8%B3%20%D8%AE%D8%B2%D8%B1%20%D9%85%D8%AF%D9%84%20fh2000p | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/e67255201c9e38a62c9330f5bf7cee12a957b752_1786911496.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-13272480 | document | variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/344997afae5c02b5da7497053c327c1f7973d4b5_1723910738.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/3c5231f6c572d38cb5dfddb361950564eb298aae_1778569389.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22286921/%D8%B3%D8%B1%D9%88%DB%8C%D8%B3%20%D8%AE%D9%88%D8%A7%D8%A8%20%D8%A7%D9%85%20%D8%AF%DB%8C%20%D8%A7%D9%81%20%D8%AF%D9%88%20%D9%86%D9%81%D8%B1%D9%87%20%D9%85%D8%AF%D9%84%20%D9%85%DB%8C%D9%86%D8%A7%20%D8%B3%D8%A7%DB%8C%D8%B2%20160%20*%20200%20%D8%B3%D8%A7%D9%86%D8%AA%DB%8C%E2%80%8C%D9%85%D8%AA%D8%B1%20%D9%85%D8%AC%D9%85%D9%88%D8%B9%D9%87%20%DB%B5%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/64d6275e9eb9edb02a6737bbc2dbd250ba6a5b6c_1620722512.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/musicapolo/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/17909796/cpc/ | xhr | categoryId |  | 
+    1 | GET | www.digikala.com | /product/dkp-15572856 | document | variant_id |  | 200
+    1 | GET | www.digikala.com | /statics/img/prize-catcher/voucher.webp | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/8423381/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/3536523/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/8423381/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22797240/ | document | variant_id |  | 301
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/8def09f7ba9c99044ed5f6bb14ed9cf560689ecf_1793613454.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/d400504015f111236069848fc58b73f9f892b811_1795264266.png | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/18226792/digipay-credit/ | xhr |  |  | 
+    1 | GET | www.digikala.com | /digiclub/ | document |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/57550b86fd35fd8bd9d6651c98cbb960c732a81b_1738673796.jpg | image | x-oss-process |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/18d7d3bf2b04c751d3558e7604cf5623d20e0ae7_1624110843.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/8e79511fbe399b6c4e7c4672a5b66d4de1744594_1602596052.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /faq/question/83/ | document |  |  | 
+    1 | GET | www.digikala.com | /_next/static/chunks/3pmv-49iv-oow.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/3a42c9bc2f3fab94feac432dd7ddbf828b92cc4a_1765284669.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/02/Vahid_Golbad-60x60.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/16726390/section/ | xhr | categoryId |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/6fc6a753f31c18b1c71858beff533b8fd7f01d4e_1788955511.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/b50389c1d6172687ef33a47c2c59e299bed258be_1766423264.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/16726390/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/20832844/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /faq/question/79/ | document |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/2h6tq2wxbbo_3.js | script |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/png/landings/new-app//benefits-title-icon.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/faq/questions/81/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/105676533.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-7438107/%D9%BE%D9%88%D8%AF%D8%B1%20%D9%BE%D8%B1%D9%88%D8%AA%D8%A6%DB%8C%D9%86%C2%A0%D8%A8%D8%A7%20%D8%B7%D8%B9%D9%85%20%D8%B4%DA%A9%D9%84%D8%A7%D8%AA%20%DA%A9%D8%A7%D9%84%D9%87%20%D9%BE%D8%B1%D9%88%20-%201800%20%DA%AF%D8%B1%D9%85 | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/da0c10adac33410188ef19048cafc1d0940c4c31_1754253763.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/073c58a28c73613545507fe999024a69b569051c_1754244508.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/turbopack-367ceu44bbc1f.js | script |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-21714507/%D9%86%DB%8C%D9%85%20%D8%A8%D9%88%D8%AA%20%D9%85%D8%B1%D8%AF%D8%A7%D9%86%D9%87%20%DA%86%D8%B1%D9%85%20%D9%85%D8%B4%D9%87%D8%AF%20%D9%85%D8%AF%D9%84%20j6372 | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/barcelona-1.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/18236685/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /page/terms/ | document |  |  | 200
+    1 | GET | www.digikala.com | /landings/prize-catcher/_assets/live-events.KudIt1M9.js | script |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/0typndg6x5ov7.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/4ca5b4befb447e7cadbd70d9c043cf415fed8204_1794751073.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/common/libs/player/vjs/lang/fa.js | script | ver |  | 200
+    1 | GET | www.digikala.com | /product/dkp-20073130/%D8%B3%D8%B1%D9%85%20%D8%A2%D8%A8%D8%B1%D8%B3%D8%A7%D9%86%20%D9%BE%D9%88%D8%B3%D8%AA%20%D8%AA%DB%8C%D9%84%D8%B3%DB%8C%D9%85%20%D9%85%D8%AF%D9%84%20%D9%87%DB%8C%D8%A7%D9%84%D9%88%D8%B1%D9%88%D9%86%DB%8C%DA%A9%20%D8%A7%D8%B3%DB%8C%D8%AF%20%D9%88%20%D8%B1%D9%88%D9%86%DB%8C%DA%A9%20%D8%A7%D8%B3%DB%8C%D8%AF%20%DA%A9%D8%AF%20b5%20%D9%85%D9%86%D8%A7%D8%B3%D8%A8%20%D8%A8%D8%B1%D8%A7%DB%8C%20%D8%A7%D9%86%D9%88%D8%A7%D8%B9%20%D9%BE%D9%88%D8%B3%D8%AA%20%D8%AD%D8%AC%D9%85%2030%20%D9%85%DB%8C%D9%84%DB%8C%E2%80%8C%D9%84%DB%8C%D8%AA%D8%B1 | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/2jf9bkazy013g.js | script |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/16392433/cpc/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/5331752/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/desktop/js/theme.min.js | script | ver |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/black-friday-1405-car-offer-284x180.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/08/%D8%AD%D8%B3%DB%8C%D9%86-%D8%A7%DA%A9%D8%A8%D8%B1%DB%8C-60x60.jpg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-adservice-banners/2739b1b59ee54d518d96047fe293c9a28cacc0fb_1795011946.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/7158804/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/f23f47142bd384c5da27afd1c2b97656c08173f8_1795105644.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/product/17909796/seller-vouchers/ | xhr |  |  | 
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/3839909/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/92ab95bc1628569a1ceb636ea46b7f51b4f6f806_1787431826.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /users/login/ | document | backUrl |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/fdfb3a99f4863e802f4a234f941e95e877a5b65f_1795110801.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/5141204/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /landing/avandfar05/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | www.digikala.com | /product/dkp-715347/ | document | variant_id |  | 301
+    1 | GET | www.digikala.com | /product/dkp-5188998/%D9%82%D8%B1%D8%B5%20%D9%85%D9%86%DB%8C%D8%B2%DB%8C%D9%85%20%D9%BE%D9%84%D8%A7%D8%B3%20%D8%A2%DB%8C%D8%B2%D9%86%20%D9%88%20%D8%A86%20%20%D8%A8%D8%B3%D8%AA%D9%87%2060%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/33790/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /landing/kasraproducts/ | document | utm_source,utm_medium,utm_campaign,promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/7158804/section/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22016847 | document | variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/8ea394f67b60d893da0753680b7db06e5a1e99fe_1789211199.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/6e29759364a7fdbb3d066f2181481334e5fe9fc8_1794665234.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/bf05-dkstores/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/23125782/digipay-credit/ | xhr |  |  | 
+    1 | GET | www.digikala.com | /wealth/static/img/png/landing/call-center.webp | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/b76655ec1c6722ecd3914e7ba22f2ea470fa002b_1780685371.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/7158804/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /product/dkp-3392989/%D8%B3%D8%A7%D9%86%D8%AF%20%D8%A8%D8%A7%D8%B1%20%D8%B3%D9%88%D9%86%DB%8C%20%D9%85%D8%AF%D9%84%20ht-s20r | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/40ztaw520g9v9.js | script |  |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/34288/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-faq/7321abdaeb14845ec224a56a50cce91c22ee666a_1642849139.png | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a1a10c6c356d39d75073bf294e33b8682501d931_1740118879.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-bellatrix/e802db13b89c9e1b9b8f91de88861e84145bb802_1794037081.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-3006653 | document | variant_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-3006653/ | document | variant_id |  | 301
+    1 | GET | api.digikala.com | /product/v1/products/16200986/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/2005n7_yhg_qd.js | script |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/16200986/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/appStores/coffe-bazzar.svg | image |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/05/%D8%A2%D8%A8%D8%A7%D9%86-%D9%81%D8%B1%D8%B2%DB%8C%D8%A7%D9%86-Aban-Farziyan-60x60.png | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/18657865/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/YTDown.com_YouTube_Media_5jpe6-vADfk_Ice-Age-Boiling-Point-Official-Trailer-In-Theaters-February-5-2027_002_720p.mp4 | media |  |  | 206
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/16222823/ | xhr |  |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/5d8efed5f3fffb736617ac268c729ba6274617b8_1792319331.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/16726390/cpc/ | xhr | categoryId |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/d0e605695a9ca6b1fd3d8c7b89db9ef3a1fd7cd9_1795242706.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/Spiral-rings-and-Persian-lettering.png | image |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-15047607/ | document | variant_id |  | 301
+    1 | GET | api.digikala.com | /v1/product/21139779/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-17361639/ | document | variant_id |  | 301
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/85f116ffbc57d19acd83e3a481a23289de9bb39c_1794838695.jpg | image | x-oss-process |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-bellatrix/5ef2bbd0315890b9e23561c8422785a34d1d6010_1795292507.png | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/0851b837f85a35e831b491c64c38d8162972a1f9_1781012173.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-bellatrix/2d02b37955dd642788ee198fbf6592f10e0328c2_1795292798.png | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/5c2d6ac7251e2e62b26e12344968c946eeaa2b78_1786910227.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/ee908bc82d40dc860f70986d1d6906fe693dd72b_1792310870.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/landing/application/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/20073130/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /landing/BF405-molt/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/7b352d705a38ec11915527621fbde343d57b9a94_1782944226.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-20832844/%D9%85%D8%A7%D9%86%DB%8C%D8%AA%D9%88%D8%B1%2027%20%D8%A7%DB%8C%D9%86%DA%86%20%D8%A7%D9%84%20%D8%AC%DB%8C%20%D9%85%D8%AF%D9%84%2027u411a-b%20%D8%A8%D8%A7%20%D9%88%D8%B6%D9%88%D8%AD%20full%20hd%20%D9%BE%D9%86%D9%84%20ips%20%D9%88%20%D9%86%D8%B1%D8%AE%20%D8%A8%D9%87%20%D8%B1%D9%88%D8%B2%D8%B1%D8%B3%D8%A7%D9%86%DB%8C%20120%20%D9%87%D8%B1%D8%AA%D8%B2 | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-reviews/8cbbd83580ea5174194c19533f2d6842a4cbe065_1667804273.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/desktop/js/flickity.pkgd.min.js | script | ver |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/plugins/captcha-bws/css/front_end_style.css | stylesheet | ver |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/1a181vjcoaj_g.js | script |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/barcelona-1-60x60.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/digiplus/landing/logo-type.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/7158804/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/19336870/section/ | xhr | categoryId |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/323b666dd89460ee257429f4320d344956525a99_1792324480.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21139779/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-14170380/%D8%A7%D8%B3%20%D8%A7%D8%B3%20%D8%AF%DB%8C%20%D8%A7%DB%8C%D9%86%D8%AA%D8%B1%D9%86%D8%A7%D9%84%20pcie%20gen3%20x4%20%D8%B3%DB%8C%D9%84%DB%8C%DA%A9%D9%88%D9%86%20%D9%BE%D8%A7%D9%88%D8%B1%20%D9%85%D8%AF%D9%84%20p34a60%20%D8%B8%D8%B1%D9%81%DB%8C%D8%AA%20512%20%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/turbopack-2tgbj7xyfv36c.js | script |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/21329866/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/ad8cc613b3f4f0076a6ab6186bf2987fd800a158_1795349108.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/05/Shahin-Mohammadi-profile-picture-60x60.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/turbopack-3kfuq9ws5phgz.js | script |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-581829/%D8%B1%DB%8C%D9%85%D9%84%20%D8%AD%D8%AC%D9%85%20%D8%AF%D9%87%D9%86%D8%AF%D9%87%20%DA%A9%D8%A7%D9%84%DB%8C%D8%B3%D8%AA%D8%A7%20%D9%85%D8%AF%D9%84%20extend%20volume | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /wealth/static/img/png/asset-pattern.webp | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/5141204/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/15047607/ | xhr | variant_id |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/2-q4bl6u40rcz.js | script |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/11204176/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/968cb96844d3eafa2d3706a86ab33331d1eb8a1a_1786910170.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/pin-nearby.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/11204176/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/3763005/section/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2021/10/20201129_214940-60x60.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3536523/ | xhr | product_id,variant_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-21714507/%D9%86%DB%8C%D9%85%20%D8%A8%D9%88%D8%AA%20%D9%85%D8%B1%D8%AF%D8%A7%D9%86%D9%87%20%DA%86%D8%B1%D9%85%20%D9%85%D8%B4%D9%87%D8%AF%20%D9%85%D8%AF%D9%84%20j6372/ | document | variant_id,product_id |  | 301
+    1 | GET | api.digikala.com | /product/v1/products/581829/cpc/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/33547/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/21253088/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/ | document |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a33f0182375c88072be7b0c076cb8143d6481405_1771756164.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/product/20073130/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/c1a9ef194fd5473275db7160a24f180f168130c5_1792312433.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/appStores/pwa.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/2726511/section/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /product/dkp-16222823/%D8%B3%DA%A9%D9%87%20%DA%AF%D8%B1%D9%85%DB%8C%20%D8%B7%D9%84%D8%A7%2018%20%D8%B9%DB%8C%D8%A7%D8%B1%20%D9%BE%D8%A7%D8%B1%D8%B3%DB%8C%D8%A7%D9%86%20%D9%BE%D8%A7%DB%8C%D8%AA%D8%AE%D8%AA%20%D9%85%D8%AF%D9%84%20%D9%BE%D8%A7%D8%B1%D8%B3%DB%8C%D8%A7%D9%86%20%DA%A9%D8%AF%20t110 | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/fb7d36b209790656b1a61a8dea43676351369629_1719643419.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/21870108/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/20073130/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/02/shared-image-3-60x60.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/2gskowkgmx_le.css | stylesheet |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3839909/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/25e595ae0611ad8ea848250f252f77e85aed1ed3_1795107591.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/common/libs/player/vjs/video.min.js | script | ver |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/3392989/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/33264/ | xhr | lazy_tabs |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/5331752/section/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/jakodi-v3-1-2.mp4 | media |  |  | 206
+    1 | GET | www.digikala.com | /_next/static/chunks/179f41q04_8-k.js | script |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/23125782/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /prize-catcher/api/v1/widget/me | fetch |  |  | 401
+    1 | GET | www.digikala.com | /product/dkp-8092428/%DA%A9%D8%B1%D9%85%20%D9%85%D8%B1%D8%B7%D9%88%D8%A8%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D8%AB%D9%85%DB%8C%D9%86%20%D9%85%D8%AF%D9%84%20010%20%D8%AD%D8%AC%D9%85%20100%20%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1%20%D9%85%D8%AC%D9%85%D9%88%D8%B9%D9%87%203%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    1 | GET | www.digikala.com | /faq/question/649/ | document |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/5331752/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/landing/seller-introduction/cover-tile-brand.svg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/71df3618cf59433a08c9cbc242c31f519f630fe4_1788452879.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/13c2932781e1a5276ee5712cd08e6230ef7b5681_1787428822.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/bf405-international-day/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21942857/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/bfa8c60878097f09d3e628b257df11b6d14523c4_1792309708.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /best-selling/ | document |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-18657865/%D8%AC%D8%A7%D8%B1%D9%88%D8%A8%D8%B1%D9%82%DB%8C%202100%20%D9%88%D8%A7%D8%AA%20%D8%AF%D9%88%D9%88%20%D9%85%D8%AF%D9%84%20dvc-lh22r | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/WHY-IS_1-284x180.jpg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-bellatrix/873d19344df3c3f967d298ed1f36aac40cd09659_1795292347.png | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/11204176/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /wealth/_next/static/chunks/3iveavyog6uu_.js | script |  |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/645663c0a038ba7c40500fb5d2c4367a297d476f_1723307136.png | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/14170380/ | xhr |  |  | 
+    1 | GET | api.digikala.com | /product/v1/products/18236685/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /v1/info/terms/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/3462a868f01fde667657baad8019a883e189d0f5_1792325944.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/15294553/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-bellatrix/4b32d9b0ffc9cdab3e2d4da8220f1312f6363f98_1795285158.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /wealth/manifest.json | manifest |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-17909796/%D9%85%D8%A7%DB%8C%DA%A9%D8%B1%D9%88%D9%88%DB%8C%D9%88%201450-1550%20%D9%88%D8%A7%D8%AA%2032%20%D9%84%DB%8C%D8%AA%D8%B1%20%D9%87%D8%A7%DB%8C%D8%A8%D9%88%D8%B1%DA%AF%20%D9%85%D8%AF%D9%84%20mw-6060%20%D8%AF%D8%A7%D8%B1%D8%A7%DB%8C%2010%20%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D9%87%20%D9%BE%D8%AE%D8%AA | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/20832844/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/5188998/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/2726511/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /product/dkp-5331752/%D8%B3%D8%A7%D9%81%D8%AA%20%DA%98%D9%84%20%D8%A7%D9%85%DA%AF%D8%A7%20%DB%B3%20%DB%B1%DB%B0%DB%B0%DB%B0%20%D9%85%DB%8C%D9%84%DB%8C%20%DA%AF%D8%B1%D9%85%DB%8C%20%D9%86%DA%A9%D8%B3%D8%AA%D8%A7%DB%8C%D9%84%20%D9%88%DB%8C%D8%AA%D8%A7%D9%85%DB%8C%D9%86%D8%B2%20%D8%A8%D8%B3%D8%AA%D9%87%2060%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    1 | GET | api.digikala.com | /product/v1/products/21329866/cpc/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /v1/product/20832844/seller-vouchers/ | xhr |  |  | 
+    1 | GET | api.digikala.com | /product/v1/products/15195605/cpc/ | xhr | categoryId |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-faq/5a67016f3394a832f44ab07bae1151cf017a6cd6_1642849128.png | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21329866/digipay-credit/ | xhr |  |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/035b418501ac8dd6341792d57729900932e9d5da_1792319878.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/3839909/section/ | xhr | categoryId |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/ab060f5d9d6327ae149f856b9271fc31570e4f6e_1786280444.jpg | image | x-oss-process |  | 
+    1 | GET | api.digikala.com | /product/v1/recommendations/3536523/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/15294553/cpc/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /v1/product/21739662/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/foolad-sepahan-1.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-20271626/ | document | variant_id |  | 301
+    1 | GET | dkstatics-public.digikala.com | /digikala-faq/f2800d3ff4d3cbf5bee283c13f0eb8387a8d9d9c_1642849094.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /firebase-messaging-sw.js | other |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/16392433/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/3763005/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/23125782/cpc/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /v1/product/3536523/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /page/privacy/ | document |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/86b0a32c92a5cf1d2a6aa429afef44661f5f285b_1754298684.jpg | image | x-oss-process |  | 
+    1 | GET | www.digikala.com | /product/dkp-715347 | document | variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/893514c15ab76813c4ae6286403b12f2bc7a1785_1772031932.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/faq/questions/79/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/3392989/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/appStores/download-apk-badge.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/33728/ | xhr | lazy_tabs |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/3a4712as-swvk.js | script |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/3516245/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/34317/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2018/02/Esfandiari-60x60.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/2726511/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-includes/js/jquery/jquery-migrate.min.js | script | ver |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/b7cc3d9322de6ee95b0cd72e424e94e635071204_1793610360.jpg | image | x-oss-process |  | 
+    1 | GET | www.digikala.com | /product/dkp-20300292 | document | variant_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22409833 | document | variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/5188998/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/16222823/ | xhr | product_id,variant_id |  | 
+    1 | GET | api.digikala.com | /product/v1/products/16726390/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /page/bug-report/ | document |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3516245/cpc/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/20073130/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/1f7ae2d9c2f8a50f3a81c13696012afb7cc649e3_1791808863.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-18987848/%DB%8C%D8%AE%20%D8%B3%D8%A7%D8%B2%20%D9%86%D9%88%D8%AA%D8%B1%DB%8C%DA%A9%D9%88%DA%A9%20%D9%85%D8%AF%D9%84%20nc-icy510s | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/desktop/css/theme.min.css | stylesheet | ver |  | 200
+    1 | GET | api.digikala.com | /v1/product/16726390/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /superapp/dkstyle/ | document |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/16200986/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /product/dkp-18236685/%DA%A9%D9%81%D8%B4%20%D9%BE%DB%8C%D8%A7%D8%AF%D9%87%E2%80%8C%D8%B1%D9%88%DB%8C%20%D8%B7%D8%B1%D8%AD%20%D8%A7%D8%B3%DA%A9%DA%86%D8%B1%D8%B2%20%D9%85%D8%AF%D9%84%201026 | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/Spiral-rings-and-Persian-lettering-60x60.png | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/2b496e63aa4c4c61413ec25e6943d3e54249f152_1725865169.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a3dc336cdc8fc17f255a79346e3a8c5a7aa46d48_1787418072.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/20832844/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/17909796/section/ | xhr | categoryId |  | 
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/28518/ | xhr | lazy_tabs |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/06/neda-kalantari-60x60.jpg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/748fd7170f18e4ab9a907401e8dcfeab6bf559f1_1766423330.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/ef16da2da2c18c238424ea3365aba527e26e93a4_1792313803.jpg | image | x-oss-process |  | 
+    1 | GET | api.digikala.com | /v1/dynamic-landing/bf405-hw/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/5331752/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/7a13912aa9b9f99c31e5698eb5efc1a4c7346196_1795110821.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/699f67a9153c3a3f377f7e2990bd847acebfe0f7_1780915278.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/product/15195605/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/7438107/digipay-credit/ | xhr |  |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/fdeff37ca6545ea1e661a582fcf01578cf778f39_1794520683.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/19336870/digipay-credit/ | xhr |  |  | 
+    1 | GET | api.digikala.com | /v1/product/8423381/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/%D8%A7%D8%B5%D9%84%DB%8C-3-284x180.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /faq/question/82/ | document |  |  | 200
+    1 | GET | www.digikala.com | /landings/seller-introduction/ | document |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/20073130/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /v1/product/5331752/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/9bca5260bc1ce92ca8b61c4d8f7bf204f707bb27_1760536853.jpg | image | x-oss-process |  | 
+    1 | GET | www.digikala.com | /landing/bf405-he/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/15047607/cpc/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/kasraproducts/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/1qdfecur2kf2y.js | script |  |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/bf405-gold/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/21253088/section/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/best-movies-about-cyber-warfare-284x180.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/21139779/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/16200986/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3392989/ | xhr | product_id,variant_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-15047607 | document | variant_id |  | 200
+    1 | GET | www.digikala.com | /statics/img/png/amazing/incredible.webp | image |  |  | 
+    1 | GET | api.digikala.com | /v1/product/16200986/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/c0412c7462e5fc671d093ff3f1ccda1f092a625c_1787419284.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/dcd1ac326e86a09f99af4a0d152c2402b686e66e_1746261039.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/16f123f9c59c671f8ee4dfb80f90ae5458b3c69b_1787670326.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/3_ym2w7qe-0vv.js | script |  |  | 
+    1 | GET | www.digikala.com | /product/dkp-7158804/%D9%82%D8%B1%D8%B5%20%D9%88%DB%8C%D8%AA%D8%A7%D9%85%DB%8C%D9%86%20d3-1000%20%D9%88%D8%A7%D8%AD%D8%AF%DB%8C%20%20%D8%A8%D8%B3%D8%AA%D9%87%2060%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/bf405-hotdeal90/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/129d606949f222476dadc2d29483bf70603de28d_1794914651.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/generated-image-76186863-8e55-409d-9b7f-f8c0e57cd3fe.png | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/21942857/section/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /wealth/favicon-v3.ico | other |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/15195605/digipay-credit/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/cdd6ca122170d01f97a85ddb51e4c94880445c16_1790770719.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /nearby-store/ | document |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/32fcd07a380a44c4b219c27340ce165509de3e78_1635866186.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-5141204/%D9%82%D8%B1%D8%B5%20%DA%A9%D9%84%D8%A7%DA%98%D9%86%20%DA%AF%D9%84%D8%AF%20833%20%D9%85%DB%8C%D9%84%DB%8C%E2%80%8C%DA%AF%D8%B1%D9%85%20%D8%AD%D8%A7%D9%88%DB%8C%20%DA%A9%D9%84%D8%A7%DA%98%D9%86%20%D9%87%DB%8C%D8%AF%D8%B1%D9%88%D9%84%DB%8C%D8%B2%20%D9%86%D9%88%D8%B9%201%20%D9%88%203%D8%8C%20%D8%B6%D8%AF%20%DA%86%D8%B1%D9%88%DA%A9%20%D9%88%20%D8%AC%D9%88%D8%A7%D9%86%E2%80%8C%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D9%BE%D9%88%D8%B3%D8%AA%D8%8C%20%D8%B1%D9%81%D8%B9%20%D8%AA%DB%8C%D8%B1%DA%AF%DB%8C%20%D9%88%20%DA%A9%D9%85%DA%A9%20%D8%A8%D9%87%20%D8%AF%D8%B1%D9%85%D8%A7%D9%86%20%D9%84%DA%A9%20%D9%86%D8%A7%D8%B4%DB%8C%20%D8%A7%D8%B2%20%D8%A2%D9%81%D8%AA%D8%A7%D8%A8%D8%8C%20%D8%A8%D8%B3%D8%AA%D9%87%2060%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /v1/product/21942857/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/landing/seller-introduction/cover-tile-instagram.svg | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/faq/questions/82/ | xhr |  |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/9525a40c84ce141f9050b8e392631e357ca27798_1792310469.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/2726511/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3839909/digipay-credit/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/cf0841c539a7e54bc111060683c06b7ceb87a26e_1738672505.jpg | image | x-oss-process |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/5d387cbdfe2669781648d0925c7b2b6dd7765c88_1622368156.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /wealth/_next/static/chunks/04wamsdn8vdoh.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/6c3e6610b35000cebe349994d6e65b927076dd0b_1792323299.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22872152/%D9%85%D8%A7%D9%86%DB%8C%D8%AA%D9%88%D8%B1%20%DA%AF%DB%8C%D9%85%DB%8C%D9%86%DA%AF%2024%20%D8%A7%DB%8C%D9%86%DA%86%20%D8%A7%D9%84%20%D8%AC%DB%8C%20%D9%85%D8%AF%D9%84%2024g411a-b%20%D8%A8%D8%A7%20%D9%88%D8%B6%D9%88%D8%AD%20fhd%20%D9%BE%DB%8C%DA%A9%D8%B3%D9%84%D8%8C%20%D9%BE%D9%86%D9%84%20ips%20%D9%88%20%D9%86%D8%B1%D8%AE%20%D8%A8%D9%87%E2%80%8C%D8%B1%D9%88%D8%B2%D8%B1%D8%B3%D8%A7%D9%86%DB%8C%20144%20%D9%87%D8%B1%D8%AA%D8%B2 | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/16392433/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3536523/digipay-credit/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /landing/bf405-fashion/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | api.digikala.com | /v1/product/21329866/seller-vouchers/ | xhr |  |  | 
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/cream-deals.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/5331752/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/prize-catcher/hero-pattern.webp | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/b4ade9aa0903fffd21c96ea5f21acbf8eb7b19e7_1794999519.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21870108/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/7438107/cpc/ | xhr | categoryId |  | 
+    1 | GET | www.digikala.com | /product/dkp-21690804/ | document | variant_id |  | 301
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a1dd6c621c15b772f1949a152d98aa8adf0dc3cf_1782037018.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /discovery/api/v1/widget-factory/widget/13 | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/c36f5ef23a910da23006a30142f5dbb99bd40b11_1624110846.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/11204176/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /wealth/my-assets/ | document |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-14673714/%D9%85%D8%AD%D9%84%D9%88%D9%84%20%D8%AA%D9%82%D9%88%DB%8C%D8%AA%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D9%85%DA%98%D9%87%20%D8%B3%D8%B1%DB%8C%D8%AA%D8%A7%20%D9%85%D8%AF%D9%84%20eyelash%20lotion%20%D8%AD%D8%AC%D9%85%208%20%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1 | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-21942857/%D8%B9%D8%B7%D8%B1%20%D8%AC%DB%8C%D8%A8%DB%8C%20%D8%B2%D9%86%D8%A7%D9%86%D9%87%20%D9%88%20%D9%85%D8%B1%D8%AF%D8%A7%D9%86%D9%87%20%D9%85%D8%AF%D9%84%20%DA%A9%D9%BE%D8%B3%D9%88%D9%84%DB%8C%20%D8%A8%D8%A7%20%D8%B1%D8%A7%DB%8C%D8%AD%D9%87%20%D8%AE%D9%86%DA%A9%20%D9%88%20%D8%B7%D8%A8%DB%8C%D8%B9%D8%AA%20%D8%AD%D8%AC%D9%85%200.3%20%D9%85%DB%8C%D9%84%DB%8C%E2%80%8C%D9%84%DB%8C%D8%AA%D8%B1%20%D9%85%D8%AC%D9%85%D9%88%D8%B9%D9%87%203%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/b9a4c8130772c5738396a18eb412438e0f9d3e57_1714378030.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/1081867-iceageboilingpointtrl12-1280-1-60x60.webp | image |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/typography/incredible.svg | image |  |  | 
+    1 | GET | api.digikala.com | /product/v1/products/21739662/cpc/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /discovery/api/v1/widget-factory/widget/593 | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/bae0e9eea954e4e6aef14067da8454e16f6cd73c_1792309009.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/real-1-60x60.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/581829/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /v1/product/18236685/seller-vouchers/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/3516245/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/4b1c4ebd78ec2def5a4e6ac2c904bf8274cb7782_1795345362.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-21139779/%D8%B4%D9%85%D8%B4%20%D8%B7%D9%84%D8%A7%2018%20%D8%B9%DB%8C%D8%A7%D8%B1%20%D9%88%D9%86%D9%88%D8%B3%20%DA%AF%D9%84%D8%AF%20%D9%85%D8%AF%D9%84%20%DA%AF%D9%84%20%D8%B1%D8%B2/ | document | variant_id,product_id |  | 301
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/17909796/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/92239efb2d306ebc61465f7e7eac8ba614cecaac_1792322563.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/05b061b1f3b89449f1c9f5e0262c5fca8fae3903_1792913661.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/common/libs/player/video-player-init-1.min.js | script | ver |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21870108/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/16726390/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/18226792/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-23248636 | document | variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/5f9bcbdadee915c1158fad1c2a230a5a88af9a0a_1777959288.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2024/08/Fateme_Hassan_Aghaei-60x60.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/18657865/section/ | xhr | categoryId |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/46ab3655fdd1d85fd32aa059eb6b677d68545a30_1792311706.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/migelbf05/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/3afcca7af179d16264d6d13b7786319def9355f3_1785337780.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2021/07/amirnikroo-60x60.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/real-1.jpg | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3763005/ | xhr | product_id,variant_id |  | 200
+    1 | GET | www.digikala.com | /landing/bf405-hw/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | www.digikala.com | /product/dkp-3536523/%D9%82%D8%B1%D8%B5%20%D9%88%DB%8C%D8%AA%D8%A7%D9%85%DB%8C%D9%86%20%D8%AF%203%20health%20%D8%A7%DB%8C%D8%AF%20%D8%A8%D8%B3%D8%AA%D9%87%2030%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/3516245/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3516245/digipay-credit/ | xhr |  |  | 200
+    1 | GET | tracker.digikala.com | /assets/js-tracker.js | script |  |  | 
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/common/font/digikala/variable/digikala.woff | font |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/119e6049620d80511f620e4593f8c7d5d6e2e554_1762352762.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-3516245/%DA%A9%D9%BE%D8%B3%D9%88%D9%84%20%D9%85%DA%AF%D9%86%DB%8C%D9%81%D9%88%D8%B1%D8%AA%20%D9%87%D9%88%D9%84%DB%8C%D8%B3%D8%AA%DB%8C%DA%A9%D8%A7%20%D8%A8%D8%B3%D8%AA%D9%87%2032%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a17104a8fbab3f0847e78445f0087a5496747e29_1722247424.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/12505712c1ea499b652923ee6c1fc794f73d016c_1794984056.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/33334/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/1r2c7vk__r_0v.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/1865ce88dd32209ff5c1a74f527b201dcce5f3cd_1624110844.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22382183 | document | variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/a7d6f41104b34400c4433ea218586158df00eaaf_1795292351.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-3763005/%D8%B3%D8%B1%D9%88%DB%8C%D8%B3%20%D9%BE%D8%AE%D8%AA%20%D9%88%20%D9%BE%D8%B2%2012%20%D9%BE%D8%A7%D8%B1%DA%86%D9%87%20%D8%B9%D8%B1%D9%88%D8%B3%20%D9%85%D8%AF%D9%84%20%D9%88%DB%8C%DA%A9%D8%AA%D9%88%D8%B1%DB%8C%D8%A7/ | document | variant_id,product_id |  | 301
+    1 | GET | www.digikala.com | /landings/prize-catcher/_assets/modal.2ft4slhg.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/45d62faf785244c82a40364755a1552d5aa602d6_1755772060.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/7438107/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/96591bcdb5d8ae35a00b2ff6e25d5b428e60e079_1792995177.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-2726511/%DA%A9%D9%88%D9%84%D8%B1%DA%AF%D8%A7%D8%B2%DB%8C%2024%20%D9%87%D8%B2%D8%A7%D8%B1%20%D8%A7%DB%8C%D9%86%D9%88%D8%B1%D8%AA%D8%B1%20%DA%AF%D8%B1%DB%8C%D9%86%20%D9%85%D8%AF%D9%84%20gws-h24p1t1a%20 | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22797240 | document | variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a0aba921f29c3ed5838bc6f14ba36196b8de8d58_1793610350.jpg | image | x-oss-process |  | 
+    1 | GET | www.digikala.com | /landings/new-app/ | document |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3392989/cpc/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3392989/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/15294553/ | xhr | product_id,variant_id |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/landing/seller-introduction/cover-tile-other.svg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/01f26b1840dec9170420f5d0798e7364a32eccb5_1787696032.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /sw9.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/f1a9071786bf7c4ee966c2231776bf3189b7116e_1792308539.jpg | image | x-oss-process |  | 
+    1 | GET | www.digikala.com | /landings/prize-catcher/_assets/dist.CD0QYknc.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-reviews/38b9126fa0f3f9fe85572eb1ffab0d66437a0a30_1667804237.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-22016847/ | document | variant_id |  | 301
+    1 | GET | www.digikala.com | /_next/static/chunks/078v281gtckvv.css | stylesheet |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/21942857/cpc/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /landing/bf405-hotdeal90/ | document | promo_name,promo_position,promo_creative,bCode |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/turbopack-01_lkh6m4woei.js | script |  |  | 200
+    1 | GET | www.digikala.com | /wealth/static/img/png/landing/Goldbar-Desktop.webp | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/19336870/cpc/ | xhr | categoryId |  | 
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/black-friday-accesstory-deals.jpg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/f21496c35d3f22f2388063f0949a42c25f394316_1790024621.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /brand/mashad-leather/ | document | has_selling_stock,no_redirect,seller_types[0],seller_types[1],sort,camCode,bCode |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/a29b2db49bf51154b7bf9b0d12be0000eb59f638_1795015001.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /discovery/api/v1/home | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/3bbdbaa0da763501ba6e172f5b03bc294b953326_1723548695.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-8423381/%DA%A9%D9%BE%D8%B3%D9%88%D9%84%20%DA%98%D9%84%D8%A7%D8%AA%DB%8C%D9%86%DB%8C%20%D8%A7%D9%85%DA%AF%D8%A7%203%20%DB%8C%D9%88%D8%B1%D9%88%D9%88%DB%8C%D8%AA%D8%A7%D9%84%20%D8%A8%D8%B3%D8%AA%D9%87%2030%20%D8%B9%D8%AF%D8%AF%DB%8C | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /wealth/static/img/png/landing/call-center-bg.webp | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/17909796/ | xhr | product_id,variant_id |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/lafarrerrcampaign05/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/18226792/section/ | xhr | categoryId |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/b67b5ada6e6ff4a4570c5194e1ff0c0615a2a6f7_1666536785.jpg | image | x-oss-process |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/cb778611f65284355e9b024b3b6901d325892264_1782818874.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /statics/img/png/landings/new-app//superapp-home-page.webp | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/27970/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/bf405-fashion/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-15195605/%D8%A7%D8%B3%20%D8%A7%D8%B3%20%D8%AF%DB%8C%20%D8%A7%DB%8C%D9%86%D8%AA%D8%B1%D9%86%D8%A7%D9%84%20sata%20iii%20%D8%A7%D9%85%20%D8%A7%D8%B3%20%D8%A2%DB%8C%20%D9%85%D8%AF%D9%84%20spatium%20s270%20%D8%B8%D8%B1%D9%81%DB%8C%D8%AA%20960%20%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/themes/digikalamag/assets/desktop/js/masonry.pkgd.min.js | script | ver |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-bellatrix/046a1ff4761df463dbcc236529a740bed5d546ac_1795304288.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-21870108/%DA%AF%D9%88%D8%B4%DB%8C%20%D9%85%D9%88%D8%A8%D8%A7%DB%8C%D9%84%20%D8%B4%DB%8C%D8%A7%D8%A6%D9%88%D9%85%DB%8C%20%D9%85%D8%AF%D9%84%20redmi%20a7%20pro%204g%20%D8%B8%D8%B1%D9%81%DB%8C%D8%AA%20128%20%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA%20%D9%88%20%D8%B1%D9%85%204%20%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a8d2ad899ab3645b5e0833c6bb2e836a481996d8_1746261039.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/21739662/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/23125782/section/ | xhr | categoryId |  | 
+    1 | GET | www.digikala.com | /_next/static/chunks/2b8773kwo8xt8.js | script |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-12109647/ | document | variant_id |  | 301
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/7438107/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/appStores/myket.svg | image |  |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/1081867-iceageboilingpointtrl12-1280-1.webp | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/20073130/cpc/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/5141204/section/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /discovery/api/v1/widget-factory/widget/28852 | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/27e9b7f78a781b45c3e3dfce910d23ce2f806fec_1768213268.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /statics/img/svg/privacy-icon.svg | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-bellatrix/e6a181fa6e60703de02a4bd6409391f3333bb790_1795337283.png | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/a417b2a92eb4c7b0f2b6a45e94d071090c156cc3_1786372512.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/3839909/cpc/ | xhr | categoryId |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/16200986/section/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/turbopack-2t12tawpikbec.js | script |  |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/5141204/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/00e906at6deit.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-admin-landing/2eb1a7dc58d857c118ef530b8e6b3f7f5719e831_1795292188.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/19336870/ | xhr | product_id,variant_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/4d0c2c0f1566242f6a6a352943d444e34f5d65e3_1725807725.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /statics/img/nearby/map-address.webp | image |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/8423381/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /superapp/for-you/api/v1/super-app/pillars/raw | xhr |  |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/2txpt8906e-3m.js | script |  |  | 200
+    1 | GET | www.digikala.com | /wealth/static/img/png/landing/Goldbar-Mobile.webp | image |  |  | 200
+    1 | GET | api.digikala.com | /v1/product/19336870/seller-vouchers/ | xhr |  |  | 
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2026/11/foolad-sepahan-1-60x60.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-18236685/%DA%A9%D9%81%D8%B4%20%D9%BE%DB%8C%D8%A7%D8%AF%D9%87%E2%80%8C%D8%B1%D9%88%DB%8C%20%D8%B7%D8%B1%D8%AD%20%D8%A7%D8%B3%DA%A9%DA%86%D8%B1%D8%B2%20%D9%85%D8%AF%D9%84%201026/ | document | variant_id,product_id |  | 301
+    1 | GET | api.digikala.com | /v1/product/581829/seller-vouchers/ | xhr |  |  | 
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/7a051b46469313ba682558775fb839f895cd59c7_1794666240.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /mag/wp-content/uploads/2025/07/%DA%A9%DB%8C%D8%A7%D9%86-%D8%B3%DB%8C%D8%B3%D8%A7%D9%86-2-60x60.jpg | image |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/png/landings/new-app/header-pattern.png | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/32af07490073ae17e5529365a8eb1ebf68e091b4_1745827632.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/d37404812dda196951a9e9d5055c65f4e8e07360_1794667418.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-21329866/%D9%81%D9%88%D9%85%20%D8%B4%D8%B3%D8%AA%E2%80%8C%D9%88%D8%B4%D9%88%DB%8C%20%D8%B5%D9%88%D8%B1%D8%AA%20%D9%88%DB%8C%D8%AA%D8%A7%D9%84%DB%8C%D8%B1%20%D9%85%D8%AF%D9%84%20activit%20%D9%85%D9%86%D8%A7%D8%B3%D8%A8%20%D8%A8%D8%B1%D8%A7%DB%8C%20%D9%BE%D9%88%D8%B3%D8%AA%20%DA%86%D8%B1%D8%A8%20%D9%88%20%D9%85%D8%AE%D8%AA%D9%84%D8%B7%20%D8%AD%D8%AC%D9%85%20200%20%D9%85%DB%8C%D9%84%DB%8C%E2%80%8C%D9%84%DB%8C%D8%AA%D8%B1 | document | variant_id,product_id |  | 200
+    1 | GET | www.digikala.com | /product/dkp-3516245/%DA%A9%D9%BE%D8%B3%D9%88%D9%84%20%D9%85%DA%AF%D9%86%DB%8C%D9%81%D9%88%D8%B1%D8%AA%20%D9%87%D9%88%D9%84%DB%8C%D8%B3%D8%AA%DB%8C%DA%A9%D8%A7%20%D8%A8%D8%B3%D8%AA%D9%87%2032%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    1 | GET | dkstatics-public.digikala.com | /digikala-faq/89c09fa9ffcdebee239c262d8cca8e53cf833267_1642848944.png | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /_next/static/chunks/3gudmc997ju56.js | script |  |  | 200
+    1 | GET | www.digikala.com | /product/dkp-18226792/%D8%AF%D8%B3%D8%AA%DA%AF%D8%A7%D9%87%20%D8%AA%D8%B5%D9%81%DB%8C%D9%87%20%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D8%A2%D8%A8%20%D8%B2%DB%8C%D9%86%D9%88%D8%AF%20%D9%85%D8%AF%D9%84%20%DA%A9%DB%8C%D8%B3%DB%8C%20cx107-wtdsm%20%D8%A8%D9%87%20%D9%87%D9%85%D8%B1%D8%A7%D9%87%20%D8%B3%D8%AE%D8%AA%DB%8C%20%D8%B3%D9%86%D8%AC%20tds-3 | document | variant_id,product_id |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/04e59c23a0cd886cf45eceaee2c93ed761cb31f2_1682845389.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-7438107/%D9%BE%D9%88%D8%AF%D8%B1%20%D9%BE%D8%B1%D9%88%D8%AA%D8%A6%DB%8C%D9%86%C2%A0%D8%A8%D8%A7%20%D8%B7%D8%B9%D9%85%20%D8%B4%DA%A9%D9%84%D8%A7%D8%AA%20%DA%A9%D8%A7%D9%84%D9%87%20%D9%BE%D8%B1%D9%88%20-%201800%20%DA%AF%D8%B1%D9%85/ | document | variant_id,product_id |  | 301
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/09d416931a21dd5467b62131c2ea86ce829ae771_1792310219.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /wealth/_next/static/chunks/2w9za1l3bh0hc.js | script |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/0be4b31e14743405037a00ef137904b860b4d5ab_1792307355.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /wealth/_next/static/chunks/1mrbq8rl217ai.js | script |  |  | 
+    1 | GET | www.digikala.com | /product/dkp-20271626 | document | variant_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/recommendations/5188998/section/ | xhr | categoryId |  | 200
+    1 | GET | www.digikala.com | /product/dkp-21139779/%D8%B4%D9%85%D8%B4%20%D8%B7%D9%84%D8%A7%2018%20%D8%B9%DB%8C%D8%A7%D8%B1%20%D9%88%D9%86%D9%88%D8%B3%20%DA%AF%D9%84%D8%AF%20%D9%85%D8%AF%D9%84%20%DA%AF%D9%84%20%D8%B1%D8%B2 | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/581829/ | xhr |  |  | 200
+    1 | GET | www.digikala.com | /statics/img/png/landings/new-app//mobile-obj-r-1.webp | image |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/4a6883d32d3ce047a72d90159e1e051ba4f2f911_1725778578.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-brands/2f84cb94305b6291026abc04557f59a32027a57c_1792322129.jpg | image | x-oss-process |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/48b24248545e4ab735556b9c81626f41b0a2a3f0_1635866187.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-19336870/%DA%98%D9%84%20%D8%A2%D8%A8%D8%B1%D8%B3%D8%A7%D9%86%20%D8%B5%D9%88%D8%B1%D8%AA%20%D8%AA%DB%8C%D9%84%D8%B3%DB%8C%D9%85%20%D9%85%D8%AF%D9%84%20hydrating%20%D9%85%D9%86%D8%A7%D8%B3%D8%A8%20%D8%A8%D8%B1%D8%A7%DB%8C%20%D8%A7%D9%86%D9%88%D8%A7%D8%B9%20%D9%BE%D9%88%D8%B3%D8%AA%20%D8%AD%D8%AC%D9%85%2050%20%D9%85%DB%8C%D9%84%DB%8C%20%D9%84%DB%8C%D8%AA%D8%B1 | document | variant_id,product_id |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/15047607/digipay-credit/ | xhr |  |  | 200
+    1 | GET | api.digikala.com | /product/v1/products/7158804/digipay-credit/ | xhr |  |  | 200
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/3cdbed1e582fdd8bddf8f5ef599d344b40beeb47_1637680134.jpg | image | x-oss-process |  | 200
+    1 | GET | www.digikala.com | /product/dkp-5141204/%D9%82%D8%B1%D8%B5%20%DA%A9%D9%84%D8%A7%DA%98%D9%86%20%DA%AF%D9%84%D8%AF%20833%20%D9%85%DB%8C%D9%84%DB%8C%E2%80%8C%DA%AF%D8%B1%D9%85%20%D8%AD%D8%A7%D9%88%DB%8C%20%DA%A9%D9%84%D8%A7%DA%98%D9%86%20%D9%87%DB%8C%D8%AF%D8%B1%D9%88%D9%84%DB%8C%D8%B2%20%D9%86%D9%88%D8%B9%201%20%D9%88%203%D8%8C%20%D8%B6%D8%AF%20%DA%86%D8%B1%D9%88%DA%A9%20%D9%88%20%D8%AC%D9%88%D8%A7%D9%86%E2%80%8C%DA%A9%D9%86%D9%86%D8%AF%D9%87%20%D9%BE%D9%88%D8%B3%D8%AA%D8%8C%20%D8%B1%D9%81%D8%B9%20%D8%AA%DB%8C%D8%B1%DA%AF%DB%8C%20%D9%88%20%DA%A9%D9%85%DA%A9%20%D8%A8%D9%87%20%D8%AF%D8%B1%D9%85%D8%A7%D9%86%20%D9%84%DA%A9%20%D9%86%D8%A7%D8%B4%DB%8C%20%D8%A7%D8%B2%20%D8%A2%D9%81%D8%AA%D8%A7%D8%A8%D8%8C%20%D8%A8%D8%B3%D8%AA%D9%87%2060%20%D8%B9%D8%AF%D8%AF%DB%8C/ | document | variant_id,product_id |  | 301
+    1 | GET | dkstatics-public.digikala.com | /digikala-products/90a2f2ade85824590eb8097d3a0221951470b576_1651483016.jpg | image | x-oss-process |  | 200
+    1 | GET | api.digikala.com | /v1/dynamic-landing/widget/28517/ | xhr | lazy_tabs |  | 200
+    1 | GET | api.digikala.com | /v1/magnet/related-posts/15047607/ | xhr |  |  | 200
+
+EXISTING endpoint-inventory.json:
+[
+  {
+    "method": "POST",
+    "path": "/api/3/envelope/",
+    "hosts": [
+      "sentry.digikala.com"
+    ],
+    "queryKeys": [
+      "sentry_version",
+      "sentry_key",
+      "sentry_client"
+    ],
+    "calls": 430,
+    "resourceTypes": [
+      "fetch"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/api/features/sdk-1aauD6mWWgx2Deg2",
+    "hosts": [
+      "api-zakaria.digikala.com"
+    ],
+    "queryKeys": [],
+    "calls": 14,
+    "resourceTypes": [
+      "fetch"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/checkout/v1/carts/mini",
+    "hosts": [
+      "api.digikala.com"
+    ],
+    "queryKeys": [
+      "bCode",
+      "camCode",
+      "promo_creative",
+      "promo_name",
+      "promo_position",
+      "utm_source",
+      "utm_campaign",
+      "utm_medium",
+      "product_id",
+      "token",
+      "category_id"
+    ],
+    "calls": 71,
+    "resourceTypes": [
+      "xhr",
+      "fetch"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/discovery/api/v1/top-banners",
+    "hosts": [
+      "api.digikala.com"
+    ],
+    "queryKeys": [],
+    "calls": 68,
+    "resourceTypes": [
+      "xhr"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/discovery/api/v1/home",
+    "hosts": [
+      "api.digikala.com"
+    ],
+    "queryKeys": [],
+    "calls": 1,
+    "resourceTypes": [
+      "xhr"
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/messages",
+    "hosts": [
+      "black-friday.digikala.com"
+    ],
+    "queryKeys": [],
+    "calls": 77,
+    "resourceTypes": [
+      "fetch"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-adservice-banners/ab4ac882a664eb088672b188e8682f8af43c5f10_1794916618.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 61,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/discovery/api/v1/mega-menu",
+    "hosts": [
+      "api.digikala.com"
+    ],
+    "queryKeys": [],
+    "calls": 49,
+    "resourceTypes": [
+      "xhr"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-adservice-banners/9fe115b731263f7f1b3b94aebe12a5983b24ebec_1795436762.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 1,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/discovery/api/v1/widget-factory/widget/593",
+    "hosts": [
+      "api.digikala.com"
+    ],
+    "queryKeys": [],
+    "calls": 1,
+    "resourceTypes": [
+      "xhr"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/discovery/api/v1/widget-factory/widget/13",
+    "hosts": [
+      "api.digikala.com"
+    ],
+    "queryKeys": [],
+    "calls": 1,
+    "resourceTypes": [
+      "xhr"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/discovery/api/v1/widget-factory/widget/28852",
+    "hosts": [
+      "api.digikala.com"
+    ],
+    "queryKeys": [],
+    "calls": 1,
+    "resourceTypes": [
+      "xhr"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-adservice-banners/463379624080e0967aa82cc5cc4ca3e79cb5a75e_1795444392.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 1,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-adservice-banners/2766ca0bcc76138c2118e4f7db8a4a5278303c93_1795291801.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 1,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-products/c64720f4446aa94b873dab4ae35091bc3f0fcc22_1637680139.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 3,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-products/9e74e37882b77ddc6219560dd908d74732e794ce_1760365118.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 2,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-products/1583357fe205bfc91950f3c7bc1b3544dcd11f16_1794830987.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 2,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-products/d27ddec9092c0505de94db549975f44a9199ea1f_1786372478.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 2,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-products/9d2f1dbce14414b9c17025b20acfcb1abf7f9f99_1651483015.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 4,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-products/6e9fc5f500d4cbe714825b963cb0305d291b73c3_1635866190.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 3,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-products/bbd607ee3a612dda2baaf12ef62a8ff2dc8a83fa_1602004475.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
+    ],
+    "calls": 4,
+    "resourceTypes": [
+      "image"
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/digikala-products/5d387cbdfe2669781648d0925c7b2b6dd7765c88_1622368155.jpg",
+    "hosts": [
+      "dkstatics-public.digikala.com"
+    ],
+    "queryKeys": [
+      "x-oss-process"
